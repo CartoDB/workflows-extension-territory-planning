@@ -1,0 +1,63 @@
+{
+    "name": "territorybalance",
+    "title": "Territory Balancing",
+    "description": "This component splits an area into k continuous territories such that a specified metric is balanced.",
+    "version": "1.0.0",
+    "icon": "component-default.svg",
+    "cartoEnvVars": [],
+    "inputs": [
+        {
+            "name": "input_table",
+            "title": "Input table",
+            "description": "The table with the gridify-enriched Area of Interest",
+            "type": "Table"
+        },
+        {
+            "name": "index_column",
+            "title": "Index column",
+            "description": "Variable to be used as cell unique identifier (H3 or Quadbin)",
+            "type": "Column",
+            "parent": "input_table"
+        },
+        {
+            "name": "demand_column",
+            "title": "Demand column",
+            "description": "Business KPI to be balanced",
+            "type": "Column",
+            "parent": "input_table"
+        },
+        {
+            "name": "similarity_feats",
+            "title": "Similarity features(s)",
+            "description": "Variable(s) to be used as similarity measurement",
+            "type": "Column",
+            "mode": "multiple",
+            "parent": "input_table",
+            "dataType": ["Number"],
+            "optional": true
+        },
+        {
+            "name": "npartitions",
+            "title": "Number of territories",
+            "description": "Number of partitions to split the AOI into",
+            "type": "Number",
+            "min": "2",
+            "default": 5
+        },
+        {
+            "name": "keep_input_columns",
+            "title": "Keep input columns",
+            "description": "Whether to include all input columns in the output table",
+            "type": "Boolean",
+            "default": true
+        }
+    ],
+    "outputs": [
+        {
+            "name": "output_table",
+            "title": "Output table",
+            "description": "The table with the specified territories",
+            "type": "Table"
+        }
+    ]
+}

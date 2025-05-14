@@ -1,11 +1,11 @@
 {
-    "name": "template",
-    "title": "Template",
+    "name": "territorybalancing",
+    "title": "Territory Balancing",
     "industry": "Templates",
-    "description": "A template extension for creating new extensions",
+    "description": "An extension package for balancing territories",
     "icon": "extension-default.svg",
     "version": "1.0.0",
-    "lastUpdate": "2024-01-31",
+    "lastUpdate": "2025-05-12",
     "provider": "bigquery",
     "author": {
         "value": "CARTO",
@@ -31,6 +31,6 @@
         }
     ],
     "components": [
-        "template"
+        "territorybalance"
     ]
 }
