@@ -4,7 +4,7 @@
     "description": "This component splits an area into k continuous territories such that a specified metric is balanced.",
     "version": "1.0.0",
     "icon": "component-default.svg",
-    "cartoEnvVars": [],
+    "cartoEnvVars": ["tempStoragePath"],
     "inputs": [
         {
             "name": "input_table",

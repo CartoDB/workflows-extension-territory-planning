@@ -1,10 +1,26 @@
-DECLARE output_temp_scoring STRING DEFAUL CONCAT(output_table, "_temp_scoring");
+DECLARE output_temp_scoring STRING;
 DECLARE create_output_query STRING;
 DECLARE query STRING;
 DECLARE row_count INT64;
 DECLARE condition STRING;
 DECLARE options STRING DEFAULT """{"scoring_method":"CUSTOM_WEIGHTS","scaling":"MIN_MAX_SCALER","aggregation":"LINEAR","return_range":[0,1]}""";
+DECLARE temp_uuid STRING;
+DECLARE temp_table STRING;
 
+SET input_table = REPLACE(input_table, '`', '');
+SET output_table = REPLACE(output_table, '`', '');
+
+-- Set variables based on whether the workflow is executed via API
+IF REGEXP_CONTAINS(output_table, r'^[^.]+\.[^.]+\.[^.]+$') THEN
+    SET create_output_query = FORMAT('CREATE TABLE IF NOT EXISTS `%s` OPTIONS (expiration_timestamp = TIMESTAMP_ADD(CURRENT_TIMESTAMP(), INTERVAL 30 DAY))', output_table);
+    SET output_temp_scoring = CONCAT(output_table, "_temp_scoring");
+ELSE
+    -- Output needs to be qualified with tempStoragePath, meaning an API execution of the Workflow
+    SET create_output_query = FORMAT('CREATE TEMPORARY TABLE `%s`', output_table);
+    SET temp_uuid = GENERATE_UUID();
+    SET temp_table = CONCAT(REPLACE(tempStoragePath, '"', ''), '.WORKFLOW_', temp_uuid, '_intermediate');
+    SET output_temp_scoring = CONCAT(temp_table, "_temp_scoring");
+END IF;
 
 -- Raise error if NULL values
 SET condition = ARRAY_TO_STRING(ARRAY(
@@ -86,12 +102,9 @@ CALL `carto-territory-balancing`.accessors.TERRITORY_BALANCING(
 
 -- Append input columns if specified
 EXECUTE IMMEDIATE FORMAT('''
-    CREATE TABLE IF NOT EXISTS `%s` OPTIONS (
-        expiration_timestamp = TIMESTAMP_ADD(CURRENT_TIMESTAMP(), INTERVAL 30 DAY)
-    ) AS
-        SELECT * FROM `%s` %s
+    %s AS SELECT * FROM `%s` %s
 ''',
-output_table,
+create_output_query,
 output_temp_scoring,
 IF(keep_input_columns, FORMAT('JOIN `%s` USING(%s)', input_table, index_column), '')
 );

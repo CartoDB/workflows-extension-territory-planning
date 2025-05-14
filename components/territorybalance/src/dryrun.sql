@@ -15,8 +15,8 @@ EXECUTE IMMEDIATE FORMAT(
         `%s` input
     WHERE 1 = 0;
     ''',
-    output_table,
+    REPLACE(output_table, '`', ''),
     index_column,
     IF(keep_input_columns, FORMAT(', input.*EXCEPT(%s)', index_column), ''),
-    input_table
+    REPLACE(input_table, '`', '')
 );
