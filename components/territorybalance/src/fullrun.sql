@@ -27,7 +27,7 @@ BEGIN
         SET output_temp_scoring = CONCAT(temp_table, "_temp_scoring");
     END IF;
 
-    -- 1. Check inputs
+    -- 1. Check input data & arguments
     -- Raise error if index_column not QUADBIN | H3 
     CALL `carto-un`.carto.__CHECK_GRID_INDEX_COLUMN(
         FORMAT('SELECT %s FROM `%s`', index_column, input_table),
@@ -69,6 +69,11 @@ BEGIN
     IF dups_flag THEN
         RAISE USING MESSAGE = FORMAT('Input index column must be unique. Please remove duplicated values before running territory balance.');
     END IF;
+
+    -- Raise error if index column is in similarity_feats
+    IF index_column IN UNNEST(SPLIT(similarity_feats,',')) THEN
+        RAISE USING MESSAGE = FORMAT('Index column cannot be used as a similarity feature.');
+    END IF; 
 
     -- 2. Prepare input
     -- Run composite score if more than one variable is selected       
