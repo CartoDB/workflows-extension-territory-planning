@@ -49,11 +49,11 @@ def compute_weighted_edges_geom(input_data: gpd.GeoDataFrame, _) -> pd.DataFrame
 
 def get_functions(grid_type):
     if grid_type == 'h3':
-        compute_kring = lambda x, k=1: h3.k_ring(x,k) - {x}      # exclude center
+        compute_kring = lambda x, k=1: h3.k_ring(x,k) - {x}           # exclude center
         compute_distance = lambda x, y: h3.h3_distance(x,y)
         compute_weights = compute_weighted_edges_index
     elif grid_type == 'quadbin':
-        compute_kring = lambda x, k=1: quadbin.k_ring(x,k) - {x} # exclude center
+        compute_kring = lambda x, k=1: set(quadbin.k_ring(x,k)) - {x} # exclude center
         compute_distance = lambda x, y: quadbin_distance(x, y)
         compute_weights = compute_weighted_edges_index
     else:
@@ -126,6 +126,7 @@ class TerritoryBalancingProblem:
         
         if self.verbose:
             print("Grid type:", self.grid_type, "- grid index column:", self.grid_index_column)
+            print("Min score:", self.df.score.min(), "Mean score:", self.df.score.mean(), "Max score:", self.df.score.max())
 
         # Define functions
         _, compute_distance, _ = get_functions(self.grid_type)

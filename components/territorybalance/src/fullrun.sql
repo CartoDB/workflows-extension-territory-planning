@@ -87,7 +87,7 @@ BEGIN
 
         EXECUTE IMMEDIATE FORMAT('''
         CREATE OR REPLACE TABLE `%s` AS
-        SELECT  a.%s,
+        SELECT  a.%s AS geoid,
                 CAST(b.%s AS FLOAT64) AS demand,
                 a.spatial_score as score
         FROM `%s` a
