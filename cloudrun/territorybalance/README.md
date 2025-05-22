@@ -29,75 +29,49 @@ Then, run the following command to build the base image for the Docker container
 
 > [!IMPORTANT]  
 > All services and functions will be deployed to the specified Google Cloud Project. Follow the steps below to install and deploy everything from scratch, including the Cloud Run function and its integration with BigQuery.
-
 > ### 1. Docker base image
-
 > First of all, you need to build the base image for the Docker container used by Cloud Run. This image contains all the dependencies needed to run the workflows.
-
 > Go to [Registry artifact](https://console.cloud.google.com/artifacts) and create a new repository called `territory-balancing` with format **Docker** and region **us-east1**.
-
 > Open the `build-base.sh` file and change the following line with your project id:
-
 > ```
 > PROJECT_ID="<your-project>"
 > ```
-
 > To build the Docker image and deploy it to GCloud Docker Artifacts (before you need to login to GCloud), you need to start Docker in your machine and run the following command:
-
 > ```
 > ./build-base.sh
 > ```
-
 > ### 2. Cloud Run
-
 > Once the base image is built, you can deploy the Cloud Run services. This service will be used to run the workflows.
-
 > Edit the following lines in the `app/build-run.sh` file:
-
 > ```
 > PROJECT_ID="<your-project>"
 > SERVICE_ACCOUNT="<your-service_account>"
 > ```
-
 > And the following line in the `app/Dockerfile` file:
-
 > ```
 > FROM us-east1-docker.pkg.dev/<my-project>/territory-balancing/territory-balancing-base
 > ```
-
 > Then, deploy the Cloud Run service for the Territory Balancing solver:
-
 > ```
 > cd app
 > ./build-run.sh
 > ```
-
 > Once the service has been created, you will be able to see it listed in your Cloud Run. For the next step, you will need its endpoint URL. To access it, go to Cloud Run and click on the > service you have created:
 > <img width="929" alt="Screenshot 2023-07-28 at 11 45 59" src="https://github.com/CartoDB/territory-balancing/assets/63408159/1a412a2d-5bac-4e47-affc-caa0dbcc2bdc">
-
-
 > ### 3. BigQuery remote function
-
 > To deploy the remote function that runs the Cloud Run service, you need to have access to a Cloud resource connection. Follow [this](https://cloud.google.com/bigquery/docs/remote-functions#create_a_connection) steps to create one if needed. Include the endpoint URL of your service in `TERRITORY_BALANCE_CLOUDRUN.sql`:
-
 > ```
 > CREATE OR REPLACE FUNCTION `<your project>`.<your dataset>.TERRITORY_BALANCE_CLOUDRUN(
 > ...
 > REMOTE WITH CONNECTION `<my-connection>`
 >   OPTIONS( max_batching_rows = 1, endpoint = '<my-endpoint>')
 > ```
-
 > Lastly, run the following command in the terminal:
-
 > ```
 > bq query --use_legacy_sql=false < TERRITORY_BALANCE_CLOUDRUN.sql
 > ```
-
-
 > ### 4. Workflows component
-
 > Remember also to update the location (FQN) of the remote function in the component's fullrun if needed (`../../components/territorybalance/src/fullrun.sql`)
-
 >```
 >SELECT `<your project>`.<your dataset>.TERRITORY_BALANCE_CLOUDRUN(...)
 >```
