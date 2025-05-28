@@ -36,7 +36,7 @@ BEGIN
         grid_resolution
     );
     IF grid_type = 'unsupported' OR grid_type IS NULL THEN
-        RAISE USING MESSAGE = FORMAT('Please select a valid index column (H3 or QUADBIN format).');
+        RAISE USING MESSAGE = FORMAT('Please select a valid index column (H3 or QUADBIN format) before running territory balance.');
     END IF;
 
     -- Raise error if NULL values
@@ -72,7 +72,7 @@ BEGIN
 
     -- Raise error if index column is in similarity_feats
     IF index_column IN UNNEST(SPLIT(similarity_feats,',')) THEN
-        RAISE USING MESSAGE = FORMAT('Index column cannot be used as a similarity feature.');
+        RAISE USING MESSAGE = FORMAT('Index column cannot be used as a similarity feature when running territory balance.');
     END IF; 
 
     -- 2. Prepare input
@@ -126,11 +126,10 @@ BEGIN
     END IF;
 
     -- 3. Call remote function to run territory optimization  
-    -- TODO: deploy in `cartobq.us`
     EXECUTE IMMEDIATE FORMAT('''
         %s AS 
         WITH T1 AS (
-            SELECT `cartodb-on-gcp-datascience`.lgarciaduarte.TERRITORY_BALANCE_CLOUDRUN(
+            SELECT `cartobq`.us._territory_balancing(
                 JSON_OBJECT("geoid", ARRAY_AGG(geoid)),
                 JSON_OBJECT("demand", ARRAY_AGG(demand)),
                 JSON_OBJECT("score", ARRAY_AGG(score)),
