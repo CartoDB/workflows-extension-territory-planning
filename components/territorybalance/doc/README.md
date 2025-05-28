@@ -1,3 +1,3 @@
 # Territory Balancing
 
-A component that splits an area into k continuous territories such that a specified metric is balanced.
+A component that splits a gridified area into a set of optimal, continuous territories, ensuring balance according to a specified metric while maintaining internal similarity within each territory. If the input grid contains disconnected elements—such as isolated cells or cell clusters—the algorithm applies a proxy mechanism to establish connectivity across all regions. However, the presence of numerous unconnected components may lead to unexpected behavior or suboptimal results.
