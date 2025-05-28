@@ -45,11 +45,10 @@ Then, run the following command to build the base image for the Docker container
 > Edit the following lines in the `app/build-run.sh` file:
 > ```
 > PROJECT_ID="<your-project>"
-> SERVICE_ACCOUNT="<your-service_account>"
 > ```
 > And the following line in the `app/Dockerfile` file:
 > ```
-> FROM us-east1-docker.pkg.dev/<my-project>/territory-balancing/territory-balancing-base
+> FROM us-central1-docker.pkg.dev/<my-project>/territory-balancing/territory-balancing
 > ```
 > Then, deploy the Cloud Run service for the Territory Balancing solver:
 > ```
@@ -59,19 +58,19 @@ Then, run the following command to build the base image for the Docker container
 > Once the service has been created, you will be able to see it listed in your Cloud Run. For the next step, you will need its endpoint URL. To access it, go to Cloud Run and click on the > service you have created:
 > <img width="929" alt="Screenshot 2023-07-28 at 11 45 59" src="https://github.com/CartoDB/territory-balancing/assets/63408159/1a412a2d-5bac-4e47-affc-caa0dbcc2bdc">
 > ### 3. BigQuery remote function
-> To deploy the remote function that runs the Cloud Run service, you need to have access to a Cloud resource connection. Follow [this](https://cloud.google.com/bigquery/docs/remote-functions#create_a_connection) steps to create one if needed. Include the endpoint URL of your service in `TERRITORY_BALANCE_CLOUDRUN.sql`:
+> To deploy the remote function that runs the Cloud Run service, you need to have access to a Cloud resource connection. Follow [this](https://cloud.google.com/bigquery/docs/remote-functions#create_a_connection) steps to create one if needed. Include the endpoint URL of your service in `_territory_balancing.sql`:
 > ```
-> CREATE OR REPLACE FUNCTION `<your project>`.<your dataset>.TERRITORY_BALANCE_CLOUDRUN(
+> CREATE OR REPLACE FUNCTION `<your project>`.<your dataset>._territory_balancing(
 > ...
 > REMOTE WITH CONNECTION `<my-connection>`
 >   OPTIONS( max_batching_rows = 1, endpoint = '<my-endpoint>')
 > ```
 > Lastly, run the following command in the terminal:
 > ```
-> bq query --use_legacy_sql=false < TERRITORY_BALANCE_CLOUDRUN.sql
+> bq query --use_legacy_sql=false < _territory_balancing.sql
 > ```
 > ### 4. Workflows component
-> Remember also to update the location (FQN) of the remote function in the component's fullrun if needed (`../../components/territorybalance/src/fullrun.sql`)
+> Remember also to update the location (FQN) of the remote function in the component's fullrun if needed (`../../components/territorybalancing/src/fullrun.sql`)
 >```
->SELECT `<your project>`.<your dataset>.TERRITORY_BALANCE_CLOUDRUN(...)
+>SELECT `<your project>`.<your dataset>._territory_balancing(...)
 >```
