@@ -1,8 +1,8 @@
-NAME="territory-balancing-lgarciaduarte"
-PROJECT_ID="cartodb-on-gcp-datascience"
-REGION="us-east1"
-GOOGLE_REGISTRY_URL="us-east1-docker.pkg.dev"
-ARTIFACTS_REPOSITORY="territory-balancing-lgarciaduarte"
+NAME="territory-balancing"
+PROJECT_ID="cartobq"
+REGION="us-central1"
+GOOGLE_REGISTRY_URL="us-central1-docker.pkg.dev"
+ARTIFACTS_REPOSITORY="territory-balancing"
 DOCKER_LABEL="latest"
 
 gcloud auth configure-docker ${GOOGLE_REGISTRY_URL}

@@ -24,6 +24,9 @@ def points_distance(q1, q2):
 def fexp(f):
     return int(np.floor(np.log10(abs(f)))) if f != 0 else 0
 
+def get_similarity(score_a, score_b):
+    return int(1000 * (1 + np.exp(-2.0 * abs(score_a - score_b))))
+
 def compute_weighted_edges_index(input_data: pd.DataFrame, kring_func) -> pd.DataFrame:
     input_data = input_data.copy()
     grid_map = input_data.set_index('geoid')[['node', 'score']].to_dict('index')
@@ -31,7 +34,7 @@ def compute_weighted_edges_index(input_data: pd.DataFrame, kring_func) -> pd.Dat
         (
             a_data['node'], 
             grid_map[b_id]['node'],
-            int(1000 * (1 + np.exp(-2.0 * abs(a_data['score'] - grid_map[b_id]['score']))))
+            get_similarity(a_data['score'], grid_map[b_id]['score'])
         )
         for a_id, a_data in grid_map.items()
         for b_id in kring_func(a_id)
@@ -43,7 +46,7 @@ def compute_weighted_edges_geom(input_data: gpd.GeoDataFrame, _) -> pd.DataFrame
     input_data = input_data.copy()
     joined = gpd.sjoin(input_data, input_data, how='inner', predicate='intersects', lsuffix='a', rsuffix='b')
     joined = joined[joined['node_a'] < joined['node_b']]
-    joined['weight'] = (1000 * (1 + np.exp(-2.0 * abs(joined['score_a'] - joined['score_b']))))
+    joined['weight'] = get_similarity(joined['score_a'], joined['score_b'])
     
     return joined[['node_a', 'node_b', 'weight']].rename(columns={'node_a': 'i', 'node_b': 'j'}).sort_values(['i', 'j'])
 
@@ -64,7 +67,7 @@ def get_functions(grid_type):
         pass
     return compute_kring, compute_distance, compute_weights
 
-def connect_components(G, df, grid_index_column, compute_distance, verbose):
+def connect_components(G, df, grid_index_column, compute_distance, verbose=True):
     while not nx.is_connected(G):
         if verbose:
             print('...entering while loop...') 
@@ -100,7 +103,7 @@ def connect_components(G, df, grid_index_column, compute_distance, verbose):
                     shortest_dist = dist
                     S_closest_node = n
             # create new edge
-            dist = int(1000 * (1 + np.exp(- 2.0 * np.abs(df.loc[G_closest_node,'score'] - df.loc[S_closest_node,'score']))))
+            dist = get_similarity(df.loc[G_closest_node,'score'], df.loc[S_closest_node,'score'])
             new_edges.append((G_closest_node, S_closest_node, dist))
 
         G.add_weighted_edges_from(new_edges)
@@ -125,6 +128,7 @@ class TerritoryBalancingProblem:
         self.df.index = list(range(self.df.shape[0]))
         
         if self.verbose:
+            print("Data shape:", self.df.shape)
             print("Grid type:", self.grid_type, "- grid index column:", self.grid_index_column)
             print("Min score:", self.df.score.min(), "Mean score:", self.df.score.mean(), "Max score:", self.df.score.max())
 

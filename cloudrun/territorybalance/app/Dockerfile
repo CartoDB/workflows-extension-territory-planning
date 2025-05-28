@@ -1,4 +1,4 @@
-FROM us-east1-docker.pkg.dev/cartodb-on-gcp-datascience/territory-balancing-lgarciaduarte/territory-balancing-lgarciaduarte
+FROM us-central1-docker.pkg.dev/cartobq/territory-balancing/territory-balancing
 
 # Allow statements and log messages to immediately appear in the logs
 ENV PYTHONUNBUFFERED True

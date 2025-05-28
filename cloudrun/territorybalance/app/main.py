@@ -18,7 +18,7 @@ logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%Y-%m-%d %I:%M:%S
 
 def parse_request_input(request_json):
     # calls will always contain a single element in this case
-    print(len(request_json["calls"]))
+    # print(len(request_json["calls"]))
     call = request_json["calls"][0]
 
     input = dict(
@@ -29,7 +29,6 @@ def parse_request_input(request_json):
         tolerance = call[4],
         grid_type = call[5]
     )
-    
     return input
 
 def solve_territory_balancing(input):
@@ -39,7 +38,6 @@ def solve_territory_balancing(input):
     for item in ['geoid', 'demand', 'score']:
         df.update(input[item])
     df = pd.DataFrame(df)
-    print(df.shape)
 
     df['node'] = df['geoid'].rank(method='dense').astype(int) - 1
     df = df.sort_values("node")
@@ -48,7 +46,7 @@ def solve_territory_balancing(input):
     compute_kring, _, compute_weights = get_functions(input['grid_type'])
     wq = compute_weights(df, compute_kring)
 
-    # We setup the territory balancing problem
+    # Setup the territory balancing problem
     tb = TerritoryBalancingProblem(
         df,
         list(wq.itertuples(index=False, name=None)),         
@@ -58,7 +56,7 @@ def solve_territory_balancing(input):
         balance_tolerance = input['tolerance'],
         verbose = True)
 
-    # We solve the problem
+    # Solve the problem
     solution_found = tb.solve()
     if solution_found:
         output = tb.df.copy()

@@ -1,10 +1,9 @@
-NAME="territory-balancing-lgarciaduarte"
-PROJECT_ID="cartodb-on-gcp-datascience"
-REGION="us-east1"
-GOOGLE_REGISTRY_URL="us-east1-docker.pkg.dev"
-ARTIFACTS_REPOSITORY="territory-balancing-lgarciaduarte"
+NAME="territory-balancing"
+PROJECT_ID="cartobq"
+REGION="us-central1"
+GOOGLE_REGISTRY_URL="us-central1-docker.pkg.dev"
+ARTIFACTS_REPOSITORY="territory-balancing"
 DOCKER_LABEL="latest"
-SERVICE_ACCOUNT="data-science-service-account@cartodb-on-gcp-datascience.iam.gserviceaccount.com"
 
 set -x
 
@@ -17,9 +16,9 @@ gcloud run deploy \
     --region=${REGION} \
     --platform=managed \
     --memory=4Gi \
+    --allow-unauthenticated \
     --image=${GOOGLE_REGISTRY_URL}/${PROJECT_ID}/${ARTIFACTS_REPOSITORY}/${NAME}:${DOCKER_LABEL} \
     --revision-suffix="${RANDOM}-$(date +%s)" \
-    --service-account="${SERVICE_ACCOUNT}" \
     ${NAME}
 
 set +x

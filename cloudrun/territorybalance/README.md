@@ -31,7 +31,7 @@ Then, run the following command to build the base image for the Docker container
 > All services and functions will be deployed to the specified Google Cloud Project. Follow the steps below to install and deploy everything from scratch, including the Cloud Run function and its integration with BigQuery.
 > ### 1. Docker base image
 > First of all, you need to build the base image for the Docker container used by Cloud Run. This image contains all the dependencies needed to run the workflows.
-> Go to [Registry artifact](https://console.cloud.google.com/artifacts) and create a new repository called `territory-balancing` with format **Docker** and region **us-east1**.
+> Go to [Artifact Registry](https://console.cloud.google.com/artifacts) and create a new repository called `territory-balancing` with format **Docker** and region **us-east1**.
 > Open the `build-base.sh` file and change the following line with your project id:
 > ```
 > PROJECT_ID="<your-project>"
