@@ -7,7 +7,7 @@ networkx==2.7.1
 ortools==9.6.2534
 pyarrow==8.0.0
 pandas-gbq==0.19.1
-scikit-learn==1.0.2
+scikit-learn==1.5.1
 h3==3.7.4
 quadbin==0.2.0
 shapely==1.8.0
