@@ -1,11 +1,11 @@
 {
-    "name": "template",
-    "title": "Template",
-    "industry": "Templates",
-    "description": "A template extension for creating new extensions",
+    "name": "territoryplanning",
+    "title": "Territory Planning",
+    "industry": "TBD",
+    "description": "An extension package for optimizing and managing territories",
     "icon": "extension-default.svg",
     "version": "1.0.0",
-    "lastUpdate": "2024-01-31",
+    "lastUpdate": "2025-05-28",
     "provider": "bigquery",
     "author": {
         "value": "CARTO",
@@ -21,16 +21,8 @@
             "href": "https://carto.com/legal"
         }
     },
-    "details": [
-        {
-            "name": "Optional detail",
-            "link": {
-                "label": "Whatever",
-                "href": "https://carto.com/"
-            }
-        }
-    ],
+    "details": [],
     "components": [
-        "template"
+        "territorybalancing"
     ]
 }
