@@ -11,9 +11,9 @@ For more details, refer to the official [METIS](https://metis.readthedocs.io/en/
 - **Index column**: Unique identifier for each spatial cell. Must be an H3 or Quadbin index.
 - **Demand column**: The business KPI used for balancing territories. This must be an extensive variable (i.e., one that adds up across space, such as number of points of sale, total population, etc.).
 - **Similarity features(s)**: Optional variable(s) used to measure similarity between neighboring cells. The similarity score influences the grouping of the cells by penalizing large differences between them:
-        - If multiple variables are selected, their values are normalized and averaged.
-        - If a single variable is selected, it is normalized to the [0, 1] range. 
-        - If no similarity features are provided, only the demand column is used for partitioning, and similarity is not considered.
+  - If multiple variables are selected, their values are normalized and averaged.
+  - If a single variable is selected, it is normalized to the [0, 1] range. 
+  - If no similarity features are provided, only the demand column is used for partitioning, and similarity is not considered.
 - **Number of territories**: The desired number of partitions (i.e., territories) to divide the Area of Interest (AOI) into.
 - **Keep input columns**: Whether to include all input columns in the output table.
 
