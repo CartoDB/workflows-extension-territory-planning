@@ -1,6 +1,8 @@
 # Territory Balancing
 
-A component that splits a gridified area into a set of optimal, continuous territories, ensuring balance according to a specified metric while maintaining internal similarity within each territory. If the input grid contains disconnected elements—such as isolated cells or cell clusters—the algorithm applies a proxy mechanism to establish connectivity across all regions. However, the presence of numerous unconnected components may lead to unexpected behavior or suboptimal results.
+A component that splits a gridified area into a set of optimal, continuous territories, ensuring balance according to a specified metric while maintaining internal similarity within each territory.
+
+If the input grid contains disconnected elements—such as isolated cells or cell clusters—the algorithm applies a proxy mechanism to establish connectivity across all regions. However, the presence of numerous unconnected components may lead to unexpected behavior or suboptimal results.
 
 For more details, refer to the official [METIS](https://metis.readthedocs.io/en/latest/) documentation.
 
