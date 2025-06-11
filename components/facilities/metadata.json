@@ -1,0 +1,264 @@
+{
+    "name": "facilities",
+    "title": "Prepare Facilities",
+    "description": "A component that prepares facilities data for Location Allocation",
+    "externalReference": {
+        "label": "Documentation",
+        "href": "https://docs.carto.com/carto-user-manual/workflows/components/territory-planning#prepare-facilities"
+    },
+    "version": "1.0.0",
+    "icon": "component-default.svg",
+    "cartoEnvVars": ["tempStoragePath"],
+    "inputs": [
+        {
+            "name": "candidates_table",
+            "title": "Candidate Facilities",
+            "description": "",
+            "type": "Table"
+        },
+        {
+            "name": "required_table",
+            "title": "Required Facilities (optional)",
+            "description": "",
+            "type": "Table",
+            "optional": true
+        },
+        {
+            "name": "competitors_table",
+            "title": "Competitor Facilities (optional)",
+            "description": "",
+            "type": "Table",
+            "optional": true
+        },
+        {
+            "name": "candidates_id",
+            "title": "Candidate facilities ID column",
+            "description": "",
+            "helper": "",
+            "dataType": ["number", "string"],
+            "type": "Column",
+            "parent": "candidates_table"
+        },
+        {
+            "name": "candidates_geom",
+            "title": "Candidate facilities geometry column",
+            "description": "",
+            "helper": "",
+            "dataType": ["geometry", "geography"],
+            "type": "Column",
+            "parent": "candidates_table"
+        },
+        {
+            "name": "required_bool",
+            "title": "Include required facilities",
+            "description": "",
+            "helper": "",
+            "type": "Boolean",
+            "default": false
+        },
+        {
+            "name": "required_id",
+            "title": "Required facilities ID column",
+            "description": "",
+            "helper": "",
+            "dataType": ["number", "string"],
+            "type": "Column",
+            "parent": "required_table",
+            "showIf": [
+                {"parameter": "required_bool", "value": true}
+            ]
+        },
+        {
+            "name": "required_geom",
+            "title": "Required facilities geometry column",
+            "description": "",
+            "helper": "",
+            "dataType": ["geometry", "geography"],
+            "type": "Column",
+            "parent": "required_table",
+            "showIf": [
+                {"parameter": "required_bool", "value": true}
+            ]
+        },
+        {
+            "name": "competitors_bool",
+            "title": "Include competitor facilities",
+            "description": "",
+            "helper": "",
+            "type": "Boolean",
+            "default": false
+        },
+        {
+            "name": "competitors_id",
+            "title": "Competitor facilities ID column",
+            "description": "",
+            "helper": "",
+            "dataType": ["number", "string"],
+            "type": "Column",
+            "parent": "competitors_table",
+            "showIf": [
+                {"parameter": "competitors_bool", "value": true}
+            ]
+        },
+        {
+            "name": "competitors_geom",
+            "title": "Competitor facilities geometry column",
+            "description": "",
+            "helper": "",
+            "dataType": ["geometry", "geography"],
+            "type": "Column",
+            "parent": "competitors_table",
+            "showIf": [
+                {"parameter": "competitors_bool", "value": true}
+            ]
+        },
+        {
+            "name": "group_bool",
+            "title": "Assign groups to facilities",
+            "advanced": true,
+            "description": "",
+            "helper": "",
+            "type": "Boolean",
+            "default": false
+        },
+        {
+            "name": "candidates_group",
+            "title": "Candidate facilities group ID column",
+            "advanced": true,
+            "description": "",
+            "helper": "",
+            "type": "Column",
+            "parent": "candidates_table",
+            "dataType": ["number","string"],
+            "showIf": [
+                {"parameter": "group_bool", "value": true}
+            ]
+        },
+        {
+            "name": "required_group",
+            "title": "Required facilities group ID column",
+            "advanced": true,
+            "description": "",
+            "helper": "",
+            "type": "Column",
+            "parent": "required_table",
+            "dataType": ["number","string"],
+            "showIf": [
+                {"parameter": "group_bool", "value": true}
+            ]
+        },
+        {
+            "name": "max_capacity_bool",
+            "title": "Assign maximum capacity to facilities",
+            "advanced": true,
+            "description": "",
+            "helper": "",
+            "type": "Boolean",
+            "default": false
+        },
+        {
+            "name": "candidates_max_capacity",
+            "title": "Candidate facilities maximum capacity column",
+            "advanced": true,
+            "description": "",
+            "helper": "",
+            "type": "Column",
+            "parent": "candidates_table",
+            "dataType": ["number"],
+            "showIf": [
+                {"parameter": "max_capacity_bool", "value": true}
+            ]
+        },
+        {
+            "name": "required_max_capacity",
+            "title": "Required facilities maximum capacity column",
+            "advanced": true,
+            "description": "",
+            "helper": "",
+            "type": "Column",
+            "parent": "required_table",
+            "dataType": ["number"],
+            "showIf": [
+                {"parameter": "max_capacity_bool", "value": true}
+            ]
+        },
+        {
+            "name": "min_capacity_bool",
+            "title": "Assign minimum capacity to facilities",
+            "advanced": true,
+            "description": "",
+            "helper": "",
+            "type": "Boolean",
+            "default": false
+        },
+        {
+            "name": "candidates_min_capacity",
+            "title": "Candidate facilities minimum capacity column",
+            "advanced": true,
+            "description": "",
+            "helper": "",
+            "type": "Column",
+            "parent": "candidates_table",
+            "dataType": ["number"],
+            "showIf": [
+                {"parameter": "min_capacity_bool", "value": true}
+            ]
+        },
+        {
+            "name": "required_min_capacity",
+            "title": "Required facilities minimum capacity column",
+            "advanced": true,
+            "description": "",
+            "helper": "",
+            "type": "Column",
+            "parent": "required_table",
+            "dataType": ["number"],
+            "showIf": [
+                {"parameter": "min_capacity_bool", "value": true}
+            ]
+        },
+        {
+            "name": "costofopen_bool",
+            "title": "Include cost of opening facilities",
+            "advanced": true,
+            "description": "",
+            "helper": "",
+            "type": "Boolean",
+            "default": false
+        },
+        {
+            "name": "candidates_costofopen",
+            "title": "Cost of open candidate facilities column",
+            "advanced": true,
+            "description": "",
+            "helper": "",
+            "type": "Column",
+            "parent": "candidates_table",
+            "dataType": ["number"],
+            "showIf": [
+                {"parameter": "costofopen_bool", "value": true}
+            ]
+        },
+        {
+            "name": "required_costofopen",
+            "title": "Cost of open required facilities column",
+            "advanced": true,
+            "description": "",
+            "helper": "",
+            "type": "Column",
+            "parent": "required_table",
+            "dataType": ["number"],
+            "showIf": [
+                {"parameter": "costofopen_bool", "value": true}
+            ]
+        }
+    ],
+    "outputs": [
+        {
+            "name": "output_table",
+            "title": "Output table",
+            "description": "The table with the prepared facilities",
+            "type": "Table"
+        }
+    ]
+}

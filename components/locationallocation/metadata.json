@@ -1,0 +1,212 @@
+{
+    "name": "locationallocation",
+    "title": "Location-Allocation",
+    "description": "A component that performs Location Allocation",
+    "externalReference": {
+        "label": "Documentation",
+        "href": "https://docs.carto.com/carto-user-manual/workflows/components/territory-planning#location-allocation"
+    },
+    "version": "1.0.0",
+    "icon": "component-default.svg",
+    "cartoEnvVars": ["tempStoragePath"],
+    "inputs": [
+        {
+            "name": "facilities_table",
+            "title": "Facilities",
+            "description": "",
+            "type": "Table"
+        },
+        {
+            "name": "customers_table",
+            "title": "Customers",
+            "description": "",
+            "type": "Table"
+        },
+        {
+            "name": "costs_table",
+            "title": "Cost",
+            "description": "",
+            "type": "Table"
+        },
+        {
+            "name": "constraints_table",
+            "title": "Constraints (optional)",
+            "description": "",
+            "type": "Table",
+            "optional": true
+        },
+        {
+            "name": "limit_facilities_bool",
+            "title": "Limit the total number of facilities",
+            "description": "",
+            "helper": "",
+            "type": "Boolean",
+            "default": false
+        },
+        {
+            "name": "min_facilities",
+            "title": "Minimum number of facilities",
+            "description": "",
+            "helper": "",
+            "type": "Number",
+            "minimum": 0,
+            "default": null,
+            "optional": true,
+            "showIf": [
+                {"parameter": "limit_facilities_bool", "value": true}
+            ]
+        },
+        {
+            "name": "max_facilities",
+            "title": "Maximum number of facilities",
+            "description": "",
+            "helper": "",
+            "type": "Number",
+            "minimum": 0,
+            "default": null,
+            "optional": true,
+            "showIf": [
+                {"parameter": "limit_facilities_bool", "value": true}
+            ]
+        },
+        {
+            "name": "limit_facilities_group_bool",
+            "title": "Limit the number of facilities per group",
+            "description": "",
+            "helper": "",
+            "type": "Boolean",
+            "default": false
+        },
+        {
+            "name": "min_facilities_group",
+            "title": "Minimum number of facilities",
+            "description": "",
+            "helper": "",
+            "type": "Number",
+            "minimum": 0,
+            "default": null,
+            "optional": true,
+            "showIf": [
+                {"parameter": "limit_facilities_group_bool", "value": true}
+            ]
+        },
+        {
+            "name": "max_facilities_group",
+            "title": "Maximum number of facilities",
+            "description": "",
+            "helper": "",
+            "type": "Number",
+            "minimum": 0,
+            "default": null,
+            "optional": true,
+            "showIf": [
+                {"parameter": "limit_facilities_group_bool", "value": true}
+            ]
+        },
+        {
+            "name": "facilities_min_capacity_bool",
+            "title": "Limit the minimum capacity of the facilities",
+            "description": "",
+            "helper": "",
+            "type": "Boolean",
+            "default": false
+        },
+        {
+            "name": "facilities_max_capacity_bool",
+            "title": "Limit the maximum capacity of the facilities",
+            "description": "",
+            "helper": "",
+            "type": "Boolean",
+            "default": false
+        },
+        {
+            "name": "required_facilities_bool",
+            "title": "Include required facilities",
+            "description": "",
+            "helper": "",
+            "type": "Boolean",
+            "default": false
+        },
+        {
+            "name": "competitor_facilities_bool",
+            "title": "Include competitor facilities",
+            "description": "",
+            "helper": "",
+            "type": "Boolean",
+            "default": false
+        },
+        {
+            "name": "competitor_trade_area",
+            "title": "Cost threshold (in cost units)",
+            "description": "",
+            "helper": "",
+            "type": "Number",
+            "default": 5,
+            "showIf": [
+                {"parameter": "competitor_facilities_bool", "value": true}
+            ]
+        },
+        {
+            "name": "open_facilities_bool",
+            "title": "Include opening cost for the facilities",
+            "description": "",
+            "helper": "",
+            "type": "Boolean",
+            "default": false
+        },
+        {
+            "name": "open_facilities_bool",
+            "title": "1:1 facility-customer serving",
+            "description": "",
+            "helper": "",
+            "type": "Boolean",
+            "default": false
+        },
+        {
+            "name": "compatibility_bool",
+            "title": "Force facility-client relationships",
+            "description": "",
+            "helper": "",
+            "type": "Boolean",
+            "default": false
+        },
+        {
+            "name": "opt_gap",
+            "title": "Maximum Optimization Gap (%)",
+            "advanced": true,
+            "description": "",
+            "helper": "",
+            "type": "Number",
+            "mode": "slider",
+            "min": 0,
+            "max": 100,
+            "default": 5
+        },
+        {
+            "name": "opt_time",
+            "title": "Maximum Solving Time (sec)",
+            "advanced": true,
+            "description": "",
+            "helper": "",
+            "type": "Number",
+            "mode": "slider",
+            "min": 1,
+            "max": 7200,
+            "default": 3600
+        }
+    ],
+    "outputs": [
+        {
+            "name": "output_table",
+            "title": "Output table",
+            "description": "The table with the specified territories",
+            "type": "Table"
+        },
+        {
+            "name": "metrics_table",
+            "title": "Output table",
+            "description": "The table with some metrics",
+            "type": "Table"
+        }
+    ]
+}

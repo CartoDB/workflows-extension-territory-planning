@@ -1,0 +1,1 @@
+EXECUTE IMMEDIATE FORMAT('DROP TABLE IF EXISTS `%s`', REPLACE(output_table, '`', ''));

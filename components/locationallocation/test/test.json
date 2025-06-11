@@ -1,0 +1,13 @@
+[
+    {
+        "id": 1,
+        "inputs": {
+            "input_table": "territory_balance_input_h3",
+            "index_column": "h3",
+            "demand_column": "total_pop_3200daaa_sum",
+            "similarity_feats": "median_income_20186485_avg,median_rent_37636cdd_avg,food_drink_9a578397_sum",
+            "npartitions": "5",
+            "keep_input_columns": true            
+        }
+    }
+]

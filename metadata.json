@@ -23,6 +23,11 @@
     },
     "details": [],
     "components": [
-        "territorybalancing"
+        "territorybalancing",
+        "facilities",
+        "customers",
+        "costs",
+        "constraints",
+        "locationallocation"
     ]
 }

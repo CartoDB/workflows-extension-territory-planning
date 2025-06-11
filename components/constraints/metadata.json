@@ -1,0 +1,100 @@
+{
+    "name": "constraints",
+    "title": "Prepare Constraints Data",
+    "description": "A component that adds constraints data for Location Allocation",
+    "externalReference": {
+        "label": "Documentation",
+        "href": "https://docs.carto.com/carto-user-manual/workflows/components/territory-planning#compute-cost"
+    },
+    "version": "1.0.0",
+    "icon": "component-default.svg",
+    "cartoEnvVars": ["tempStoragePath"],
+    "inputs": [
+        {
+            "name": "matches_table",
+            "title": "Matches (optional)",
+            "description": "",
+            "type": "Table",
+            "optional": true
+        },
+        {
+            "name": "unmatches_table",
+            "title": "Unmatches (optional)",
+            "description": "",
+            "type": "Table",
+            "optional": true
+        },
+        {
+            "name": "matches_bool",
+            "title": "Include required facility-customer pairs",
+            "description": "",
+            "helper": "",
+            "type": "Boolean",
+            "default": false
+        },
+        {
+            "name": "matches_facility_id",
+            "title": "Facilities ID column",
+            "description": "",
+            "helper": "",
+            "dataType": ["number", "string"],
+            "type": "Column",
+            "parent": "matches_table",
+            "showIf": [
+                {"parameter": "matches_bool", "value": true}
+            ]
+        },
+        {
+            "name": "matches_customer_id",
+            "title": "Customers ID column",
+            "description": "",
+            "helper": "",
+            "dataType": ["number", "string"],
+            "type": "Column",
+            "parent": "matches_table",
+            "showIf": [
+                {"parameter": "matches_bool", "value": true}
+            ]
+        },
+        {
+            "name": "unmatches_bool",
+            "title": "Include banned facility-customer pairs",
+            "description": "",
+            "helper": "",
+            "type": "Boolean",
+            "default": false
+        },
+        {
+            "name": "unmatches_facility_id",
+            "title": "Facilities ID column",
+            "description": "",
+            "helper": "",
+            "dataType": ["number", "string"],
+            "type": "Column",
+            "parent": "unmatches_table",
+            "showIf": [
+                {"parameter": "unmatches_bool", "value": true}
+            ]
+        },
+        {
+            "name": "unmatches_customer_id",
+            "title": "Customers ID column",
+            "description": "",
+            "helper": "",
+            "dataType": ["number", "string"],
+            "type": "Column",
+            "parent": "unmatches_table",
+            "showIf": [
+                {"parameter": "unmatches_bool", "value": true}
+            ]
+        }
+    ],
+    "outputs": [
+        {
+            "name": "output_table",
+            "title": "Output table",
+            "description": "The table with the computed costs",
+            "type": "Table"
+        }
+    ]
+}

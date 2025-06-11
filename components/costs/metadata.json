@@ -1,0 +1,89 @@
+{
+    "name": "costs",
+    "title": "Prepare Cost",
+    "description": "A component that prepares cost for Location Allocation",
+    "externalReference": {
+        "label": "Documentation",
+        "href": "https://docs.carto.com/carto-user-manual/workflows/components/territory-planning#compute-cost"
+    },
+    "version": "1.0.0",
+    "icon": "component-default.svg",
+    "cartoEnvVars": ["tempStoragePath"],
+    "inputs": [
+        {
+            "name": "costs_table",
+            "title": "Costs",
+            "description": "",
+            "type": "Table"
+        },
+        {
+            "name": "facilities_column",
+            "title": "Facilities ID column",
+            "description": "",
+            "helper": "",
+            "dataType": ["number","string"],
+            "type": "Column",
+            "parent": "costs_table"
+        },
+        {
+            "name": "customers_column",
+            "title": "Customers ID column",
+            "description": "",
+            "helper": "",
+            "dataType": ["number","string"],
+            "type": "Column",
+            "parent": "costs_table"
+        },
+        {
+            "name": "cost_column",
+            "title": "Costs column",
+            "description": "",
+            "helper": "",
+            "dataType": ["number"],
+            "type": "Column",
+            "parent": "costs_table"
+        },
+        {
+            "name": "transformation_bool",
+            "title": "Apply transformation to cost",
+            "advanced": true,
+            "description": "",
+            "helper": "",
+            "type": "Boolean",
+            "default": false
+        },
+        {
+            "name": "transformation_function",
+            "title": "Transformation",
+            "advanced": true,
+            "description": "",
+            "helper": "",
+            "type": "Selection",
+            "options": ["Linear", "Power", "Exponential"],
+            "showIf": [
+                {"parameter": "transformation_bool", "value": true}
+            ]
+        },
+        {
+            "name": "transformation_parameter",
+            "title": "Transformation parameter",
+            "advanced": true,
+            "description": "",
+            "helper": "",
+            "type": "Number",
+            "min": 1,
+            "default": 1,
+            "showIf": [
+                {"parameter": "transformation_bool", "value": true}
+            ]
+        }
+    ],
+    "outputs": [
+        {
+            "name": "output_table",
+            "title": "Output table",
+            "description": "The table with the computed costs",
+            "type": "Table"
+        }
+    ]
+}
