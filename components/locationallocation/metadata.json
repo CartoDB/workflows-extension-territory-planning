@@ -163,6 +163,14 @@
             "default": false
         },
         {
+            "name": "demand_bool",
+            "title": "Satisfy customers demand",
+            "description": "",
+            "helper": "",
+            "type": "Boolean",
+            "default": false
+        },
+        {
             "name": "compatibility_bool",
             "title": "Force facility-client relationships",
             "description": "",
@@ -172,7 +180,7 @@
         },
         {
             "name": "opt_gap",
-            "title": "Maximum Optimization Gap (%)",
+            "title": "Relative Gap Tolerance (%)",
             "advanced": true,
             "description": "",
             "helper": "",
