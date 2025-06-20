@@ -1,20 +1,80 @@
 DECLARE candidates_query STRING DEFAULT '';
 DECLARE required_query STRING DEFAULT '';
 DECLARE competitors_query STRING DEFAULT '';
+DECLARE query STRING;
+DECLARE flag BOOL;
 
--- TODO: check unique IDs per type of facility, raise error accordingly
 BEGIN
+BEGIN
+
+    SET output_table = REPLACE(output_table, '`', '');
+    SET candidates_table = REPLACE(candidates_table, '`', '');
+    SET required_table = REPLACE(required_table, '`', '');
+    SET competitors_table = REPLACE(competitors_table, '`', '');
+
+    -- 1. Check NULLs
+    SET query = FORMAT("""
+        SELECT COUNTIF(%s %s %s %s %s %s) != COUNT(*)
+        FROM `%s`
+    """, 
+    FORMAT("%s IS NOT NULL", candidates_id),
+    FORMAT("AND %s IS NOT NULL", candidates_geom),
+    IF(group_bool, FORMAT("AND %s IS NOT NULL", candidates_group), ''),
+    IF(min_capacity_bool, FORMAT("AND %s IS NOT NULL", candidates_min_capacity), ''),
+    IF(max_capacity_bool, FORMAT("AND %s IS NOT NULL", candidates_max_capacity), ''),
+    IF(costofopen_bool, FORMAT("AND %s IS NOT NULL", candidates_costofopen), ''),
+    candidates_table
+    );
+    EXECUTE IMMEDIATE query INTO flag;
+    IF flag THEN
+        RAISE USING MESSAGE = 'Candidate facilities data contains NULLs in selected features';
+    END IF;
+
+    IF required_bool THEN
+        SET query = FORMAT("""
+            SELECT COUNTIF(%s %s %s %s %s %s) != COUNT(*)
+            FROM `%s`
+        """, 
+        FORMAT("%s IS NOT NULL", required_id),
+        FORMAT("AND %s IS NOT NULL", required_geom),
+        IF(group_bool, FORMAT("AND %s IS NOT NULL", required_group), ''),
+        IF(min_capacity_bool, FORMAT("AND %s IS NOT NULL", required_min_capacity), ''),
+        IF(max_capacity_bool, FORMAT("AND %s IS NOT NULL", required_max_capacity), ''),
+        IF(costofopen_bool, FORMAT("AND %s IS NOT NULL", required_costofopen), ''),
+        required_table
+        );
+        EXECUTE IMMEDIATE query INTO flag;
+        IF flag THEN
+            RAISE USING MESSAGE = 'Required facilities data contains NULLs in selected features';
+        END IF;
+    END IF;
+
+    IF competitors_bool THEN
+        SET query = FORMAT("""
+            SELECT COUNTIF(%s %s) != COUNT(*)
+            FROM `%s`
+        """, 
+        FORMAT("%s IS NOT NULL", competitors_id),
+        FORMAT("AND %s IS NOT NULL", competitors_geom),
+        competitors_table
+        );
+        EXECUTE IMMEDIATE query INTO flag;
+        IF flag THEN
+            RAISE USING MESSAGE = 'Competitor facilities data contains NULLs in selected features';
+        END IF;
+    END IF;
+
+    -- 2. Prepare data
     SET candidates_query = FORMAT("""
         SELECT 
             CAST(%s AS STRING) AS facility_id,
             %s AS geom,
-            'candidate' AS facility_type,
+            0 AS facility_type,
             CAST(%s AS STRING) AS group_id,
             %s AS min_capacity,
             %s AS max_capacity,
             %s AS cost_of_open
         FROM `%s` 
-
     """,
     candidates_id,
     candidates_geom,
@@ -22,7 +82,7 @@ BEGIN
     IF(min_capacity_bool, candidates_min_capacity, 'NULL'),
     IF(max_capacity_bool, candidates_max_capacity, 'NULL'),
     IF(costofopen_bool, candidates_costofopen, 'NULL'),
-    REPLACE(candidates_table, '`', '')
+    candidates_table
     );
 
     IF required_bool THEN
@@ -31,13 +91,12 @@ BEGIN
             SELECT 
                 CAST(%s AS STRING) AS facility_id,
                 %s AS geom,
-                'required' AS facility_type,
+                1 AS facility_type,
                 CAST(%s AS STRING) AS group_id,
                 %s AS min_capacity,
                 %s AS max_capacity,
                 %s AS cost_of_open
             FROM `%s` 
-
         """,
         required_id,
         required_geom,
@@ -45,7 +104,7 @@ BEGIN
         IF(min_capacity_bool, required_min_capacity, 'NULL'),
         IF(max_capacity_bool, required_max_capacity, 'NULL'),
         IF(costofopen_bool, required_costofopen, 'NULL'),
-        REPLACE(required_table, '`', '')
+        required_table
         );
     END IF;
 
@@ -55,17 +114,16 @@ BEGIN
             SELECT 
                 CAST(%s AS STRING) AS facility_id,
                 %s AS geom,
-                'competitor' AS facility_type,
+                2 AS facility_type,
                 NULL AS group_id,
                 NULL AS min_capacity,
                 NULL AS max_capacity,
                 NULL AS cost_of_open
             FROM `%s` 
-
         """,
         competitors_id,
         competitors_geom,
-        REPLACE(competitors_table, '`', '')
+        competitors_table
         );
     END IF;
 
@@ -76,11 +134,31 @@ BEGIN
     %s
     %s
     %s
+    ORDER BY facility_id
     ''',
-    REPLACE(output_table, '`', ''),
+    output_table,
     candidates_query,
     required_query,
     competitors_query
     );
 
+    -- Raise error if facility_id is not unique
+    SET query = FORMAT("""
+        SELECT COUNT(DISTINCT facility_id) != COUNT(*)
+        FROM `%s`
+    """, output_table);
+    EXECUTE IMMEDIATE query INTO flag;
+    IF flag THEN
+        RAISE USING MESSAGE = FORMAT('Duplicates found in overall facily IDs. Please make sure that values in candidate, required and competitor facility IDs (`%s`, `%s` and `%s`) are unique.', candidates_id, required_id, competitors_id);
+    END IF;
+
+    -- Drop tables in case of error & propagate the original error
+    EXCEPTION
+        WHEN ERROR THEN
+            IF (output_table IS NOT NULL) THEN
+                EXECUTE IMMEDIATE FORMAT('DROP TABLE IF EXISTS `%s`', output_table);
+            END IF;
+            RAISE;
+
+END;
 END;

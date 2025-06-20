@@ -1,18 +1,23 @@
-EXECUTE IMMEDIATE FORMAT(
-    '''
-    CREATE TABLE IF NOT EXISTS
-        `%s`
-    OPTIONS(
-        expiration_timestamp = TIMESTAMP_ADD(CURRENT_TIMESTAMP(), INTERVAL 30 DAY)
-    )
-    AS SELECT
-        %s,
-        0 AS cluster
-    FROM
-        `%s` input
-    WHERE 1 = 0;
-    ''',
-    REPLACE(output_table, '`', ''),
-    IF(keep_input_columns, 'input.*', FORMAT('input.%s', index_column)),
-    REPLACE(input_table, '`', '')
+EXECUTE IMMEDIATE FORMAT('''
+CREATE TABLE IF NOT EXISTS `%s` (
+facility_id STRING,
+customer_id STRING,
+demand FLOAT64,
+geom GEOGRAPHY
+)
+OPTIONS (
+expiration_timestamp = TIMESTAMP_ADD(CURRENT_TIMESTAMP(), INTERVAL 30 DAY)
 );
+''', REPLACE(output_table, '`', ''));
+
+EXECUTE IMMEDIATE FORMAT('''
+CREATE TABLE IF NOT EXISTS `%s` (
+objective_value FLOAT64,
+gap FLOAT64,
+solving_time FLOAT64,
+termination_reason STRING
+)
+OPTIONS (
+expiration_timestamp = TIMESTAMP_ADD(CURRENT_TIMESTAMP(), INTERVAL 30 DAY)
+);
+''', REPLACE(metrics_table, '`', ''));

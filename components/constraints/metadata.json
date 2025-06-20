@@ -11,21 +11,21 @@
     "cartoEnvVars": ["tempStoragePath"],
     "inputs": [
         {
-            "name": "matches_table",
-            "title": "Matches (optional)",
+            "name": "compatible_table",
+            "title": "Compatible (optional)",
             "description": "",
             "type": "Table",
             "optional": true
         },
         {
-            "name": "unmatches_table",
-            "title": "Unmatches (optional)",
+            "name": "uncompatible_table",
+            "title": "Uncompatible (optional)",
             "description": "",
             "type": "Table",
             "optional": true
         },
         {
-            "name": "matches_bool",
+            "name": "compatible_bool",
             "title": "Include required facility-customer pairs",
             "description": "",
             "helper": "",
@@ -33,31 +33,31 @@
             "default": false
         },
         {
-            "name": "matches_facility_id",
+            "name": "compatible_facility_id",
             "title": "Facilities ID column",
             "description": "",
             "helper": "",
             "dataType": ["number", "string"],
             "type": "Column",
-            "parent": "matches_table",
+            "parent": "compatible_table",
             "showIf": [
-                {"parameter": "matches_bool", "value": true}
+                {"parameter": "compatible_bool", "value": true}
             ]
         },
         {
-            "name": "matches_customer_id",
+            "name": "compatible_customer_id",
             "title": "Customers ID column",
             "description": "",
             "helper": "",
             "dataType": ["number", "string"],
             "type": "Column",
-            "parent": "matches_table",
+            "parent": "compatible_table",
             "showIf": [
-                {"parameter": "matches_bool", "value": true}
+                {"parameter": "compatible_bool", "value": true}
             ]
         },
         {
-            "name": "unmatches_bool",
+            "name": "uncompatible_bool",
             "title": "Include banned facility-customer pairs",
             "description": "",
             "helper": "",
@@ -65,27 +65,27 @@
             "default": false
         },
         {
-            "name": "unmatches_facility_id",
+            "name": "uncompatible_facility_id",
             "title": "Facilities ID column",
             "description": "",
             "helper": "",
             "dataType": ["number", "string"],
             "type": "Column",
-            "parent": "unmatches_table",
+            "parent": "uncompatible_table",
             "showIf": [
-                {"parameter": "unmatches_bool", "value": true}
+                {"parameter": "uncompatible_bool", "value": true}
             ]
         },
         {
-            "name": "unmatches_customer_id",
+            "name": "uncompatible_customer_id",
             "title": "Customers ID column",
             "description": "",
             "helper": "",
             "dataType": ["number", "string"],
             "type": "Column",
-            "parent": "unmatches_table",
+            "parent": "uncompatible_table",
             "showIf": [
-                {"parameter": "unmatches_bool", "value": true}
+                {"parameter": "uncompatible_bool", "value": true}
             ]
         }
     ],

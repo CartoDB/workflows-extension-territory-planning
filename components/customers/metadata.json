@@ -18,7 +18,7 @@
         },
         {
             "name": "customers_id",
-            "title": "Customers ID column",
+            "title": "ID column",
             "description": "",
             "helper": "",
             "dataType": ["number", "string"],
@@ -27,7 +27,7 @@
         },
         {
             "name": "customers_geom",
-            "title": "Customers Geometry column",
+            "title": "Geometry column",
             "description": "",
             "helper": "",
             "dataType": ["geometry", "geography"],
@@ -37,7 +37,7 @@
         {
             "name": "demand_bool",
             "title": "Assign demand to customers",
-            "advanced": true,
+            "advanced": false,
             "description": "",
             "helper": "",
             "type": "Boolean"
@@ -45,7 +45,7 @@
         {
             "name": "demand_col",
             "title": "Customers demand column",
-            "advanced": true,
+            "advanced": false,
             "description": "",
             "helper": "",
             "dataType": ["number"],
@@ -60,7 +60,7 @@
         {
             "name": "output_table",
             "title": "Output table",
-            "description": "The table with the prepared customers",
+            "description": "The table with the prepared customers data",
             "type": "Table"
         }
     ]

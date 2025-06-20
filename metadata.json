@@ -15,9 +15,9 @@
         }
     },
     "license": {
-        "value": "CARTO Proprietary",
+        "value": "CARTO License",
         "link": {
-            "label": "CARTO Proprietary",
+            "label": "CARTO License",
             "href": "https://carto.com/legal"
         }
     },

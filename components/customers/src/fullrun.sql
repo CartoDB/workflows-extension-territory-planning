@@ -1,4 +1,5 @@
 DECLARE flag BOOL;
+DECLARE query STRING;
 
 BEGIN
     -- 1. Check unique customer_id
@@ -18,7 +19,7 @@ BEGIN
     """, customers_geom, REPLACE(customers_table, '`', ''));
     EXECUTE IMMEDIATE query INTO flag;
     IF flag THEN
-        RAISE USING MESSAGE = FORMAT('Customers Geometry column `%s` must contain point geometries.', customers_id);
+        RAISE USING MESSAGE = FORMAT('Customers Geometry column `%s` must contain point geometries.', customers_geom);
     END IF;
 
     -- 3. Check complete demand
@@ -29,7 +30,7 @@ BEGIN
         """, demand_col, REPLACE(customers_table, '`', ''));
         EXECUTE IMMEDIATE query INTO flag;
         IF flag THEN
-            RAISE USING MESSAGE = FORMAT('Customers demand column `%s` cannot contain NULL values.', customers_id);
+            RAISE USING MESSAGE = FORMAT('Customers demand column `%s` cannot contain NULL values.', demand_col);
         END IF;
     END IF;
 
@@ -38,17 +39,17 @@ BEGIN
         CREATE TABLE IF NOT EXISTS `%s` 
         OPTIONS (expiration_timestamp = TIMESTAMP_ADD(CURRENT_TIMESTAMP(), INTERVAL 30 DAY)) 
         AS
-            SELECT 
+            SELECT
                 CAST(%s AS STRING) AS customer_id,
                 %s AS geom,
                 %s AS demand
-            FROM `%s` 
-
+            FROM `%s`
+            ORDER BY customer_id
     """,
     REPLACE(output_table, '`', ''),
     customers_id,
     customers_geom,
-    IF(demand_bool, demand_col, 1),
+    IF(demand_bool, demand_col, 'NULL'),
     REPLACE(customers_table, '`', '')
     );
 

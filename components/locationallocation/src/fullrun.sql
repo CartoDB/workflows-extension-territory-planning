@@ -1,1 +1,240 @@
-EXECUTE IMMEDIATE FORMAT('DROP TABLE IF EXISTS `%s`', REPLACE(output_table, '`', ''));
+DECLARE c_compatibility_table STRING DEFAULT NULL;
+DECLARE c_compatibility_query STRING DEFAULT '';
+DECLARE c_compatibility_join STRING DEFAULT '';
+DECLARE output_table_temp STRING;
+DECLARE query STRING;
+DECLARE flag BOOL;
+
+/*
+-- 1. Check input params
+
+-- 2. Check input data
+All facilities-customers pairs are in costs
+
+-- 3. Run Location-Allocation. 
+Extract constraints data if compatibility_bool
+Remove competitors (always) and customers captured by competitors (if competitor_facilities_bool)
+
+-- 4. Extract output 
+(what happens if it fails?)
+*/
+
+BEGIN
+
+    SET output_table_temp = CONCAT(REPLACE(output_table, '`', ''), "_temp");
+
+    -- 1. Check input params
+    -- No checks needed, data was checked using 'Prepare x' components. 
+    -- If there are NULLs in input columns, an error will occurr when calling LOCATION_ALLOCATION
+    -- and we avoid doing intensive checks
+
+    -- 2. Check input data
+    SET query = FORMAT("""
+        SELECT COUNTIF(
+            COALESCE(t1.facility_id,'') != COALESCE(t2.facility_id,'') 
+            OR
+            COALESCE(t1.customer_id,'') != COALESCE(t2.customer_id,'')
+        ) != 0
+        FROM `%s` t1
+        FULL OUTER JOIN (
+            SELECT facility_id, customer_id
+            FROM `%s` CROSS JOIN `%s`
+        ) t2
+        ON t1.facility_id = t2.facility_id AND t1.customer_id = t2.customer_id
+    """,
+    REPLACE(costs_table, '`', ''),
+    REPLACE(facilities_table, '`', ''),
+    REPLACE(customers_table, '`', '')
+    );
+    EXECUTE IMMEDIATE query INTO flag;
+    IF flag THEN
+        RAISE USING MESSAGE = 'Missing costs detected. Please assign one cost for each facility-customer pair.';
+    END IF;
+
+    -- 3. Run Location Allocation
+    IF compatibility_bool THEN
+
+        IF constraints_table IS NULL THEN
+            RAISE USING MESSAGE = 'Please connect a `Prepare Constraints data` component to force facility-customer relationships.';
+        END IF;
+
+        EXECUTE IMMEDIATE FORMAT('''SELECT table_name FROM `%s` WHERE constraint_id = "compatibility" ''', REPLACE(constraints_table, '`', ''))
+        INTO c_compatibility_table;
+
+        IF c_compatibility_table IS NULL THEN
+            RAISE USING MESSAGE = 'Please use a `Prepare Constraints data` component to prepare the necessary data to force facility-customer relationships.';
+        END IF;
+
+        SET c_compatibility_query = FORMAT('''
+        c_compatibility AS (
+            SELECT
+                ARRAY_AGG(CAST(c.facility_id AS STRING)) compatibility_facility_id,
+                ARRAY_AGG(CAST(c.customer_id AS STRING)) compatibility_customer_id,
+                ARRAY_AGG(CAST(c.compatibility AS INT64)) compatibility_type
+            FROM `%s` c
+            INNER JOIN facilities_comp f USING (facility_id)                     -- remove competitors
+            LEFT JOIN customers_comp d ON c.customer_id = d.customer_id 
+            WHERE d.customer_id IS NULL                                     -- remove customers captured by competitors
+        ),
+        ''',
+        REPLACE(c_compatibility_table, '`', '')
+        );
+
+        SET c_compatibility_join = "CROSS JOIN c_compatibility";
+    END IF;
+
+    EXECUTE IMMEDIATE FORMAT('''
+    CREATE OR REPLACE TABLE `%s` AS
+    WITH 
+    customers_comp AS (
+        -- Customers captured by competitors
+        SELECT DISTINCT c.customer_id
+        FROM `%s` c
+        JOIN `%s` f 
+        ON c.facility_id = f.facility_id
+        WHERE f.facility_type = 2 AND c.cost <= %f
+    ),
+    facilities_comp AS (
+        SELECT 
+            facility_id,
+            facility_type,
+            %s AS facility_group_id,                                    -- make sure this variables are informed 
+            %s AS facility_min_capacity,                                -- (if any NULL, internal error)
+            %s AS facility_max_capacity,
+            %s AS facility_cost_of_open
+        FROM `%s` 
+        WHERE facility_type != 2                                        -- remove competitors
+    ),
+    facilities AS (
+        SELECT 
+            ARRAY_AGG(CAST(facility_id AS STRING)) facility_id,
+            ARRAY_AGG(CAST(facility_type AS INT64)) facility_type,
+            ARRAY_AGG(CAST(facility_group_id AS STRING)) facility_group_id,                            
+            ARRAY_AGG(CAST(facility_min_capacity AS FLOAT64)) facility_min_capacity,                       
+            ARRAY_AGG(CAST(facility_max_capacity AS FLOAT64)) facility_max_capacity,
+            ARRAY_AGG(CAST(facility_cost_of_open AS FLOAT64)) facility_cost_of_open
+        FROM facilities_comp
+    ),
+    customers AS (
+        SELECT
+            ARRAY_AGG(CAST(c.customer_id AS STRING)) customer_id,
+            ARRAY_AGG(CAST(%s AS FLOAT64)) customer_demand
+        FROM `%s` c
+        LEFT JOIN customers_comp d ON c.customer_id = d.customer_id 
+        WHERE d.customer_id IS NULL                                             -- remove customers captured by competitors
+    ),
+    costs AS (
+        SELECT 
+            ARRAY_AGG(CAST(c.facility_id AS STRING)) cost_facility_id,
+            ARRAY_AGG(CAST(c.customer_id AS STRING)) cost_customer_id,
+            ARRAY_AGG(CAST(c.cost AS FLOAT64)) cost
+        FROM `%s` c
+        INNER JOIN facilities_comp f USING (facility_id)                             -- remove competitors
+        LEFT JOIN customers_comp d ON c.customer_id = d.customer_id 
+        WHERE d.customer_id IS NULL                                             -- remove customers captured by competitors
+    ),
+    %s
+    result AS (
+    SELECT  *
+    FROM facilities CROSS JOIN customers CROSS JOIN costs %s
+    )
+    SELECT s.* FROM result, UNNEST(`cartodb-on-gcp-datascience.lgarciaduarte.LOCATION_ALLOCATION`
+    (    
+        facility_id,
+        facility_type,
+        facility_group_id,
+        facility_min_capacity,
+        facility_max_capacity,
+        facility_cost_of_open,
+        customer_id,
+        customer_demand,
+        cost_facility_id,
+        cost_customer_id,
+        cost,
+        %s,
+        %s,
+        %s,
+        %t, 
+        %s,
+        %s,
+        %s,
+        %s,
+        %t,
+        %t,
+        %t,
+        %t,
+        %t,
+        %d,
+        %d,
+        False
+    )) s
+    ''',
+    output_table_temp,
+    -- competitors
+    REPLACE(costs_table, '`', ''),
+    REPLACE(facilities_table, '`', ''),
+    IF(competitor_facilities_bool, competitor_trade_area, -1),
+    -- facilities
+    IF(limit_facilities_group_bool, 'group_id', 'COALESCE(group_id,"0")'),
+    IF(facilities_min_capacity_bool, 'min_capacity', 'COALESCE(min_capacity,0)'),
+    IF(facilities_max_capacity_bool, 'max_capacity', 'COALESCE(max_capacity,0)'),
+    IF(costopen_facilities_bool, 'cost_of_open', 'COALESCE(cost_of_open,0)'),
+    REPLACE(facilities_table, '`', ''),
+    -- customers
+    IF(demand_bool, 'c.demand', 'COALESCE(c.demand,0)'),
+    REPLACE(customers_table, '`', ''),
+    -- costs
+    REPLACE(costs_table, '`', ''),
+    -- constraints
+    c_compatibility_query,
+    c_compatibility_join,
+    -- location allocation
+    IF(compatibility_bool, 'compatibility_facility_id', 'NULL'),
+    IF(compatibility_bool, 'compatibility_customer_id', 'NULL'),
+    IF(compatibility_bool, 'compatibility_type', 'NULL'),
+    required_facilities_bool, 
+    IF(min_facilities IS NULL, 'NULL', CAST(min_facilities AS STRING)), --CAST(COALESCE(min_facilities,0) AS INT64),
+    IF(max_facilities IS NULL, 'NULL', CAST(max_facilities AS STRING)), --CAST(COALESCE(max_facilities,0) AS INT64),
+    IF(min_facilities_group IS NULL, 'NULL', CAST(min_facilities_group AS STRING)), --CAST(COALESCE(min_facilities_group,0) AS INT64),
+    IF(max_facilities_group IS NULL, 'NULL', CAST(max_facilities_group AS STRING)), --CAST(COALESCE(max_facilities_group,0) AS INT64),
+    facilities_min_capacity_bool,
+    facilities_max_capacity_bool,
+    compatibility_bool,
+    demand_bool,
+    costopen_facilities_bool,
+    CAST(time_limit AS INT64),
+    CAST(relative_gap AS INT64)
+    );
+
+    -- 4. Extract output
+    EXECUTE IMMEDIATE FORMAT('''
+    CREATE TABLE IF NOT EXISTS `%s` 
+    OPTIONS (expiration_timestamp = TIMESTAMP_ADD(CURRENT_TIMESTAMP(), INTERVAL 30 DAY)) 
+    AS
+        SELECT facility_id, customer_id, demand, ST_MAKELINE(f.geom, c.geom) geom
+        FROM `%s`
+        JOIN  (SELECT facility_id, geom FROM `%s`) f
+        USING (facility_id)
+        JOIN   (SELECT customer_id, geom FROM `%s`) c
+        USING (customer_id)
+    ''',
+    REPLACE(output_table, '`', ''),
+    output_table_temp,
+    REPLACE(facilities_table, '`', ''),
+    REPLACE(customers_table, '`', '')
+    );
+
+    EXECUTE IMMEDIATE FORMAT('''
+    CREATE TABLE IF NOT EXISTS `%s` 
+    OPTIONS (expiration_timestamp = TIMESTAMP_ADD(CURRENT_TIMESTAMP(), INTERVAL 30 DAY)) 
+    AS
+        SELECT objective_value, gap, solving_time, termination_reason
+        FROM `%s`
+        ORDER BY objective_value NULLS LAST
+        LIMIT 1
+    ''',
+    REPLACE(metrics_table, '`', ''),
+    output_table_temp
+    );
+
+END;

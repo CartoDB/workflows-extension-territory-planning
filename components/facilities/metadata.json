@@ -115,7 +115,7 @@
         {
             "name": "group_bool",
             "title": "Assign groups to facilities",
-            "advanced": true,
+            "advanced": false,
             "description": "",
             "helper": "",
             "type": "Boolean",
@@ -124,7 +124,7 @@
         {
             "name": "candidates_group",
             "title": "Candidate facilities group ID column",
-            "advanced": true,
+            "advanced": false,
             "description": "",
             "helper": "",
             "type": "Column",
@@ -137,20 +137,21 @@
         {
             "name": "required_group",
             "title": "Required facilities group ID column",
-            "advanced": true,
+            "advanced": false,
             "description": "",
             "helper": "",
             "type": "Column",
             "parent": "required_table",
             "dataType": ["number","string"],
             "showIf": [
+                {"parameter": "required_bool", "value": true},
                 {"parameter": "group_bool", "value": true}
             ]
         },
         {
             "name": "max_capacity_bool",
             "title": "Assign maximum capacity to facilities",
-            "advanced": true,
+            "advanced": false,
             "description": "",
             "helper": "",
             "type": "Boolean",
@@ -159,7 +160,7 @@
         {
             "name": "candidates_max_capacity",
             "title": "Candidate facilities maximum capacity column",
-            "advanced": true,
+            "advanced": false,
             "description": "",
             "helper": "",
             "type": "Column",
@@ -172,20 +173,21 @@
         {
             "name": "required_max_capacity",
             "title": "Required facilities maximum capacity column",
-            "advanced": true,
+            "advanced": false,
             "description": "",
             "helper": "",
             "type": "Column",
             "parent": "required_table",
             "dataType": ["number"],
             "showIf": [
+                {"parameter": "required_bool", "value": true},
                 {"parameter": "max_capacity_bool", "value": true}
             ]
         },
         {
             "name": "min_capacity_bool",
             "title": "Assign minimum capacity to facilities",
-            "advanced": true,
+            "advanced": false,
             "description": "",
             "helper": "",
             "type": "Boolean",
@@ -194,7 +196,7 @@
         {
             "name": "candidates_min_capacity",
             "title": "Candidate facilities minimum capacity column",
-            "advanced": true,
+            "advanced": false,
             "description": "",
             "helper": "",
             "type": "Column",
@@ -207,20 +209,21 @@
         {
             "name": "required_min_capacity",
             "title": "Required facilities minimum capacity column",
-            "advanced": true,
+            "advanced": false,
             "description": "",
             "helper": "",
             "type": "Column",
             "parent": "required_table",
             "dataType": ["number"],
             "showIf": [
+                {"parameter": "required_bool", "value": true},
                 {"parameter": "min_capacity_bool", "value": true}
             ]
         },
         {
             "name": "costofopen_bool",
             "title": "Include cost of opening facilities",
-            "advanced": true,
+            "advanced": false,
             "description": "",
             "helper": "",
             "type": "Boolean",
@@ -228,8 +231,8 @@
         },
         {
             "name": "candidates_costofopen",
-            "title": "Cost of open candidate facilities column",
-            "advanced": true,
+            "title": "Candidate facilities cost of open column",
+            "advanced": false,
             "description": "",
             "helper": "",
             "type": "Column",
@@ -241,14 +244,15 @@
         },
         {
             "name": "required_costofopen",
-            "title": "Cost of open required facilities column",
-            "advanced": true,
+            "title": "Required facilities cost of open column",
+            "advanced": false,
             "description": "",
             "helper": "",
             "type": "Column",
             "parent": "required_table",
             "dataType": ["number"],
             "showIf": [
+                {"parameter": "required_bool", "value": true},
                 {"parameter": "costofopen_bool", "value": true}
             ]
         }

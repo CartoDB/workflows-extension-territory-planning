@@ -2,7 +2,7 @@ EXECUTE IMMEDIATE FORMAT('''
 CREATE TABLE IF NOT EXISTS `%s` (
 facility_id STRING,
 geom GEOGRAPHY,
-facility_type STRING,
+facility_type INT64,
 group_id STRING,
 min_capacity FLOAT64,
 max_capacity FLOAT64,

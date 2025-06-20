@@ -74,7 +74,8 @@
             "min": 1,
             "default": 1,
             "showIf": [
-                {"parameter": "transformation_bool", "value": true}
+                {"parameter": "transformation_bool", "value": true},
+                {"parameter": "transformation_function", "value": ["Power", "Exponential"]}
             ]
         }
     ],

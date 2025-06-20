@@ -1,30 +1,50 @@
-EXECUTE IMMEDIATE FORMAT("""
-    CREATE TABLE IF NOT EXISTS `%s` 
-    OPTIONS (expiration_timestamp = TIMESTAMP_ADD(CURRENT_TIMESTAMP(), INTERVAL 30 DAY)) 
-    AS
-        SELECT 
-            CAST(%s AS STRING) AS facility_id,
-            CAST(%s AS STRING) AS customer_id,
-            %s AS cost
-        FROM `%s` 
+DECLARE query STRING;
+DECLARE flag BOOL;
 
-""",
-REPLACE(output_table, '`', ''),
-facilities_column,
-customers_column,
-IF(
-    transformation_bool,
+BEGIN
+
+    -- TODO: Check if cost has null values
+    SET query = FORMAT("""
+        SELECT COUNT(*) != COUNT(DISTINCT CONCAT(CAST(%s AS STRING), '-', CAST(%s AS STRING))) 
+        FROM `%s`
+    """, 
+    facilities_column,
+    customers_column,
+    REPLACE(costs_table, '`', ''));
+    EXECUTE IMMEDIATE query INTO flag;
+    IF flag THEN
+        RAISE USING MESSAGE = 'Found multiple cost values for facility-client pair(s). Please assign one cost value per facility-customer pair.';
+    END IF;
+
+    EXECUTE IMMEDIATE FORMAT("""
+        CREATE TABLE IF NOT EXISTS `%s` 
+        OPTIONS (expiration_timestamp = TIMESTAMP_ADD(CURRENT_TIMESTAMP(), INTERVAL 30 DAY)) 
+        AS
+            SELECT 
+                CAST(%s AS STRING) AS facility_id,
+                CAST(%s AS STRING) AS customer_id,
+                %s AS cost
+            FROM `%s` 
+            ORDER BY facility_id, customer_id
+
+    """,
+    REPLACE(output_table, '`', ''),
+    facilities_column,
+    customers_column,
     IF(
-        UPPER(transformation_function) = 'POWER', 
-        FORMAT('POW(%s, %d)', cost_column, CAST(transformation_parameter AS INT64)),
+        transformation_bool,
         IF(
-            UPPER(transformation_function) = 'EXPONENTIAL',
-            FORMAT('EXP(%d * %s)', CAST(transformation_parameter AS INT64), cost_column),
-            FORMAT('%d * %s', CAST(transformation_parameter AS INT64), cost_column)
-        )
+            UPPER(transformation_function) = 'POWER', 
+            FORMAT('POW(%s, %f)', cost_column, transformation_parameter),
+            IF(
+                UPPER(transformation_function) = 'EXPONENTIAL',
+                FORMAT('EXP(%f * %s)', transformation_parameter, cost_column),
+                FORMAT('%f * %s', transformation_parameter, cost_column)
+            )
+        ),
+        cost_column
     ),
-    cost_column
-),
-REPLACE(costs_table, '`', '')
-);
+    REPLACE(costs_table, '`', '')
+    );
 
+END;
