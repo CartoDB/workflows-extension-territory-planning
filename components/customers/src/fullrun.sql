@@ -25,12 +25,12 @@ BEGIN
     -- 3. Check complete demand
     IF demand_bool THEN
         SET query = FORMAT("""
-            SELECT COUNTIF(%s IS NOT NULL) != COUNT(*)
+            SELECT COUNTIF(%s IS NOT NULL AND %s > 0) != COUNT(*)
             FROM `%s`
-        """, demand_col, REPLACE(customers_table, '`', ''));
+        """, demand_col, demand_col, REPLACE(customers_table, '`', ''));
         EXECUTE IMMEDIATE query INTO flag;
         IF flag THEN
-            RAISE USING MESSAGE = FORMAT('Customers demand column `%s` cannot contain NULL values.', demand_col);
+            RAISE USING MESSAGE = FORMAT('Customers demand column `%s` cannot contain NULL values and must be positive', demand_col);
         END IF;
     END IF;
 

@@ -152,6 +152,18 @@ BEGIN
         RAISE USING MESSAGE = FORMAT('Duplicates found in overall facily IDs. Please make sure that values in candidate, required and competitor facility IDs (`%s`, `%s` and `%s`) are unique.', candidates_id, required_id, competitors_id);
     END IF;
 
+    -- Raise error if min_capacity > max_capacity
+    IF min_capacity_bool AND max_capacity_bool THEN
+        SET query = FORMAT("""
+            SELECT COUNTIF(min_capacity <= max_capacity) != COUNT(*)
+            FROM `%s`
+        """, output_table);
+        EXECUTE IMMEDIATE query INTO flag;
+        IF flag THEN
+            RAISE USING MESSAGE = 'Minimum capacity cannot be larger than maximum capacity';
+        END IF;
+    END IF;
+
     -- Drop tables in case of error & propagate the original error
     EXCEPTION
         WHEN ERROR THEN

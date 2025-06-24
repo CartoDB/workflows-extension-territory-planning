@@ -3,7 +3,18 @@ DECLARE flag BOOL;
 
 BEGIN
 
-    -- TODO: Check if cost has null values
+    SET query = FORMAT("""
+        SELECT COUNTIF(%s IS NOT NULL AND %s >= 0) != COUNT(*)
+        FROM `%s`
+    """, 
+    cost_column,
+    cost_column,
+    REPLACE(costs_table, '`', ''));
+    EXECUTE IMMEDIATE query INTO flag;
+    IF flag THEN
+        RAISE USING MESSAGE = 'All costs must be non-negative and cannot have NULL values.';
+    END IF;
+
     SET query = FORMAT("""
         SELECT COUNT(*) != COUNT(DISTINCT CONCAT(CAST(%s AS STRING), '-', CAST(%s AS STRING))) 
         FROM `%s`

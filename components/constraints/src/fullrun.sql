@@ -2,6 +2,7 @@ DECLARE compatibility_tablename STRING DEFAULT NULL;
 DECLARE compatibility_metadata STRING DEFAULT NULL;
 DECLARE compatible_query STRING DEFAULT NULL;
 DECLARE uncompatible_query STRING DEFAULT NULL;
+DECLARE out_table STRING;
 DECLARE query STRING;
 DECLARE flag BOOL;
 
@@ -9,7 +10,7 @@ BEGIN
 
 BEGIN
 
-    SET output_table = REPLACE(output_table, '`', '');
+    SET out_table = REPLACE(output_table, '`', '');
 
     -- 1. Create metadata table (ouput)
     EXECUTE IMMEDIATE FORMAT("""
@@ -20,7 +21,7 @@ BEGIN
         )
         OPTIONS (expiration_timestamp = TIMESTAMP_ADD(CURRENT_TIMESTAMP(), INTERVAL 30 DAY)) 
     """,
-    output_table
+    out_table
     );
 
     -- 2. Add available constraints
@@ -32,20 +33,20 @@ BEGIN
             NULL
         )
     """,
-    output_table
+    out_table
     );
 
     -- 3. Create auxiliary tables and update metadata if specified
     
     -- Constraint ID: compatibility
     IF compatible_bool OR uncompatible_bool THEN
-        SET compatibility_tablename = FORMAT('%s_compatibility', output_table);
+        SET compatibility_tablename = FORMAT('%s_compatibility', out_table);
         EXECUTE IMMEDIATE FORMAT("""
             UPDATE `%s`
             SET table_name = '%s'
             WHERE constraint_id = 'compatibility';
         """,
-        output_table,
+        out_table,
         compatibility_tablename
         );
 
@@ -104,8 +105,8 @@ BEGIN
     -- Drop tables in case of error & propagate the original error
     EXCEPTION
         WHEN ERROR THEN
-            IF (output_table IS NOT NULL) THEN
-                EXECUTE IMMEDIATE FORMAT('DROP TABLE IF EXISTS `%s`', output_table);
+            IF (out_table IS NOT NULL) THEN
+                EXECUTE IMMEDIATE FORMAT('DROP TABLE IF EXISTS `%s`', out_table);
             END IF;
             IF (compatibility_tablename IS NOT NULL) THEN
                 EXECUTE IMMEDIATE FORMAT('DROP TABLE IF EXISTS `%s`', compatibility_tablename);
