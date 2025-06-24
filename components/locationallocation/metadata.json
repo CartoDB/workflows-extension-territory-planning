@@ -36,6 +36,14 @@
             "optional": true
         },
         {
+            "name": "optimization_strategy",
+            "title": "Optimization Strategy",
+            "description": "",
+            "type": "Selection",
+            "options": ["Minimize total cost", "Minimize maximum cost"],
+            "default": "Minimize total cost"
+        },
+        {
             "name": "limit_facilities_bool",
             "title": "Limit the total number of facilities",
             "description": "",
@@ -44,27 +52,13 @@
             "default": false
         },
         {
-            "name": "min_facilities",
-            "title": "Minimum number of facilities",
-            "description": "",
-            "helper": "",
-            "type": "Number",
-            "minimum": 0,
-            "default": null,
-            "optional": true,
-            "showIf": [
-                {"parameter": "limit_facilities_bool", "value": true}
-            ]
-        },
-        {
             "name": "max_facilities",
             "title": "Maximum number of facilities",
             "description": "",
             "helper": "",
             "type": "Number",
             "minimum": 1,
-            "default": null,
-            "optional": true,
+            "default": 5,
             "showIf": [
                 {"parameter": "limit_facilities_bool", "value": true}
             ]
@@ -78,27 +72,13 @@
             "default": false
         },
         {
-            "name": "min_facilities_group",
-            "title": "Minimum number of facilities",
-            "description": "",
-            "helper": "",
-            "type": "Number",
-            "minimum": 0,
-            "default": null,
-            "optional": true,
-            "showIf": [
-                {"parameter": "limit_facilities_group_bool", "value": true}
-            ]
-        },
-        {
             "name": "max_facilities_group",
             "title": "Maximum number of facilities",
             "description": "",
             "helper": "",
             "type": "Number",
             "minimum": 1,
-            "default": null,
-            "optional": true,
+            "default": 5,
             "showIf": [
                 {"parameter": "limit_facilities_group_bool", "value": true}
             ]

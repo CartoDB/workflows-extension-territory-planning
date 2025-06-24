@@ -2,6 +2,7 @@ DECLARE c_compatibility_table STRING DEFAULT NULL;
 DECLARE c_compatibility_query STRING DEFAULT '';
 DECLARE c_compatibility_join STRING DEFAULT '';
 DECLARE output_table_temp STRING;
+DECLARE opt_strategy STRING;
 DECLARE query STRING;
 DECLARE flag BOOL;
 
@@ -27,6 +28,11 @@ BEGIN
     -- No checks needed, data was checked using 'Prepare x' components. 
     -- If there are NULLs in input columns, an error will occurr when calling LOCATION_ALLOCATION
     -- and we avoid doing intensive checks
+
+    SET opt_strategy =  CASE optimization_strategy
+        WHEN 'Minimize maximum cost' THEN 'minimize_max_cost'
+        ELSE 'minimize_total_cost'
+    END;
 
     -- 2. Check input data
     SET query = FORMAT("""
@@ -140,6 +146,7 @@ BEGIN
     )
     SELECT s.* FROM result, UNNEST(`cartodb-on-gcp-datascience.lgarciaduarte.LOCATION_ALLOCATION`
     (    
+        '%s',
         facility_id,
         facility_type,
         facility_group_id,
@@ -155,8 +162,6 @@ BEGIN
         %s,
         %s,
         %t, 
-        %s,
-        %s,
         %s,
         %s,
         %t,
@@ -189,14 +194,13 @@ BEGIN
     c_compatibility_query,
     c_compatibility_join,
     -- location allocation
+    opt_strategy,
     IF(compatibility_bool, 'compatibility_facility_id', 'NULL'),
     IF(compatibility_bool, 'compatibility_customer_id', 'NULL'),
     IF(compatibility_bool, 'compatibility_type', 'NULL'),
     required_facilities_bool, 
-    IF(min_facilities IS NULL, 'NULL', CAST(min_facilities AS STRING)), --CAST(COALESCE(min_facilities,0) AS INT64),
-    IF(max_facilities IS NULL, 'NULL', CAST(max_facilities AS STRING)), --CAST(COALESCE(max_facilities,0) AS INT64),
-    IF(min_facilities_group IS NULL, 'NULL', CAST(min_facilities_group AS STRING)), --CAST(COALESCE(min_facilities_group,0) AS INT64),
-    IF(max_facilities_group IS NULL, 'NULL', CAST(max_facilities_group AS STRING)), --CAST(COALESCE(max_facilities_group,0) AS INT64),
+    IF(limit_facilities_bool, CAST(max_facilities AS STRING), 'NULL'), 
+    IF(limit_facilities_group_bool, CAST(max_facilities_group AS STRING), 'NULL'), 
     facilities_min_capacity_bool,
     facilities_max_capacity_bool,
     compatibility_bool,
