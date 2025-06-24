@@ -1,13 +1,58 @@
 [
     {
-        "id": 1,
+        "id": "add_all",
         "inputs": {
-            "input_table": "territory_balance_input_h3",
-            "index_column": "h3",
-            "demand_column": "total_pop_3200daaa_sum",
-            "similarity_feats": "median_income_20186485_avg,median_rent_37636cdd_avg,food_drink_9a578397_sum",
-            "npartitions": "5",
-            "keep_input_columns": true            
+            "candidates_table": "candidate_facilities",
+            "required_table": "required_facilities",
+            "competitors_table": "competitor_facilities",
+            "candidates_id": "facility_name",
+            "candidates_geom": "geom",
+            "required_bool": true,
+            "required_id": "facility_name",
+            "required_geom": "geom",
+            "competitors_bool": true,
+            "competitors_id": "competitor_id",
+            "competitors_geom": "geom",
+            "group_bool": true,
+            "candidates_group": "group_name",
+            "required_group": "group_name",
+            "max_capacity_bool": true,
+            "candidates_max_capacity": "capacity",
+            "required_max_capacity": "capacity",
+            "min_capacity_bool": true,
+            "candidates_min_capacity": "coverage",
+            "required_min_capacity": "coverage",
+            "costofopen_bool": true,
+            "candidates_costofopen": "cost_of_open",
+            "required_costofopen": "cost_of_open"
+        }
+    },
+    {
+        "id": "add_mandatory",
+        "inputs": {
+            "candidates_table": "candidate_facilities",
+            "required_table": "required_facilities",
+            "competitors_table": "competitor_facilities",
+            "candidates_id": "facility_name",
+            "candidates_geom": "geom",
+            "required_bool": false,
+            "required_id": null,
+            "required_geom": null,
+            "competitors_bool": false,
+            "competitors_id": null,
+            "competitors_geom": null,
+            "group_bool": false,
+            "candidates_group": null,
+            "required_group": null,
+            "max_capacity_bool": false,
+            "candidates_max_capacity": null,
+            "required_max_capacity": null,
+            "min_capacity_bool": false,
+            "candidates_min_capacity": null,
+            "required_min_capacity": null,
+            "costofopen_bool": false,
+            "candidates_costofopen": null,
+            "required_costofopen": null
         }
     }
 ]

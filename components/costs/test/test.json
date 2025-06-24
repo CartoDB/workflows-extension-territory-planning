@@ -1,13 +1,26 @@
 [
     {
-        "id": 1,
+        "id": "without_transformation",
         "inputs": {
-            "input_table": "territory_balance_input_h3",
-            "index_column": "h3",
-            "demand_column": "total_pop_3200daaa_sum",
-            "similarity_feats": "median_income_20186485_avg,median_rent_37636cdd_avg,food_drink_9a578397_sum",
-            "npartitions": "5",
-            "keep_input_columns": true            
+            "costs_table": "costs",
+            "facilities_column": "facility_name",
+            "customers_column": "customer_name_joined",
+            "cost_column": "distance_kilometers",
+            "transformation_bool": false,
+            "transformation_function": null,
+            "transformation_parameter": null  
+        }
+    },
+    {
+        "id": "with_transformation",
+        "inputs": {
+            "costs_table": "costs",
+            "facilities_column": "facility_name",
+            "customers_column": "customer_name_joined",
+            "cost_column": "distance_kilometers",
+            "transformation_bool": true,
+            "transformation_function": "Power",
+            "transformation_parameter": 2  
         }
     }
 ]
