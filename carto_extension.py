@@ -643,8 +643,8 @@ def _get_test_results(metadata, component, progress_bar=None):
                         param_values.append(f"'{param_value}'")
                     else:
                         param_values.append(param_value)
-            tablename = f"{workflows_temp}._table_{uuid4().hex}"
             for outputparam in component["outputs"]:
+                tablename = f"{workflows_temp}._table_{uuid4().hex}"
                 param_values.append(f"'{tablename}'")
                 tables[outputparam["name"]] = tablename
 
@@ -1011,12 +1011,12 @@ def capture(component):
             os.makedirs(test_folder, exist_ok=True)
             test_filename = os.path.join(test_folder, f"{test_id}.json")
             with open(test_filename, "w") as f:
-                outputs = {
+                output = {
                     output_name: output_results.to_dict(orient="records")
                     for output_name, output_results in outputs["full"].items()
                 }
 
-                contents = json.dumps(outputs, indent=2, default=str)
+                contents = json.dumps(output, indent=2, default=str)
                 contents = substitute_keys(contents, dotenv=dotenv)
                 f.write(contents)
 
