@@ -4,7 +4,7 @@
         "inputs": {
             "costs_table": "costs",
             "facilities_column": "facility_name",
-            "customers_column": "customer_name_joined",
+            "customers_column": "customer_name",
             "cost_column": "distance_kilometers",
             "transformation_bool": false,
             "transformation_function": null,
@@ -16,7 +16,7 @@
         "inputs": {
             "costs_table": "costs",
             "facilities_column": "facility_name",
-            "customers_column": "customer_name_joined",
+            "customers_column": "customer_name",
             "cost_column": "distance_kilometers",
             "transformation_bool": true,
             "transformation_function": "Power",

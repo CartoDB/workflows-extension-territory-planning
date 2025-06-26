@@ -3,7 +3,7 @@
     {
       "constraint_id": "compatibility",
       "constraint_description": "Force facility-customer relationships",
-      "table_name": "@@BQ_TEST_PROJECT@@.@@BQ_TEST_DATASET@@._table_86287c3e715141c49a6b18a96e8d514b_compatibility"
+      "table_name": "@@BQ_TEST_PROJECT@@.@@BQ_TEST_DATASET@@._table_a679cf0edcbd49aaaa10fc1380f8242e_compatibility"
     }
   ]
 }

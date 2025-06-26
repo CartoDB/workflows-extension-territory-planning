@@ -157,6 +157,7 @@ BEGIN
         SET query = FORMAT("""
             SELECT COUNTIF(min_capacity <= max_capacity) != COUNT(*)
             FROM `%s`
+            WHERE facility_type != 2
         """, output_table);
         EXECUTE IMMEDIATE query INTO flag;
         IF flag THEN
