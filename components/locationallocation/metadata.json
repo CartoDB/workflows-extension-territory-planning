@@ -40,8 +40,58 @@
             "title": "Optimization Strategy",
             "description": "",
             "type": "Selection",
-            "options": ["Minimize total cost", "Minimize maximum cost"],
+            "options": ["Minimize total cost", "Minimize maximum cost", "Maximize coverage"],
             "default": "Minimize total cost"
+        },
+        {
+            "name": "coverage_radius",
+            "title": "Facilities coverage radius",
+            "description": "",
+            "helper": "",
+            "type": "Number",
+            "minimum": 0,
+            "default": 10,
+            "showIf": [
+                {"parameter": "optimization_strategy", "value": ["Maximize coverage"]}
+            ]
+        },
+        {
+            "name": "required_facilities_bool",
+            "title": "Include required facilities",
+            "description": "",
+            "helper": "",
+            "type": "Boolean",
+            "default": false
+        },
+        {
+            "name": "competitor_facilities_bool",
+            "title": "Include competitor facilities",
+            "description": "",
+            "helper": "",
+            "type": "Boolean",
+            "default": false
+        },
+        {
+            "name": "competitor_trade_area",
+            "title": "Cost threshold (in cost units)",
+            "description": "",
+            "helper": "",
+            "type": "Number",
+            "default": 5,
+            "showIf": [
+                {"parameter": "competitor_facilities_bool", "value": true}
+            ]
+        },
+        {
+            "name": "costopen_facilities_bool",
+            "title": "Include opening cost for the facilities",
+            "description": "",
+            "helper": "",
+            "type": "Boolean",
+            "default": false,
+            "showIf": [
+                {"parameter": "optimization_strategy", "value": ["Minimize total cost", "Minimize maximum cost"]}
+            ]
         },
         {
             "name": "limit_facilities_bool",
@@ -84,57 +134,6 @@
             ]
         },
         {
-            "name": "facilities_min_capacity_bool",
-            "title": "Limit the minimum capacity of the facilities",
-            "description": "",
-            "helper": "",
-            "type": "Boolean",
-            "default": false
-        },
-        {
-            "name": "facilities_max_capacity_bool",
-            "title": "Limit the maximum capacity of the facilities",
-            "description": "",
-            "helper": "",
-            "type": "Boolean",
-            "default": false
-        },
-        {
-            "name": "required_facilities_bool",
-            "title": "Include required facilities",
-            "description": "",
-            "helper": "",
-            "type": "Boolean",
-            "default": false
-        },
-        {
-            "name": "competitor_facilities_bool",
-            "title": "Include competitor facilities",
-            "description": "",
-            "helper": "",
-            "type": "Boolean",
-            "default": false
-        },
-        {
-            "name": "competitor_trade_area",
-            "title": "Cost threshold (in cost units)",
-            "description": "",
-            "helper": "",
-            "type": "Number",
-            "default": 5,
-            "showIf": [
-                {"parameter": "competitor_facilities_bool", "value": true}
-            ]
-        },
-        {
-            "name": "costopen_facilities_bool",
-            "title": "Include opening cost for the facilities",
-            "description": "",
-            "helper": "",
-            "type": "Boolean",
-            "default": false
-        },
-        {
             "name": "demand_bool",
             "title": "Satisfy customers demand",
             "description": "",
@@ -143,12 +142,37 @@
             "default": false
         },
         {
+            "name": "facilities_min_capacity_bool",
+            "title": "Limit the minimum capacity of the facilities",
+            "description": "",
+            "helper": "",
+            "type": "Boolean",
+            "default": false,
+            "showIf": [
+                {"parameter": "optimization_strategy", "value": ["Minimize total cost", "Minimize maximum cost"]}
+            ]
+        },
+        {
+            "name": "facilities_max_capacity_bool",
+            "title": "Limit the maximum capacity of the facilities",
+            "description": "",
+            "helper": "",
+            "type": "Boolean",
+            "default": false,
+            "showIf": [
+                {"parameter": "optimization_strategy", "value": ["Minimize total cost", "Minimize maximum cost"]}
+            ]
+        },
+        {
             "name": "compatibility_bool",
             "title": "Force facility-customer relationships",
             "description": "",
             "helper": "",
             "type": "Boolean",
-            "default": false
+            "default": false,
+            "showIf": [
+                {"parameter": "optimization_strategy", "value": ["Minimize total cost", "Minimize maximum cost"]}
+            ]
         },
         {
             "name": "relative_gap",

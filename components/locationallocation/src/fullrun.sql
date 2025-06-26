@@ -31,6 +31,7 @@ BEGIN
 
     SET opt_strategy =  CASE optimization_strategy
         WHEN 'Minimize maximum cost' THEN 'minimize_max_cost'
+        WHEN 'Maximize coverage' THEN 'maximize_coverage'
         ELSE 'minimize_total_cost'
     END;
 
@@ -135,7 +136,7 @@ BEGIN
             ARRAY_AGG(CAST(c.customer_id AS STRING)) cost_customer_id,
             ARRAY_AGG(CAST(c.cost AS FLOAT64)) cost
         FROM `%s` c
-        INNER JOIN facilities_comp f USING (facility_id)                             -- remove competitors
+        INNER JOIN facilities_comp f USING (facility_id)                        -- remove competitors
         LEFT JOIN customers_comp d ON c.customer_id = d.customer_id 
         WHERE d.customer_id IS NULL                                             -- remove customers captured by competitors
     ),
@@ -144,7 +145,7 @@ BEGIN
     SELECT  *
     FROM facilities CROSS JOIN customers CROSS JOIN costs %s
     )
-    SELECT s.* FROM result, UNNEST(`cartodb-on-gcp-datascience.lgarciaduarte.LOCATION_ALLOCATION`
+    SELECT s.* FROM result, UNNEST(@@workflows_temp@@.`LOCATION_ALLOCATION`
     (    
         '%s',
         facility_id,
@@ -169,6 +170,7 @@ BEGIN
         %t,
         %t,
         %t,
+        %f,
         %d,
         %d,
         False
@@ -206,6 +208,7 @@ BEGIN
     compatibility_bool,
     demand_bool,
     costopen_facilities_bool,
+    IFNULL(coverage_radius,0),
     CAST(time_limit AS INT64),
     CAST(relative_gap AS INT64)
     );
@@ -232,12 +235,18 @@ BEGIN
     CREATE TABLE IF NOT EXISTS `%s` 
     OPTIONS (expiration_timestamp = TIMESTAMP_ADD(CURRENT_TIMESTAMP(), INTERVAL 30 DAY)) 
     AS
-        SELECT objective_value, gap, solving_time, termination_reason
+        SELECT objective_value, gap, solving_time, termination_reason, stats
         FROM `%s`
-        ORDER BY objective_value NULLS LAST
+        ORDER BY termination_reason NULLS LAST
         LIMIT 1
     ''',
     REPLACE(metrics_table, '`', ''),
+    output_table_temp
+    );
+
+    EXECUTE IMMEDIATE FORMAT('''
+    DROP TABLE `%s`;
+    ''',
     output_table_temp
     );
 
