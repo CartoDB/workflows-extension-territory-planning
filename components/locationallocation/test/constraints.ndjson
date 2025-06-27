@@ -1,0 +1,1 @@
+{"constraint_id":"compatibility","constraint_description":"Force facility-customer relationships","table_name":"@@BQ_TEST_PROJECT@@.@@BQ_TEST_DATASET@@._table_692ab1af8d704cdeaf03c070e6c06f90_compatibility"}

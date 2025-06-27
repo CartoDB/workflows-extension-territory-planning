@@ -1,0 +1,73 @@
+{
+  "output_table": [
+    {
+      "facility_id": "0",
+      "customer_id": "16",
+      "demand": 10.0,
+      "geom": "LINESTRING(0.164949479833198 0.689766924217567, 0.38577768443489 0.994842726621423)"
+    },
+    {
+      "facility_id": "0",
+      "customer_id": "12",
+      "demand": 10.0,
+      "geom": "LINESTRING(0.164949479833198 0.689766924217567, 0.47632538943695 0.827018085032771)"
+    },
+    {
+      "facility_id": "0",
+      "customer_id": "0",
+      "demand": 5.0,
+      "geom": "LINESTRING(0.164949479833198 0.689766924217567, 0.115809810525299 0.951964117124012)"
+    },
+    {
+      "facility_id": "0",
+      "customer_id": "13",
+      "demand": 4.0,
+      "geom": "LINESTRING(0.164949479833198 0.689766924217567, 0.201079423287743 0.923167445854478)"
+    },
+    {
+      "facility_id": "4",
+      "customer_id": "10",
+      "demand": 7.0,
+      "geom": "LINESTRING(0.505084153470012 0.236056363496211, 0.762792646120434 0.580765709197664)"
+    },
+    {
+      "facility_id": "4",
+      "customer_id": "15",
+      "demand": 9.0,
+      "geom": "LINESTRING(0.505084153470012 0.236056363496211, 0.365220546383473 0.45132162795543)"
+    },
+    {
+      "facility_id": "4",
+      "customer_id": "17",
+      "demand": 10.0,
+      "geom": "LINESTRING(0.505084153470012 0.236056363496211, 0.386593276751821 0.0268356638708758)"
+    },
+    {
+      "facility_id": "4",
+      "customer_id": "11",
+      "demand": 3.0,
+      "geom": "LINESTRING(0.505084153470012 0.236056363496211, 0.729757376543632 0.122477870882474)"
+    },
+    {
+      "facility_id": "4",
+      "customer_id": "14",
+      "demand": 7.0,
+      "geom": "LINESTRING(0.505084153470012 0.236056363496211, 0.887559715925329 0.409601690560485)"
+    },
+    {
+      "facility_id": "4",
+      "customer_id": "1",
+      "demand": 5.0,
+      "geom": "LINESTRING(0.505084153470012 0.236056363496211, 0.368446640843333 0.154813056744797)"
+    }
+  ],
+  "metrics_table": [
+    {
+      "objective_value": 2409.0110614294,
+      "gap": 0.0,
+      "solving_time": 0.016683,
+      "termination_reason": "OPTIMAL",
+      "stats": "{'open_facilities': ['0', '4'], 'total_demand': 70.0, 'total_covered_demand': 70.0, 'coverage_percentage': 1.0, 'total_opened_capacity': 350.0, 'capacity_utilization': 0.2}"
+    }
+  ]
+}
