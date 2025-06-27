@@ -623,6 +623,7 @@ def _get_test_results(metadata, component, progress_bar=None):
         for test_configuration in test_configurations:
             param_values = []
             test_id = test_configuration["id"]
+            skip_outputs = test_configuration.get("skip_output", [])
             component_results[test_id] = {}
             for inputparam in component["inputs"]:
                 param_value = test_configuration["inputs"][inputparam["name"]]
@@ -659,7 +660,8 @@ def _get_test_results(metadata, component, progress_bar=None):
             # TODO: improve argument passing to _run_query()
             component_results[test_id]["dry"] = _run_query(dry_run_query, component, metadata["provider"], tables)
             component_results[test_id]["full"] = _run_query(full_run_query, component, metadata["provider"], tables)
-            
+            component_results[test_id]["skip_output"] = skip_outputs
+
             # Update progress bar after each test (dry + full run = 1 item)
             if progress_bar:
                 progress_bar.update(1)
@@ -725,6 +727,7 @@ def test(component):
         for test_id, outputs in results[component["name"]].items():
             test_folder = os.path.join(component_folder, "test", "fixtures")
             test_filename = os.path.join(test_folder, f"{test_id}.json")
+            skip_outputs = outputs['skip_output']
 
             zipped_outputs = [
                 (output_name, dry_output, outputs["full"][output_name])
@@ -748,11 +751,15 @@ def test(component):
             with open(test_filename, "r") as f:
                 expected = json.loads(substitute_vars(f.read()))
                 for output_name, test_result_df in outputs["full"].items():
-                    output = dataframe_to_dict(test_result_df)
-                    if not test_output(expected[output_name], output, decimal_places=3):
-                        raise AssertionError(
-                            f"Test '{test_id}' failed for component {component['name']} and table {output_name}."
-                        )
+                    if output_name in skip_outputs:
+                        # Don't compare results
+                        continue
+                    else:
+                        output = dataframe_to_dict(test_result_df)
+                        if not test_output(expected[output_name], output, decimal_places=3):
+                            raise AssertionError(
+                                f"Test '{test_id}' failed for component {component['name']} and table {output_name}."
+                            )
 
     print("Extension correctly tested.")
 
@@ -815,6 +822,7 @@ def load_test_cases():
         for test_id, outputs in test_results_cache[component["name"]].items():
             test_folder = os.path.join(component_folder, "test", "fixtures")
             test_filename = os.path.join(test_folder, f"{test_id}.json")
+            skip_outputs = outputs['skip_output']
 
             # Schema test case
             test_cases.append({
@@ -825,7 +833,15 @@ def load_test_cases():
                 "test_name": f"schema_{component['name']}_{test_id}"
             })
 
-            # Results test case (skip if test_id starts with "skip_")
+            # Results test case (skip if test_id starts with "skip_", skip output if table in skip_outputs)
+            output_names = []
+            for mode in ['dry', 'full']:
+                if mode in outputs:
+                    outputs[mode] = {k: v for k, v in outputs[mode].items() if k not in skip_outputs}
+                    output_names.append(list(outputs[mode].keys()))
+            output_names = list(set(item for sublist in output_names for item in sublist))
+            outputs.pop('skip_output', None)
+
             if not str(test_id).startswith("skip_"):
                 test_cases.append({
                     "test_type": "results", 
@@ -833,7 +849,7 @@ def load_test_cases():
                     "test_id": test_id,
                     "outputs": outputs,
                     "test_filename": test_filename,
-                    "test_name": f"results_{component['name']}_{test_id}"
+                    "test_name": f"results_{component['name']}_{test_id}__{'_'.join(output_names)}"
                 })
 
     return test_cases
