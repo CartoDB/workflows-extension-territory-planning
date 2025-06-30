@@ -3,6 +3,7 @@ DECLARE required_query STRING DEFAULT '';
 DECLARE competitors_query STRING DEFAULT '';
 DECLARE query STRING;
 DECLARE flag BOOL;
+DECLARE create_output_query STRING;
 
 BEGIN
 BEGIN
@@ -11,6 +12,14 @@ BEGIN
     SET candidates_table = REPLACE(candidates_table, '`', '');
     SET required_table = REPLACE(required_table, '`', '');
     SET competitors_table = REPLACE(competitors_table, '`', '');
+
+    -- Set variables based on whether the workflow is executed via API
+    IF REGEXP_CONTAINS(output_table, r'^[^.]+\.[^.]+\.[^.]+$') THEN
+        SET create_output_query = FORMAT('CREATE TABLE IF NOT EXISTS `%s` OPTIONS (expiration_timestamp = TIMESTAMP_ADD(CURRENT_TIMESTAMP(), INTERVAL 30 DAY))', output_table);
+    ELSE
+        -- Output needs to be qualified with tempStoragePath, meaning an API execution of the Workflow
+        SET create_output_query = FORMAT('CREATE TEMPORARY TABLE `%s`', output_table);
+    END IF;
 
     -- 1. Check NULLs
     SET query = FORMAT("""
@@ -128,15 +137,14 @@ BEGIN
     END IF;
 
     EXECUTE IMMEDIATE FORMAT('''
-    CREATE TABLE IF NOT EXISTS `%s` 
-    OPTIONS (expiration_timestamp = TIMESTAMP_ADD(CURRENT_TIMESTAMP(), INTERVAL 30 DAY)) 
+    %s
     AS
     %s
     %s
     %s
     ORDER BY facility_id
     ''',
-    output_table,
+    create_output_query,
     candidates_query,
     required_query,
     competitors_query

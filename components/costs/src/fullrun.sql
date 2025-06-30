@@ -1,8 +1,20 @@
-DECLARE query STRING;
 DECLARE flag BOOL;
+DECLARE query STRING;
+DECLARE create_output_query STRING;
 
 BEGIN
 
+    SET output_table = REPLACE(output_table, '`', '');
+
+    -- Set variables based on whether the workflow is executed via API
+    IF REGEXP_CONTAINS(output_table, r'^[^.]+\.[^.]+\.[^.]+$') THEN
+        SET create_output_query = FORMAT('CREATE TABLE IF NOT EXISTS `%s` OPTIONS (expiration_timestamp = TIMESTAMP_ADD(CURRENT_TIMESTAMP(), INTERVAL 30 DAY))', output_table);
+    ELSE
+        -- Output needs to be qualified with tempStoragePath, meaning an API execution of the Workflow
+        SET create_output_query = FORMAT('CREATE TEMPORARY TABLE `%s`', output_table);
+    END IF;
+
+    -- 1. Check input data
     SET query = FORMAT("""
         SELECT COUNTIF(%s IS NOT NULL AND %s >= 0) != COUNT(*)
         FROM `%s`
@@ -27,9 +39,9 @@ BEGIN
         RAISE USING MESSAGE = 'Found multiple cost values for facility-client pair(s). Please assign one cost value per facility-customer pair.';
     END IF;
 
+    -- 2. Prepare costs
     EXECUTE IMMEDIATE FORMAT("""
-        CREATE TABLE IF NOT EXISTS `%s` 
-        OPTIONS (expiration_timestamp = TIMESTAMP_ADD(CURRENT_TIMESTAMP(), INTERVAL 30 DAY)) 
+        %s
         AS
             SELECT 
                 CAST(%s AS STRING) AS facility_id,
@@ -39,7 +51,7 @@ BEGIN
             ORDER BY facility_id, dpoint_id
 
     """,
-    REPLACE(output_table, '`', ''),
+    create_output_query,
     facilities_column,
     dpoints_column,
     IF(

@@ -5,24 +5,29 @@ DECLARE output_table_temp STRING;
 DECLARE opt_strategy STRING;
 DECLARE query STRING;
 DECLARE flag BOOL;
-
-/*
--- 1. Check input params
-
--- 2. Check input data
-All facilities-dpoints pairs are in costs
-
--- 3. Run Location-Allocation. 
-Extract constraints data if compatibility_bool
-Remove competitors (always) and dpoints captured by competitors (if competitor_facilities_bool)
-
--- 4. Extract output 
-(what happens if it fails?)
-*/
+DECLARE create_output_query STRING;
+DECLARE create_metrics_query STRING;
+DECLARE temp_uuid STRING;
+DECLARE temp_table STRING;
 
 BEGIN
 
-    SET output_table_temp = CONCAT(REPLACE(output_table, '`', ''), "_temp");
+    SET output_table = REPLACE(output_table, '`', '');
+    SET metrics_table = REPLACE(metrics_table, '`', '');
+
+    -- Set variables based on whether the workflow is executed via API
+    IF REGEXP_CONTAINS(output_table, r'^[^.]+\.[^.]+\.[^.]+$') THEN
+        SET create_output_query = FORMAT('CREATE TABLE IF NOT EXISTS `%s` OPTIONS (expiration_timestamp = TIMESTAMP_ADD(CURRENT_TIMESTAMP(), INTERVAL 30 DAY))', output_table);
+        SET create_metrics_query = FORMAT('CREATE TABLE IF NOT EXISTS `%s` OPTIONS (expiration_timestamp = TIMESTAMP_ADD(CURRENT_TIMESTAMP(), INTERVAL 30 DAY))', metrics_table);
+        SET output_table_temp = CONCAT(REPLACE(output_table, '`', ''), "_temp");
+    ELSE
+        -- Output needs to be qualified with tempStoragePath, meaning an API execution of the Workflow
+        SET create_output_query = FORMAT('CREATE TEMPORARY TABLE `%s`', output_table);
+        SET create_metrics_query = FORMAT('CREATE TEMPORARY TABLE `%s`', metrics_table);
+        SET temp_uuid = GENERATE_UUID();
+        SET temp_table = CONCAT(REPLACE(tempStoragePath, '"', ''), '.WORKFLOW_', temp_uuid, '_intermediate');
+        SET output_table_temp = CONCAT(temp_table, "_temp_scoring");
+    END IF;
 
     -- 1. Check input params
     -- No checks needed, data was checked using 'Prepare x' components. 
@@ -91,7 +96,9 @@ BEGIN
     END IF;
 
     EXECUTE IMMEDIATE FORMAT('''
-    CREATE OR REPLACE TABLE `%s` AS
+    CREATE OR REPLACE TABLE `%s` 
+    OPTIONS (expiration_timestamp = TIMESTAMP_ADD(CURRENT_TIMESTAMP(), INTERVAL 30 DAY))
+    AS
     WITH 
     dpoints_comp AS (
         -- Customers captured by competitors
@@ -216,8 +223,7 @@ BEGIN
 
     -- 4. Extract output
     EXECUTE IMMEDIATE FORMAT('''
-    CREATE TABLE IF NOT EXISTS `%s` 
-    OPTIONS (expiration_timestamp = TIMESTAMP_ADD(CURRENT_TIMESTAMP(), INTERVAL 30 DAY)) 
+    %s
     AS
         SELECT facility_id, dpoint_id, demand, ST_MAKELINE(f.geom, c.geom) geom
         FROM `%s`
@@ -226,22 +232,21 @@ BEGIN
         JOIN   (SELECT dpoint_id, geom FROM `%s`) c
         USING (dpoint_id)
     ''',
-    REPLACE(output_table, '`', ''),
+    create_output_query,
     output_table_temp,
     REPLACE(facilities_table, '`', ''),
     REPLACE(dpoints_table, '`', '')
     );
 
     EXECUTE IMMEDIATE FORMAT('''
-    CREATE TABLE IF NOT EXISTS `%s` 
-    OPTIONS (expiration_timestamp = TIMESTAMP_ADD(CURRENT_TIMESTAMP(), INTERVAL 30 DAY)) 
+    %s
     AS
         SELECT objective_value, gap, solving_time, termination_reason, stats
         FROM `%s`
         ORDER BY termination_reason NULLS LAST
         LIMIT 1
     ''',
-    REPLACE(metrics_table, '`', ''),
+    create_metrics_query,
     output_table_temp
     );
 

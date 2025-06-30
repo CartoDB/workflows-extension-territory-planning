@@ -2,26 +2,34 @@ DECLARE compatibility_tablename STRING DEFAULT NULL;
 DECLARE compatibility_metadata STRING DEFAULT NULL;
 DECLARE compatible_query STRING DEFAULT NULL;
 DECLARE uncompatible_query STRING DEFAULT NULL;
-DECLARE out_table STRING;
 DECLARE query STRING;
 DECLARE flag BOOL;
+DECLARE create_output_query STRING;
+DECLARE create_compatibility_query STRING;
 
 BEGIN
 
 BEGIN
 
-    SET out_table = REPLACE(output_table, '`', '');
+    SET output_table = REPLACE(output_table, '`', '');
+    SET compatibility_tablename = FORMAT('%s_compatibility', output_table);
+
+    -- Set variables based on whether the workflow is executed via API
+    IF REGEXP_CONTAINS(output_table, r'^[^.]+\.[^.]+\.[^.]+$') THEN
+        SET create_output_query = FORMAT('CREATE TABLE IF NOT EXISTS `%s` (constraint_id STRING, constraint_description STRING, table_name STRING) OPTIONS (expiration_timestamp = TIMESTAMP_ADD(CURRENT_TIMESTAMP(), INTERVAL 30 DAY))', output_table);
+        SET create_compatibility_query = FORMAT('CREATE TABLE IF NOT EXISTS `%s` OPTIONS (expiration_timestamp = TIMESTAMP_ADD(CURRENT_TIMESTAMP(), INTERVAL 30 DAY))', compatibility_tablename);
+    ELSE
+        -- Output needs to be qualified with tempStoragePath, meaning an API execution of the Workflow
+        SET create_output_query = FORMAT('CREATE TEMPORARY TABLE `%s` (constraint_id STRING, constraint_description STRING, table_name STRING)', output_table);
+        SET create_compatibility_query = FORMAT('CREATE TEMPORARY TABLE `%s`', compatibility_tablename);
+    END IF;
+
 
     -- 1. Create metadata table (ouput)
     EXECUTE IMMEDIATE FORMAT("""
-        CREATE TABLE IF NOT EXISTS `%s` (   
-            constraint_id STRING,
-            constraint_description STRING,
-            table_name STRING
-        )
-        OPTIONS (expiration_timestamp = TIMESTAMP_ADD(CURRENT_TIMESTAMP(), INTERVAL 30 DAY)) 
+        %s 
     """,
-    out_table
+    create_output_query
     );
 
     -- 2. Add available constraints
@@ -33,20 +41,19 @@ BEGIN
             NULL
         )
     """,
-    out_table
+    output_table
     );
 
     -- 3. Create auxiliary tables and update metadata if specified
     
     -- Constraint ID: compatibility
     IF compatible_bool OR uncompatible_bool THEN
-        SET compatibility_tablename = FORMAT('%s_compatibility', out_table);
         EXECUTE IMMEDIATE FORMAT("""
             UPDATE `%s`
             SET table_name = '%s'
             WHERE constraint_id = 'compatibility';
         """,
-        out_table,
+        output_table,
         compatibility_tablename
         );
 
@@ -79,13 +86,12 @@ BEGIN
         END IF;
 
         EXECUTE IMMEDIATE FORMAT("""
-            CREATE TABLE IF NOT EXISTS `%s` 
-            OPTIONS (expiration_timestamp = TIMESTAMP_ADD(CURRENT_TIMESTAMP(), INTERVAL 30 DAY)) 
+            %s
             AS
                 %s
                 ORDER BY facility_id, dpoint_id
         """,
-        compatibility_tablename,
+        create_compatibility_query,
         ARRAY_TO_STRING(
             ARRAY(SELECT x FROM UNNEST([compatible_query,uncompatible_query]) AS x WHERE x IS NOT NULL),
             ' UNION ALL ')
@@ -105,8 +111,8 @@ BEGIN
     -- Drop tables in case of error & propagate the original error
     EXCEPTION
         WHEN ERROR THEN
-            IF (out_table IS NOT NULL) THEN
-                EXECUTE IMMEDIATE FORMAT('DROP TABLE IF EXISTS `%s`', out_table);
+            IF (output_table IS NOT NULL) THEN
+                EXECUTE IMMEDIATE FORMAT('DROP TABLE IF EXISTS `%s`', output_table);
             END IF;
             IF (compatibility_tablename IS NOT NULL) THEN
                 EXECUTE IMMEDIATE FORMAT('DROP TABLE IF EXISTS `%s`', compatibility_tablename);

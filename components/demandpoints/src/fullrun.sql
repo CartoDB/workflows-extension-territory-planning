@@ -1,7 +1,19 @@
 DECLARE flag BOOL;
 DECLARE query STRING;
+DECLARE create_output_query STRING;
 
 BEGIN
+
+    SET output_table = REPLACE(output_table, '`', '');
+
+    -- Set variables based on whether the workflow is executed via API
+    IF REGEXP_CONTAINS(output_table, r'^[^.]+\.[^.]+\.[^.]+$') THEN
+        SET create_output_query = FORMAT('CREATE TABLE IF NOT EXISTS `%s` OPTIONS (expiration_timestamp = TIMESTAMP_ADD(CURRENT_TIMESTAMP(), INTERVAL 30 DAY))', output_table);
+    ELSE
+        -- Output needs to be qualified with tempStoragePath, meaning an API execution of the Workflow
+        SET create_output_query = FORMAT('CREATE TEMPORARY TABLE `%s`', output_table);
+    END IF;
+
     -- 1. Check unique dpoint_id
     SET query = FORMAT("""
         SELECT COUNT(DISTINCT %s) != COUNT(*)
@@ -36,8 +48,7 @@ BEGIN
 
     -- 4. Prepare dpoints data
     EXECUTE IMMEDIATE FORMAT("""
-        CREATE TABLE IF NOT EXISTS `%s` 
-        OPTIONS (expiration_timestamp = TIMESTAMP_ADD(CURRENT_TIMESTAMP(), INTERVAL 30 DAY)) 
+        %s
         AS
             SELECT
                 CAST(%s AS STRING) AS dpoint_id,
@@ -46,7 +57,7 @@ BEGIN
             FROM `%s`
             ORDER BY dpoint_id
     """,
-    REPLACE(output_table, '`', ''),
+    create_output_query,
     dpoints_id,
     dpoints_geom,
     IF(demand_bool, demand_col, 'NULL'),
