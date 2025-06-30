@@ -1,0 +1,69 @@
+{
+    "name": "demandpoints",
+    "title": "Prepare Demand Points",
+    "description": "A component that prepares demand points (customers, delivery addresses, clinics...) data for Location Allocation.",
+    "externalReference": {
+        "label": "Documentation",
+        "href": "https://docs.carto.com/carto-user-manual/workflows/components/territory-planning#prepare-demand-points"
+    },
+    "version": "1.0.0",
+    "icon": "component-default.svg",
+    "cartoEnvVars": ["tempStoragePath"],
+    "inputs": [
+        {
+            "name": "dpoints_table",
+            "title": "Demand Points",
+            "description": "The source table containing demand points data.",
+            "helper": "The source table containing demand points data.",
+            "type": "Table"
+        },
+        {
+            "name": "dpoints_id",
+            "title": "ID column",
+            "description": "The column containing the unique identifier for each demand point.",
+            "helper": "The column containing the unique identifier for each demand point.",
+            "dataType": ["number", "string"],
+            "type": "Column",
+            "parent": "dpoints_table"
+        },
+        {
+            "name": "dpoints_geom",
+            "title": "Geometry column",
+            "description": "The column containing each demand point location.",
+            "helper": "The column containing each demand point location.",
+            "dataType": ["geometry", "geography"],
+            "type": "Column",
+            "parent": "dpoints_table"
+        },
+        {
+            "name": "demand_bool",
+            "title": "Assign demand to demand points",
+            "advanced": false,
+            "description": "Whether each demand point should have an associated demand value.",
+            "helper": "Whether each demand point should have an associated demand value.",
+            "type": "Boolean"
+        },
+        {
+            "name": "demand_col",
+            "title": "Customers demand column",
+            "advanced": false,
+            "description": "The column containing demand values for each demand point.",
+            "helper": "The column containing demand values for each demand point.",
+            "dataType": ["number"],
+            "type": "Column",
+            "parent": "dpoints_table",
+            "showIf": [
+                {"parameter": "demand_bool", "value": true}
+            ]
+        }
+    ],
+    "outputs": [
+        {
+            "name": "output_table",
+            "title": "Output table",
+            "description": "The table with the prepared demand points data.",
+            "helper": "The table with the prepared demand points data.",
+            "type": "Table"
+        }
+    ]
+}

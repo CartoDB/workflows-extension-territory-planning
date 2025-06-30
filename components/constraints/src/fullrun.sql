@@ -29,7 +29,7 @@ BEGIN
         INSERT INTO `%s` 
         VALUES (   
             'compatibility',
-            'Force facility-customer relationships',
+            'Force facility-demand point relationships',
             NULL
         )
     """,
@@ -54,12 +54,12 @@ BEGIN
             SET compatible_query = FORMAT("""
                 SELECT DISTINCT
                     CAST(%s AS STRING) AS facility_id,
-                    CAST(%s AS STRING) AS customer_id,
+                    CAST(%s AS STRING) AS dpoint_id,
                     1 AS compatibility
                 FROM `%s`
             """,
             compatible_facility_id,
-            compatible_customer_id,
+            compatible_dpoint_id,
             REPLACE(compatible_table, '`', '')
             );
         END IF;
@@ -68,12 +68,12 @@ BEGIN
             SET uncompatible_query = FORMAT("""
                 SELECT DISTINCT
                     CAST(%s AS STRING) AS facility_id,
-                    CAST(%s AS STRING) AS customer_id,
+                    CAST(%s AS STRING) AS dpoint_id,
                     0 AS compatibility
                 FROM `%s`
             """,
             uncompatible_facility_id,
-            uncompatible_customer_id,
+            uncompatible_dpoint_id,
             REPLACE(uncompatible_table, '`', '')
             );
         END IF;
@@ -83,7 +83,7 @@ BEGIN
             OPTIONS (expiration_timestamp = TIMESTAMP_ADD(CURRENT_TIMESTAMP(), INTERVAL 30 DAY)) 
             AS
                 %s
-                ORDER BY facility_id, customer_id
+                ORDER BY facility_id, dpoint_id
         """,
         compatibility_tablename,
         ARRAY_TO_STRING(
@@ -92,7 +92,7 @@ BEGIN
         );
 
         SET query = FORMAT("""
-            SELECT COUNT(*) != COUNT(DISTINCT CONCAT(facility_id, '-', customer_id))
+            SELECT COUNT(*) != COUNT(DISTINCT CONCAT(facility_id, '-', dpoint_id))
             FROM `%s`
         """, compatibility_tablename);
         EXECUTE IMMEDIATE query INTO flag;

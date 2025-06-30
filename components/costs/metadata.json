@@ -1,10 +1,10 @@
 {
     "name": "costs",
     "title": "Prepare Cost",
-    "description": "A component that prepares cost for Location Allocation",
+    "description": "A component that prepares cost for Location Allocation.",
     "externalReference": {
         "label": "Documentation",
-        "href": "https://docs.carto.com/carto-user-manual/workflows/components/territory-planning#compute-cost"
+        "href": "https://docs.carto.com/carto-user-manual/workflows/components/territory-planning#prepare-cost"
     },
     "version": "1.0.0",
     "icon": "component-default.svg",
@@ -13,23 +13,24 @@
         {
             "name": "costs_table",
             "title": "Costs",
-            "description": "",
+            "description": " The source table containing the cost of assigning each facility to each demand point (such as travel distace, travel time...).",
+            "helper": " The source table containing the cost of assigning each facility to each demand point (such as travel distace, travel time...).",
             "type": "Table"
         },
         {
             "name": "facilities_column",
             "title": "Facilities ID column",
-            "description": "",
-            "helper": "",
+            "description": "The column containing the facility IDs.",
+            "helper": "The column containing the facility IDs.",
             "dataType": ["number","string"],
             "type": "Column",
             "parent": "costs_table"
         },
         {
-            "name": "customers_column",
-            "title": "Customers ID column",
-            "description": "",
-            "helper": "",
+            "name": "dpoints_column",
+            "title": "Demand points ID column",
+            "description": "The column containing the demand point IDs.",
+            "helper": "The column containing the demand point IDs.",
             "dataType": ["number","string"],
             "type": "Column",
             "parent": "costs_table"
@@ -37,8 +38,8 @@
         {
             "name": "cost_column",
             "title": "Costs column",
-            "description": "",
-            "helper": "",
+            "description": "The column containing the cost of assigning each facility to each demand point.",
+            "helper": "The column containing the cost of assigning each facility to each demand point.",
             "dataType": ["number"],
             "type": "Column",
             "parent": "costs_table"
@@ -47,8 +48,8 @@
             "name": "transformation_bool",
             "title": "Apply transformation to cost",
             "advanced": true,
-            "description": "",
-            "helper": "",
+            "description": "Whether to apply a transformation to the cost",
+            "helper": "Whether to apply a transformation to the cost",
             "type": "Boolean",
             "default": false
         },
@@ -56,8 +57,8 @@
             "name": "transformation_function",
             "title": "Transformation",
             "advanced": true,
-            "description": "",
-            "helper": "",
+            "description": "The function to apply.",
+            "helper": "The function to apply.",
             "type": "Selection",
             "options": ["Linear", "Power", "Exponential"],
             "showIf": [
@@ -68,8 +69,8 @@
             "name": "transformation_parameter",
             "title": "Transformation parameter",
             "advanced": true,
-            "description": "",
-            "helper": "",
+            "description": "The parameter value to use.",
+            "helper": "The parameter value to use.",
             "type": "Number",
             "min": 1,
             "default": 1,
@@ -83,7 +84,8 @@
         {
             "name": "output_table",
             "title": "Output table",
-            "description": "The table with the computed costs",
+            "description": "The table with the prepared cost data.",
+            "helper": "The table with the prepared cost data.",
             "type": "Table"
         }
     ]

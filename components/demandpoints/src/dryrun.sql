@@ -1,6 +1,6 @@
 EXECUTE IMMEDIATE FORMAT('''
 CREATE TABLE IF NOT EXISTS `%s` (
-customer_id STRING,
+dpoint_id STRING,
 geom GEOGRAPHY,
 demand FLOAT64
 )

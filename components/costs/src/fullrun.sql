@@ -20,7 +20,7 @@ BEGIN
         FROM `%s`
     """, 
     facilities_column,
-    customers_column,
+    dpoints_column,
     REPLACE(costs_table, '`', ''));
     EXECUTE IMMEDIATE query INTO flag;
     IF flag THEN
@@ -33,15 +33,15 @@ BEGIN
         AS
             SELECT 
                 CAST(%s AS STRING) AS facility_id,
-                CAST(%s AS STRING) AS customer_id,
+                CAST(%s AS STRING) AS dpoint_id,
                 %s AS cost
             FROM `%s` 
-            ORDER BY facility_id, customer_id
+            ORDER BY facility_id, dpoint_id
 
     """,
     REPLACE(output_table, '`', ''),
     facilities_column,
-    customers_column,
+    dpoints_column,
     IF(
         transformation_bool,
         IF(

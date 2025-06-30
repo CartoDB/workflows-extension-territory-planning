@@ -380,9 +380,9 @@ class LocationAllocation:
                 'open_facilities': open_facilities,
                 'total_demand': total_demand,
                 'total_covered_demand': total_covered_demand,
-                'coverage_percentage': total_covered_demand / total_demand,
+                'coverage_percentage': (total_covered_demand / total_demand) * 100,
                 'total_opened_capacity': total_opened_capacity,
-                'capacity_utilization': (total_demand / total_opened_capacity) 
+                'capacity_utilization': (total_demand / total_opened_capacity) * 100 
             }
             stats = str({k: v for k, v in stats.items() if v is not np.nan})
             

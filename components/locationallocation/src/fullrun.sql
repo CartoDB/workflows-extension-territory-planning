@@ -10,11 +10,11 @@ DECLARE flag BOOL;
 -- 1. Check input params
 
 -- 2. Check input data
-All facilities-customers pairs are in costs
+All facilities-dpoints pairs are in costs
 
 -- 3. Run Location-Allocation. 
 Extract constraints data if compatibility_bool
-Remove competitors (always) and customers captured by competitors (if competitor_facilities_bool)
+Remove competitors (always) and dpoints captured by competitors (if competitor_facilities_bool)
 
 -- 4. Extract output 
 (what happens if it fails?)
@@ -40,48 +40,48 @@ BEGIN
         SELECT COUNTIF(
             COALESCE(t1.facility_id,'') != COALESCE(t2.facility_id,'') 
             OR
-            COALESCE(t1.customer_id,'') != COALESCE(t2.customer_id,'')
+            COALESCE(t1.dpoint_id,'') != COALESCE(t2.dpoint_id,'')
         ) != 0
         FROM `%s` t1
         FULL OUTER JOIN (
-            SELECT facility_id, customer_id
+            SELECT facility_id, dpoint_id
             FROM `%s` CROSS JOIN `%s`
         ) t2
-        ON t1.facility_id = t2.facility_id AND t1.customer_id = t2.customer_id
+        ON t1.facility_id = t2.facility_id AND t1.dpoint_id = t2.dpoint_id
     """,
     REPLACE(costs_table, '`', ''),
     REPLACE(facilities_table, '`', ''),
-    REPLACE(customers_table, '`', '')
+    REPLACE(dpoints_table, '`', '')
     );
     EXECUTE IMMEDIATE query INTO flag;
     IF flag THEN
-        RAISE USING MESSAGE = 'Missing costs detected. Please assign one cost for each facility-customer pair.';
+        RAISE USING MESSAGE = 'Missing costs detected. Please assign one cost for each facility-demand point pair.';
     END IF;
 
     -- 3. Run Location Allocation
     IF compatibility_bool THEN
 
         IF constraints_table IS NULL THEN
-            RAISE USING MESSAGE = 'Please connect a `Prepare Constraints data` component to force facility-customer relationships.';
+            RAISE USING MESSAGE = 'Please connect a `Prepare Constraints data` component to force facility-demand point relationships.';
         END IF;
 
         EXECUTE IMMEDIATE FORMAT('''SELECT table_name FROM `%s` WHERE constraint_id = "compatibility" ''', REPLACE(constraints_table, '`', ''))
         INTO c_compatibility_table;
 
         IF c_compatibility_table IS NULL THEN
-            RAISE USING MESSAGE = 'Please use a `Prepare Constraints data` component to prepare the necessary data to force facility-customer relationships.';
+            RAISE USING MESSAGE = 'Please use a `Prepare Constraints data` component to prepare the necessary data to force facility-demand point relationships.';
         END IF;
 
         SET c_compatibility_query = FORMAT('''
         c_compatibility AS (
             SELECT
                 ARRAY_AGG(CAST(c.facility_id AS STRING)) compatibility_facility_id,
-                ARRAY_AGG(CAST(c.customer_id AS STRING)) compatibility_customer_id,
+                ARRAY_AGG(CAST(c.dpoint_id AS STRING)) compatibility_dpoint_id,
                 ARRAY_AGG(CAST(c.compatibility AS INT64)) compatibility_type
             FROM `%s` c
             INNER JOIN facilities_comp f USING (facility_id)                     -- remove competitors
-            LEFT JOIN customers_comp d ON c.customer_id = d.customer_id 
-            WHERE d.customer_id IS NULL                                     -- remove customers captured by competitors
+            LEFT JOIN dpoints_comp d ON c.dpoint_id = d.dpoint_id 
+            WHERE d.dpoint_id IS NULL                                     -- remove dpoints captured by competitors
         ),
         ''',
         REPLACE(c_compatibility_table, '`', '')
@@ -93,9 +93,9 @@ BEGIN
     EXECUTE IMMEDIATE FORMAT('''
     CREATE OR REPLACE TABLE `%s` AS
     WITH 
-    customers_comp AS (
+    dpoints_comp AS (
         -- Customers captured by competitors
-        SELECT DISTINCT c.customer_id
+        SELECT DISTINCT c.dpoint_id
         FROM `%s` c
         JOIN `%s` f 
         ON c.facility_id = f.facility_id
@@ -122,30 +122,31 @@ BEGIN
             ARRAY_AGG(CAST(facility_cost_of_open AS FLOAT64)) facility_cost_of_open
         FROM facilities_comp
     ),
-    customers AS (
+    dpoints AS (
         SELECT
-            ARRAY_AGG(CAST(c.customer_id AS STRING)) customer_id,
-            ARRAY_AGG(CAST(%s AS FLOAT64)) customer_demand
+            ARRAY_AGG(CAST(c.dpoint_id AS STRING)) dpoint_id,
+            ARRAY_AGG(CAST(%s AS FLOAT64)) dpoint_demand
         FROM `%s` c
-        LEFT JOIN customers_comp d ON c.customer_id = d.customer_id 
-        WHERE d.customer_id IS NULL                                             -- remove customers captured by competitors
+        LEFT JOIN dpoints_comp d ON c.dpoint_id = d.dpoint_id 
+        WHERE d.dpoint_id IS NULL                                             -- remove dpoints captured by competitors
     ),
     costs AS (
         SELECT 
             ARRAY_AGG(CAST(c.facility_id AS STRING)) cost_facility_id,
-            ARRAY_AGG(CAST(c.customer_id AS STRING)) cost_customer_id,
+            ARRAY_AGG(CAST(c.dpoint_id AS STRING)) cost_dpoint_id,
             ARRAY_AGG(CAST(c.cost AS FLOAT64)) cost
         FROM `%s` c
         INNER JOIN facilities_comp f USING (facility_id)                        -- remove competitors
-        LEFT JOIN customers_comp d ON c.customer_id = d.customer_id 
-        WHERE d.customer_id IS NULL                                             -- remove customers captured by competitors
+        LEFT JOIN dpoints_comp d ON c.dpoint_id = d.dpoint_id 
+        WHERE d.dpoint_id IS NULL                                             -- remove dpoints captured by competitors
     ),
     %s
     result AS (
     SELECT  *
-    FROM facilities CROSS JOIN customers CROSS JOIN costs %s
+    FROM facilities CROSS JOIN dpoints CROSS JOIN costs %s
     )
-    SELECT s.* FROM result, UNNEST(@@workflows_temp@@.`LOCATION_ALLOCATION`
+    SELECT s.facility_id, s.customer_id as dpoint_id, s.demand, s.objective_value, s.gap, s.solving_time, s.termination_reason, s.stats
+    FROM result, UNNEST(@@workflows_temp@@.`LOCATION_ALLOCATION`
     (    
         '%s',
         facility_id,
@@ -154,10 +155,10 @@ BEGIN
         facility_min_capacity,
         facility_max_capacity,
         facility_cost_of_open,
-        customer_id,
-        customer_demand,
+        dpoint_id,
+        dpoint_demand,
         cost_facility_id,
-        cost_customer_id,
+        cost_dpoint_id,
         cost,
         %s,
         %s,
@@ -187,9 +188,9 @@ BEGIN
     IF(facilities_max_capacity_bool, 'max_capacity', 'COALESCE(max_capacity,0)'),
     IF(costopen_facilities_bool, 'cost_of_open', 'COALESCE(cost_of_open,0)'),
     REPLACE(facilities_table, '`', ''),
-    -- customers
+    -- dpoints
     IF(demand_bool, 'c.demand', 'COALESCE(c.demand,0)'),
-    REPLACE(customers_table, '`', ''),
+    REPLACE(dpoints_table, '`', ''),
     -- costs
     REPLACE(costs_table, '`', ''),
     -- constraints
@@ -198,7 +199,7 @@ BEGIN
     -- location allocation
     opt_strategy,
     IF(compatibility_bool, 'compatibility_facility_id', 'NULL'),
-    IF(compatibility_bool, 'compatibility_customer_id', 'NULL'),
+    IF(compatibility_bool, 'compatibility_dpoint_id', 'NULL'),
     IF(compatibility_bool, 'compatibility_type', 'NULL'),
     required_facilities_bool, 
     IF(limit_facilities_bool, CAST(max_facilities AS STRING), 'NULL'), 
@@ -218,17 +219,17 @@ BEGIN
     CREATE TABLE IF NOT EXISTS `%s` 
     OPTIONS (expiration_timestamp = TIMESTAMP_ADD(CURRENT_TIMESTAMP(), INTERVAL 30 DAY)) 
     AS
-        SELECT facility_id, customer_id, demand, ST_MAKELINE(f.geom, c.geom) geom
+        SELECT facility_id, dpoint_id, demand, ST_MAKELINE(f.geom, c.geom) geom
         FROM `%s`
         JOIN  (SELECT facility_id, geom FROM `%s`) f
         USING (facility_id)
-        JOIN   (SELECT customer_id, geom FROM `%s`) c
-        USING (customer_id)
+        JOIN   (SELECT dpoint_id, geom FROM `%s`) c
+        USING (dpoint_id)
     ''',
     REPLACE(output_table, '`', ''),
     output_table_temp,
     REPLACE(facilities_table, '`', ''),
-    REPLACE(customers_table, '`', '')
+    REPLACE(dpoints_table, '`', '')
     );
 
     EXECUTE IMMEDIATE FORMAT('''

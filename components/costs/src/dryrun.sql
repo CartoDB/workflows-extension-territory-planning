@@ -1,7 +1,7 @@
 EXECUTE IMMEDIATE FORMAT('''
 CREATE TABLE IF NOT EXISTS `%s` (
 facility_id STRING,
-customer_id STRING,
+dpoint_id STRING,
 cost FLOAT64
 )
 OPTIONS (

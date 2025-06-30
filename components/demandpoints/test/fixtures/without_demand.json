@@ -1,54 +1,54 @@
 {
   "output_table": [
     {
-      "customer_id": "0",
+      "dpoint_id": "0",
       "geom": "POINT(0.115809810525299 0.951964117124012)",
-      "demand": 5
+      "demand": null
     },
     {
-      "customer_id": "1",
+      "dpoint_id": "1",
       "geom": "POINT(0.368446640843333 0.154813056744797)",
-      "demand": 5
+      "demand": null
     },
     {
-      "customer_id": "10",
+      "dpoint_id": "10",
       "geom": "POINT(0.762792646120434 0.580765709197664)",
-      "demand": 7
+      "demand": null
     },
     {
-      "customer_id": "11",
+      "dpoint_id": "11",
       "geom": "POINT(0.729757376543632 0.122477870882474)",
-      "demand": 3
+      "demand": null
     },
     {
-      "customer_id": "12",
+      "dpoint_id": "12",
       "geom": "POINT(0.47632538943695 0.827018085032771)",
-      "demand": 10
+      "demand": null
     },
     {
-      "customer_id": "13",
+      "dpoint_id": "13",
       "geom": "POINT(0.201079423287743 0.923167445854478)",
-      "demand": 4
+      "demand": null
     },
     {
-      "customer_id": "14",
+      "dpoint_id": "14",
       "geom": "POINT(0.887559715925329 0.409601690560485)",
-      "demand": 7
+      "demand": null
     },
     {
-      "customer_id": "15",
+      "dpoint_id": "15",
       "geom": "POINT(0.365220546383473 0.45132162795543)",
-      "demand": 9
+      "demand": null
     },
     {
-      "customer_id": "16",
+      "dpoint_id": "16",
       "geom": "POINT(0.38577768443489 0.994842726621423)",
-      "demand": 10
+      "demand": null
     },
     {
-      "customer_id": "17",
+      "dpoint_id": "17",
       "geom": "POINT(0.386593276751821 0.0268356638708758)",
-      "demand": 10
+      "demand": null
     }
   ]
 }

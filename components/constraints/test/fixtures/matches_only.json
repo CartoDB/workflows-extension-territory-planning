@@ -1,9 +1,0 @@
-{
-  "output_table": [
-    {
-      "constraint_id": "compatibility",
-      "constraint_description": "Force facility-customer relationships",
-      "table_name": "@@BQ_TEST_PROJECT@@.@@BQ_TEST_DATASET@@._table_a54cb798d11b4693b4cb41b108d775a8_compatibility"
-    }
-  ]
-}

@@ -2,9 +2,9 @@
     {
         "id": "without_demand",
         "inputs": {
-            "customers_table": "customers",
-            "customers_id": "customer_name",
-            "customers_geom": "customer_geom",
+            "dpoints_table": "customers",
+            "dpoints_id": "customer_name",
+            "dpoints_geom": "customer_geom",
             "demand_bool": false,
             "demand_col": null
         }
@@ -12,9 +12,9 @@
     {
         "id": "with_demand",
         "inputs": {
-            "customers_table": "customers",
-            "customers_id": "customer_name",
-            "customers_geom": "customer_geom",
+            "dpoints_table": "customers",
+            "dpoints_id": "customer_name",
+            "dpoints_geom": "customer_geom",
             "demand_bool": true,
             "demand_col": "customer_demand"
         }

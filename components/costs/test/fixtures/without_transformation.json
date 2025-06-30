@@ -2,352 +2,352 @@
   "output_table": [
     {
       "facility_id": "0",
-      "customer_id": "0",
+      "dpoint_id": "0",
       "cost": 29.662546424
     },
     {
       "facility_id": "0",
-      "customer_id": "1",
+      "dpoint_id": "1",
       "cost": 63.642483326
     },
     {
       "facility_id": "0",
-      "customer_id": "10",
+      "dpoint_id": "10",
       "cost": 67.5690893226
     },
     {
       "facility_id": "0",
-      "customer_id": "11",
+      "dpoint_id": "11",
       "cost": 89.0120914881
     },
     {
       "facility_id": "0",
-      "customer_id": "12",
+      "dpoint_id": "12",
       "cost": 37.8350716553
     },
     {
       "facility_id": "0",
-      "customer_id": "13",
+      "dpoint_id": "13",
       "cost": 26.262040989
     },
     {
       "facility_id": "0",
-      "customer_id": "14",
+      "dpoint_id": "14",
       "cost": 86.1750563755
     },
     {
       "facility_id": "0",
-      "customer_id": "15",
+      "dpoint_id": "15",
       "cost": 34.6244877013
     },
     {
       "facility_id": "0",
-      "customer_id": "16",
+      "dpoint_id": "16",
       "cost": 41.8757986755
     },
     {
       "facility_id": "0",
-      "customer_id": "17",
+      "dpoint_id": "17",
       "cost": 77.7254043115
     },
     {
       "facility_id": "1",
-      "customer_id": "0",
+      "dpoint_id": "0",
       "cost": 78.0835759989
     },
     {
       "facility_id": "1",
-      "customer_id": "1",
+      "dpoint_id": "1",
       "cost": 46.6768672582
     },
     {
       "facility_id": "1",
-      "customer_id": "10",
+      "dpoint_id": "10",
       "cost": 18.1576509521
     },
     {
       "facility_id": "1",
-      "customer_id": "11",
+      "dpoint_id": "11",
       "cost": 41.0305968102
     },
     {
       "facility_id": "1",
-      "customer_id": "12",
+      "dpoint_id": "12",
       "cost": 42.5197229176
     },
     {
       "facility_id": "1",
-      "customer_id": "13",
+      "dpoint_id": "13",
       "cost": 69.0353561533
     },
     {
       "facility_id": "1",
-      "customer_id": "14",
+      "dpoint_id": "14",
       "cost": 29.1264687841
     },
     {
       "facility_id": "1",
-      "customer_id": "15",
+      "dpoint_id": "15",
       "cost": 30.1557723898
     },
     {
       "facility_id": "1",
-      "customer_id": "16",
+      "dpoint_id": "16",
       "cost": 63.6917066785
     },
     {
       "facility_id": "1",
-      "customer_id": "17",
+      "dpoint_id": "17",
       "cost": 57.3757891065
     },
     {
       "facility_id": "100",
-      "customer_id": "0",
+      "dpoint_id": "0",
       "cost": 68.637249886
     },
     {
       "facility_id": "100",
-      "customer_id": "1",
+      "dpoint_id": "1",
       "cost": 60.3444564081
     },
     {
       "facility_id": "100",
-      "customer_id": "10",
+      "dpoint_id": "10",
       "cost": 14.5725287598
     },
     {
       "facility_id": "100",
-      "customer_id": "11",
+      "dpoint_id": "11",
       "cost": 56.7747109608
     },
     {
       "facility_id": "100",
-      "customer_id": "12",
+      "dpoint_id": "12",
       "cost": 28.868940697
     },
     {
       "facility_id": "100",
-      "customer_id": "13",
+      "dpoint_id": "13",
       "cost": 58.9449760765
     },
     {
       "facility_id": "100",
-      "customer_id": "14",
+      "dpoint_id": "14",
       "cost": 36.5366728164
     },
     {
       "facility_id": "100",
-      "customer_id": "15",
+      "dpoint_id": "15",
       "cost": 36.0913829369
     },
     {
       "facility_id": "100",
-      "customer_id": "16",
+      "dpoint_id": "16",
       "cost": 49.8645850411
     },
     {
       "facility_id": "100",
-      "customer_id": "17",
+      "dpoint_id": "17",
       "cost": 72.2114017737
     },
     {
       "facility_id": "101",
-      "customer_id": "0",
+      "dpoint_id": "0",
       "cost": 82.9450860065
     },
     {
       "facility_id": "101",
-      "customer_id": "1",
+      "dpoint_id": "1",
       "cost": 12.8741373868
     },
     {
       "facility_id": "101",
-      "customer_id": "10",
+      "dpoint_id": "10",
       "cost": 67.2474048106
     },
     {
       "facility_id": "101",
-      "customer_id": "11",
+      "dpoint_id": "11",
       "cost": 51.7890849365
     },
     {
       "facility_id": "101",
-      "customer_id": "12",
+      "dpoint_id": "12",
       "cost": 70.7728335565
     },
     {
       "facility_id": "101",
-      "customer_id": "13",
+      "dpoint_id": "13",
       "cost": 78.2648727447
     },
     {
       "facility_id": "101",
-      "customer_id": "14",
+      "dpoint_id": "14",
       "cost": 71.1929448569
     },
     {
       "facility_id": "101",
-      "customer_id": "15",
+      "dpoint_id": "15",
       "cost": 27.2753997201
     },
     {
       "facility_id": "101",
-      "customer_id": "16",
+      "dpoint_id": "16",
       "cost": 86.680811175
     },
     {
       "facility_id": "101",
-      "customer_id": "17",
+      "dpoint_id": "17",
       "cost": 25.1137564302
     },
     {
       "facility_id": "2",
-      "customer_id": "0",
+      "dpoint_id": "0",
       "cost": 20.9285919316
     },
     {
       "facility_id": "2",
-      "customer_id": "1",
+      "dpoint_id": "1",
       "cost": 72.9196170599
     },
     {
       "facility_id": "2",
-      "customer_id": "10",
+      "dpoint_id": "10",
       "cost": 65.1997028749
     },
     {
       "facility_id": "2",
-      "customer_id": "11",
+      "dpoint_id": "11",
       "cost": 93.8937409947
     },
     {
       "facility_id": "2",
-      "customer_id": "12",
+      "dpoint_id": "12",
       "cost": 29.1938729739
     },
     {
       "facility_id": "2",
-      "customer_id": "13",
+      "dpoint_id": "13",
       "cost": 14.6094240937
     },
     {
       "facility_id": "2",
-      "customer_id": "14",
+      "dpoint_id": "14",
       "cost": 85.9614456258
     },
     {
       "facility_id": "2",
-      "customer_id": "15",
+      "dpoint_id": "15",
       "cost": 41.419764383
     },
     {
       "facility_id": "2",
-      "customer_id": "16",
+      "dpoint_id": "16",
       "cost": 29.3565970356
     },
     {
       "facility_id": "2",
-      "customer_id": "17",
+      "dpoint_id": "17",
       "cost": 87.2397221363
     },
     {
       "facility_id": "3",
-      "customer_id": "0",
+      "dpoint_id": "0",
       "cost": 91.1536849789
     },
     {
       "facility_id": "3",
-      "customer_id": "1",
+      "dpoint_id": "1",
       "cost": 62.9977477333
     },
     {
       "facility_id": "3",
-      "customer_id": "10",
+      "dpoint_id": "10",
       "cost": 9.0993686036
     },
     {
       "facility_id": "3",
-      "customer_id": "11",
+      "dpoint_id": "11",
       "cost": 44.224634275
     },
     {
       "facility_id": "3",
-      "customer_id": "12",
+      "dpoint_id": "12",
       "cost": 50.8157088037
     },
     {
       "facility_id": "3",
-      "customer_id": "13",
+      "dpoint_id": "13",
       "cost": 81.4689169758
     },
     {
       "facility_id": "3",
-      "customer_id": "14",
+      "dpoint_id": "14",
       "cost": 14.4688705789
     },
     {
       "facility_id": "3",
-      "customer_id": "15",
+      "dpoint_id": "15",
       "cost": 49.6842066051
     },
     {
       "facility_id": "3",
-      "customer_id": "16",
+      "dpoint_id": "16",
       "cost": 71.2702066711
     },
     {
       "facility_id": "3",
-      "customer_id": "17",
+      "dpoint_id": "17",
       "cost": 71.4841127602
     },
     {
       "facility_id": "4",
-      "customer_id": "0",
+      "dpoint_id": "0",
       "cost": 90.6113976629
     },
     {
       "facility_id": "4",
-      "customer_id": "1",
+      "dpoint_id": "1",
       "cost": 17.6761968217
     },
     {
       "facility_id": "4",
-      "customer_id": "10",
+      "dpoint_id": "10",
       "cost": 47.8571398877
     },
     {
       "facility_id": "4",
-      "customer_id": "11",
+      "dpoint_id": "11",
       "cost": 27.9932691018
     },
     {
       "facility_id": "4",
-      "customer_id": "12",
+      "dpoint_id": "12",
       "cost": 65.7898052649
     },
     {
       "facility_id": "4",
-      "customer_id": "13",
+      "dpoint_id": "13",
       "cost": 83.5466707044
     },
     {
       "facility_id": "4",
-      "customer_id": "14",
+      "dpoint_id": "14",
       "cost": 46.7020458056
     },
     {
       "facility_id": "4",
-      "customer_id": "15",
+      "dpoint_id": "15",
       "cost": 28.5449402706
     },
     {
       "facility_id": "4",
-      "customer_id": "16",
+      "dpoint_id": "16",
       "cost": 85.4097764465
     },
     {
       "facility_id": "4",
-      "customer_id": "17",
+      "dpoint_id": "17",
       "cost": 26.7361908343
     }
   ]
