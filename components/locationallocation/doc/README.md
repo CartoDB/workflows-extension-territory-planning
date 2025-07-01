@@ -2,7 +2,7 @@
 
 Performs Location Allocation optimization, enabling users to determine the best locations for facilities (e.g., warehouses, stores, hospitals, service centers) and assign demand points to those facilities. The goal is to minimize total/maximum cost or maximize coverage, while respecting a variety of customizable constraints.
 
-This component uses Google's OR-Tools under the hood for solving the optimization problem.
+This component uses [Google's OR-Tools](https://developers.google.com/optimization) under the hood for solving the optimization problem.
 
 ## Inputs
 - **Facilities input table**: A table with facilities data, as produced by the [Prepare Facilities](../../facilities/doc/README.md#outputs).
