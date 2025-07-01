@@ -379,10 +379,10 @@ class LocationAllocation:
             stats = {
                 'open_facilities': open_facilities,
                 'total_demand': total_demand,
-                'total_covered_demand': total_covered_demand,
-                'coverage_percentage': (total_covered_demand / total_demand) * 100,
+                'total_covered_demand': np.round(total_covered_demand, 3),
+                'coverage_percentage': np.round((total_covered_demand / total_demand) * 100, 3),
                 'total_opened_capacity': total_opened_capacity,
-                'capacity_utilization': (total_demand / total_opened_capacity) * 100 
+                'capacity_utilization': np.round((total_demand / total_opened_capacity) * 100, 3)
             }
             stats = str({k: v for k, v in stats.items() if k != 'open_facilities' and not np.isnan(v)})
             

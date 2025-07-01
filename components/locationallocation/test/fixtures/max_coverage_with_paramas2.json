@@ -53,7 +53,7 @@
     {
       "objective_value": 56.0,
       "gap": 0.0,
-      "solving_time": 0.001621,
+      "solving_time": 0.001352,
       "termination_reason": "OPTIMAL",
       "stats": "{'total_demand': 70.0, 'total_covered_demand': 56.0, 'coverage_percentage': 80.0, 'total_opened_capacity': 100.0, 'capacity_utilization': 70.0}"
     }

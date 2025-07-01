@@ -65,7 +65,7 @@
     {
       "objective_value": 218.6073222456999,
       "gap": 0.0,
-      "solving_time": 0.033231,
+      "solving_time": 0.032882,
       "termination_reason": "OPTIMAL",
       "stats": "{'total_demand': 10, 'total_covered_demand': 10, 'coverage_percentage': 100.0}"
     }
