@@ -8,6 +8,12 @@
     },
     {
       "facility_id": "2",
+      "dpoint_id": "12",
+      "demand": 10.0,
+      "geom": "LINESTRING(0.216014347893903 0.792633358200246, 0.47632538943695 0.827018085032771)"
+    },
+    {
+      "facility_id": "2",
       "dpoint_id": "13",
       "demand": 4.0,
       "geom": "LINESTRING(0.216014347893903 0.792633358200246, 0.201079423287743 0.923167445854478)"
@@ -19,16 +25,10 @@
       "geom": "LINESTRING(0.216014347893903 0.792633358200246, 0.38577768443489 0.994842726621423)"
     },
     {
-      "facility_id": "2",
-      "dpoint_id": "12",
-      "demand": 10.0,
-      "geom": "LINESTRING(0.216014347893903 0.792633358200246, 0.47632538943695 0.827018085032771)"
-    },
-    {
       "facility_id": "4",
-      "dpoint_id": "15",
-      "demand": 9.0,
-      "geom": "LINESTRING(0.505084153470012 0.236056363496211, 0.365220546383473 0.45132162795543)"
+      "dpoint_id": "1",
+      "demand": 5.0,
+      "geom": "LINESTRING(0.505084153470012 0.236056363496211, 0.368446640843333 0.154813056744797)"
     },
     {
       "facility_id": "4",
@@ -38,24 +38,24 @@
     },
     {
       "facility_id": "4",
-      "dpoint_id": "17",
-      "demand": 10.0,
-      "geom": "LINESTRING(0.505084153470012 0.236056363496211, 0.386593276751821 0.0268356638708758)"
+      "dpoint_id": "15",
+      "demand": 9.0,
+      "geom": "LINESTRING(0.505084153470012 0.236056363496211, 0.365220546383473 0.45132162795543)"
     },
     {
       "facility_id": "4",
-      "dpoint_id": "1",
-      "demand": 5.0,
-      "geom": "LINESTRING(0.505084153470012 0.236056363496211, 0.368446640843333 0.154813056744797)"
+      "dpoint_id": "17",
+      "demand": 10.0,
+      "geom": "LINESTRING(0.505084153470012 0.236056363496211, 0.386593276751821 0.0268356638708758)"
     }
   ],
   "metrics_table": [
     {
       "objective_value": 56.0,
       "gap": 0.0,
-      "solving_time": 0.001707,
+      "solving_time": 0.001621,
       "termination_reason": "OPTIMAL",
-      "stats": "{'open_facilities': ['2', '4'], 'total_demand': 70.0, 'total_covered_demand': 56.0, 'coverage_percentage': 0.8, 'total_opened_capacity': 100.0, 'capacity_utilization': 0.7}"
+      "stats": "{'total_demand': 70.0, 'total_covered_demand': 56.0, 'coverage_percentage': 80.0, 'total_opened_capacity': 100.0, 'capacity_utilization': 70.0}"
     }
   ]
 }

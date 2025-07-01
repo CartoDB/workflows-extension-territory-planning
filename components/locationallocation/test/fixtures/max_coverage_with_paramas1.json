@@ -2,15 +2,15 @@
   "output_table": [
     {
       "facility_id": "1",
-      "dpoint_id": "14",
-      "demand": 1.0,
-      "geom": "LINESTRING(0.634999940404721 0.479100472057451, 0.887559715925329 0.409601690560485)"
-    },
-    {
-      "facility_id": "1",
       "dpoint_id": "10",
       "demand": 1.0,
       "geom": "LINESTRING(0.634999940404721 0.479100472057451, 0.762792646120434 0.580765709197664)"
+    },
+    {
+      "facility_id": "1",
+      "dpoint_id": "14",
+      "demand": 1.0,
+      "geom": "LINESTRING(0.634999940404721 0.479100472057451, 0.887559715925329 0.409601690560485)"
     },
     {
       "facility_id": "1",
@@ -20,9 +20,9 @@
     },
     {
       "facility_id": "2",
-      "dpoint_id": "13",
+      "dpoint_id": "0",
       "demand": 1.0,
-      "geom": "LINESTRING(0.216014347893903 0.792633358200246, 0.201079423287743 0.923167445854478)"
+      "geom": "LINESTRING(0.216014347893903 0.792633358200246, 0.115809810525299 0.951964117124012)"
     },
     {
       "facility_id": "2",
@@ -32,9 +32,9 @@
     },
     {
       "facility_id": "2",
-      "dpoint_id": "0",
+      "dpoint_id": "13",
       "demand": 1.0,
-      "geom": "LINESTRING(0.216014347893903 0.792633358200246, 0.115809810525299 0.951964117124012)"
+      "geom": "LINESTRING(0.216014347893903 0.792633358200246, 0.201079423287743 0.923167445854478)"
     },
     {
       "facility_id": "2",
@@ -47,9 +47,9 @@
     {
       "objective_value": 7.0,
       "gap": 0.0,
-      "solving_time": 0.000571,
+      "solving_time": 0.000608,
       "termination_reason": "OPTIMAL",
-      "stats": "{'open_facilities': ['1', '2'], 'total_demand': 10, 'total_covered_demand': 7.0, 'coverage_percentage': 0.7, 'total_opened_capacity': nan, 'capacity_utilization': nan}"
+      "stats": "{'total_demand': 10, 'total_covered_demand': 7.0, 'coverage_percentage': 70.0}"
     }
   ]
 }

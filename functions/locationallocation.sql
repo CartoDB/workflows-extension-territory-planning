@@ -384,7 +384,7 @@ class LocationAllocation:
                 'total_opened_capacity': total_opened_capacity,
                 'capacity_utilization': (total_demand / total_opened_capacity) * 100 
             }
-            stats = str({k: v for k, v in stats.items() if v is not np.nan})
+            stats = str({k: v for k, v in stats.items() if k != 'open_facilities' and not np.isnan(v)})
             
             allocations.loc[0,'objective_value'] = result.objective_value()
             allocations.loc[0,'gap'] = np.abs(result.dual_bound() - result.objective_value()) / result.objective_value()
