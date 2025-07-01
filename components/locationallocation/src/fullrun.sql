@@ -31,8 +31,7 @@ BEGIN
 
     -- 1. Check input params
     -- No checks needed, data was checked using 'Prepare x' components. 
-    -- If there are NULLs in input columns, an error will occurr when calling LOCATION_ALLOCATION
-    -- and we avoid doing intensive checks
+    -- If there are NULLs in input columns, an error will occurr when calling LOCATION_ALLOCATION avoiding doing intensive checks
 
     SET opt_strategy =  CASE optimization_strategy
         WHEN 'Minimize maximum cost' THEN 'minimize_max_cost'
@@ -78,16 +77,16 @@ BEGIN
         END IF;
 
         SET c_compatibility_query = FORMAT('''
-        c_compatibility AS (
+        , c_compatibility AS (
             SELECT
                 ARRAY_AGG(CAST(c.facility_id AS STRING)) compatibility_facility_id,
                 ARRAY_AGG(CAST(c.dpoint_id AS STRING)) compatibility_dpoint_id,
                 ARRAY_AGG(CAST(c.compatibility AS INT64)) compatibility_type
             FROM `%s` c
-            INNER JOIN facilities_comp f USING (facility_id)                     -- remove competitors
+            INNER JOIN facilities_comp f USING (facility_id)              -- remove competitors
             LEFT JOIN dpoints_comp d ON c.dpoint_id = d.dpoint_id 
             WHERE d.dpoint_id IS NULL                                     -- remove dpoints captured by competitors
-        ),
+        )
         ''',
         REPLACE(c_compatibility_table, '`', '')
         );
@@ -143,17 +142,41 @@ BEGIN
             ARRAY_AGG(CAST(c.dpoint_id AS STRING)) cost_dpoint_id,
             ARRAY_AGG(CAST(c.cost AS FLOAT64)) cost
         FROM `%s` c
-        INNER JOIN facilities_comp f USING (facility_id)                        -- remove competitors
+        INNER JOIN facilities_comp f USING (facility_id)                      -- remove competitors
         LEFT JOIN dpoints_comp d ON c.dpoint_id = d.dpoint_id 
         WHERE d.dpoint_id IS NULL                                             -- remove dpoints captured by competitors
-    ),
+    )
     %s
-    result AS (
     SELECT  *
     FROM facilities CROSS JOIN dpoints CROSS JOIN costs %s
-    )
+    ''',
+    output_table_temp,
+    -- competitors
+    REPLACE(costs_table, '`', ''),
+    REPLACE(facilities_table, '`', ''),
+    IF(competitor_facilities_bool, competitor_trade_area, -1),
+    -- facilities
+    IF(limit_facilities_group_bool, 'group_id', 'COALESCE(group_id,"0")'),
+    IF(facilities_min_capacity_bool, 'min_capacity', 'COALESCE(min_capacity,0)'),
+    IF(facilities_max_capacity_bool, 'max_capacity', 'COALESCE(max_capacity,0)'),
+    IF(costopen_facilities_bool, 'cost_of_open', 'COALESCE(cost_of_open,0)'),
+    REPLACE(facilities_table, '`', ''),
+    -- dpoints
+    IF(demand_bool, 'c.demand', 'COALESCE(c.demand,0)'),
+    REPLACE(dpoints_table, '`', ''),
+    -- costs
+    REPLACE(costs_table, '`', ''),
+    -- constraints
+    c_compatibility_query,
+    c_compatibility_join
+    );
+
+    EXECUTE IMMEDIATE FORMAT('''
+    CREATE OR REPLACE TABLE `%s` 
+    OPTIONS (expiration_timestamp = TIMESTAMP_ADD(CURRENT_TIMESTAMP(), INTERVAL 30 DAY))
+    AS
     SELECT s.facility_id, s.customer_id as dpoint_id, s.demand, s.objective_value, s.gap, s.solving_time, s.termination_reason, s.stats
-    FROM result, UNNEST(@@workflows_temp@@.`LOCATION_ALLOCATION`
+    FROM `%s`, UNNEST(@@workflows_temp@@.`LOCATION_ALLOCATION`
     (    
         '%s',
         facility_id,
@@ -185,25 +208,7 @@ BEGIN
     )) s
     ''',
     output_table_temp,
-    -- competitors
-    REPLACE(costs_table, '`', ''),
-    REPLACE(facilities_table, '`', ''),
-    IF(competitor_facilities_bool, competitor_trade_area, -1),
-    -- facilities
-    IF(limit_facilities_group_bool, 'group_id', 'COALESCE(group_id,"0")'),
-    IF(facilities_min_capacity_bool, 'min_capacity', 'COALESCE(min_capacity,0)'),
-    IF(facilities_max_capacity_bool, 'max_capacity', 'COALESCE(max_capacity,0)'),
-    IF(costopen_facilities_bool, 'cost_of_open', 'COALESCE(cost_of_open,0)'),
-    REPLACE(facilities_table, '`', ''),
-    -- dpoints
-    IF(demand_bool, 'c.demand', 'COALESCE(c.demand,0)'),
-    REPLACE(dpoints_table, '`', ''),
-    -- costs
-    REPLACE(costs_table, '`', ''),
-    -- constraints
-    c_compatibility_query,
-    c_compatibility_join,
-    -- location allocation
+    output_table_temp,
     opt_strategy,
     IF(compatibility_bool, 'compatibility_facility_id', 'NULL'),
     IF(compatibility_bool, 'compatibility_dpoint_id', 'NULL'),
@@ -231,6 +236,7 @@ BEGIN
         USING (facility_id)
         JOIN   (SELECT dpoint_id, geom FROM `%s`) c
         USING (dpoint_id)
+        ORDER BY facility_id, dpoint_id
     ''',
     create_output_query,
     output_table_temp,
