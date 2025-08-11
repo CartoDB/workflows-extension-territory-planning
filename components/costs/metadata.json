@@ -7,7 +7,7 @@
         "href": "https://docs.carto.com/carto-user-manual/workflows/components/territory-planning#prepare-cost"
     },
     "version": "1.0.0",
-    "icon": "component-default.svg",
+    "icon": "prepare-cost.svg",
     "cartoEnvVars": ["tempStoragePath"],
     "inputs": [
         {

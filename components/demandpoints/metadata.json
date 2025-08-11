@@ -7,7 +7,7 @@
         "href": "https://docs.carto.com/carto-user-manual/workflows/components/territory-planning#prepare-demand-points"
     },
     "version": "1.0.0",
-    "icon": "component-default.svg",
+    "icon": "prepare-demand-points.svg",
     "cartoEnvVars": ["tempStoragePath"],
     "inputs": [
         {

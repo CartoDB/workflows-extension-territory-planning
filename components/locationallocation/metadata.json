@@ -7,7 +7,7 @@
         "href": "https://docs.carto.com/carto-user-manual/workflows/components/territory-planning#location-allocation"
     },
     "version": "1.0.0",
-    "icon": "component-default.svg",
+    "icon": "location-allocation.svg",
     "cartoEnvVars": ["tempStoragePath"],
     "inputs": [
         {

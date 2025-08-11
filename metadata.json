@@ -3,7 +3,7 @@
     "title": "Territory Planning",
     "industry": "TBD",
     "description": "An extension package for optimizing and managing territories",
-    "icon": "extension-default.svg",
+    "icon": "territory-planning_extension.svg",
     "version": "1.0.0",
     "lastUpdate": "2025-06-30",
     "provider": "bigquery",

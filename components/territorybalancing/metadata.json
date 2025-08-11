@@ -7,7 +7,7 @@
         "href": "https://docs.carto.com/carto-user-manual/workflows/components/territory-planning#territory-balancing"
     },
     "version": "1.0.0",
-    "icon": "component-default.svg",
+    "icon": "territory-balancing.svg",
     "cartoEnvVars": ["tempStoragePath"],
     "inputs": [
         {

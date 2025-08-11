@@ -7,7 +7,7 @@
         "href": "https://docs.carto.com/carto-user-manual/workflows/components/territory-planning#prepare-facilities"
     },
     "version": "1.0.0",
-    "icon": "component-default.svg",
+    "icon": "prepare-facilities.svg",
     "cartoEnvVars": ["tempStoragePath"],
     "inputs": [
         {
