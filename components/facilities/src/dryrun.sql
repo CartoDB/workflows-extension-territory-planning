@@ -4,7 +4,7 @@ facility_id STRING,
 geom GEOGRAPHY,
 facility_type INT64,
 group_id STRING,
-min_capacity FLOAT64,
+min_usage FLOAT64,
 max_capacity FLOAT64,
 cost_of_open FLOAT64
 )

@@ -1,10 +1,10 @@
 {
     "name": "costs",
-    "title": "Prepare Cost",
+    "title": "Cost Matrix Preparation",
     "description": "A component that prepares cost for Location Allocation.",
     "externalReference": {
         "label": "Documentation",
-        "href": "https://docs.carto.com/carto-user-manual/workflows/components/territory-planning#prepare-cost"
+        "href": "https://docs.carto.com/carto-user-manual/workflows/components/territory-planning#cost-matrix-preparation"
     },
     "version": "1.0.0",
     "icon": "prepare-cost.svg",
@@ -47,7 +47,6 @@
         {
             "name": "transformation_bool",
             "title": "Apply transformation to cost",
-            "advanced": true,
             "description": "Whether to apply a transformation to the cost",
             "helper": "Whether to apply a transformation to the cost",
             "type": "Boolean",
@@ -55,12 +54,11 @@
         },
         {
             "name": "transformation_function",
-            "title": "Transformation",
-            "advanced": true,
+            "title": "Transformation function",
             "description": "The function to apply.",
             "helper": "The function to apply.",
             "type": "Selection",
-            "options": ["Linear", "Power", "Exponential"],
+            "options": ["Power", "Exponential"],
             "showIf": [
                 {"parameter": "transformation_bool", "value": true}
             ]
@@ -68,15 +66,13 @@
         {
             "name": "transformation_parameter",
             "title": "Transformation parameter",
-            "advanced": true,
             "description": "The parameter value to use.",
             "helper": "The parameter value to use.",
             "type": "Number",
             "min": 1,
             "default": 1,
             "showIf": [
-                {"parameter": "transformation_bool", "value": true},
-                {"parameter": "transformation_function", "value": ["Power", "Exponential"]}
+                {"parameter": "transformation_bool", "value": true}
             ]
         }
     ],
@@ -84,8 +80,8 @@
         {
             "name": "output_table",
             "title": "Output table",
-            "description": "The table with the prepared cost data.",
-            "helper": "The table with the prepared cost data.",
+            "description": "The table with the prepared costs data.",
+            "helper": "The table with the prepared costs data.",
             "type": "Table"
         }
     ]

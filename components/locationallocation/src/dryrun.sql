@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS `%s` (
 facility_id STRING,
 dpoint_id STRING,
 demand FLOAT64,
+variable_value FLOAT64,
 geom GEOGRAPHY
 )
 OPTIONS (

@@ -1,14 +1,14 @@
-# Prepare Customers
+# Demand Points Preparation
 
 Processes and formats demand points (customers, delivery addresses, clinics...) data for use in a Location Allocation analysis.
 
 ## Inputs
-- **Customers input table**: The source table containing demand points data.
+- **Demand points input table**: The source table containing demand points data.
 
 ## Settings
 - **ID column**: The column containing the unique identifier for each demand point.
 - **Geometry column**: The column containing each demand point location.
-- **Assign specific demand**: Whether each demand point should have an associated demand value. If enabled:
+- **Use demand**: Whether each demand point should have an associated demand value. If enabled:
     - **Demand column**: The column containing demand values for each demand point.
 
 ## Outputs

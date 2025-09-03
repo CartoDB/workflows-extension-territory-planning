@@ -59,11 +59,7 @@ BEGIN
         IF(
             UPPER(transformation_function) = 'POWER', 
             FORMAT('POW(%s, %f)', cost_column, transformation_parameter),
-            IF(
-                UPPER(transformation_function) = 'EXPONENTIAL',
-                FORMAT('EXP(%f * %s)', transformation_parameter, cost_column),
-                FORMAT('%f * %s', transformation_parameter, cost_column)
-            )
+            FORMAT('EXP(%f * %s)', transformation_parameter, cost_column)
         ),
         cost_column
     ),

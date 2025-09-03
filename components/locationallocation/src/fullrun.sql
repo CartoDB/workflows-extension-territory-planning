@@ -112,7 +112,7 @@ BEGIN
             facility_id,
             facility_type,
             %s AS facility_group_id,                                    -- make sure this variables are informed 
-            %s AS facility_min_capacity,                                -- (if any NULL, internal error)
+            %s AS facility_min_usage,                                -- (if any NULL, internal error)
             %s AS facility_max_capacity,
             %s AS facility_cost_of_open
         FROM `%s` 
@@ -123,7 +123,7 @@ BEGIN
             ARRAY_AGG(CAST(facility_id AS STRING)) facility_id,
             ARRAY_AGG(CAST(facility_type AS INT64)) facility_type,
             ARRAY_AGG(CAST(facility_group_id AS STRING)) facility_group_id,                            
-            ARRAY_AGG(CAST(facility_min_capacity AS FLOAT64)) facility_min_capacity,                       
+            ARRAY_AGG(CAST(facility_min_usage AS FLOAT64)) facility_min_usage,                       
             ARRAY_AGG(CAST(facility_max_capacity AS FLOAT64)) facility_max_capacity,
             ARRAY_AGG(CAST(facility_cost_of_open AS FLOAT64)) facility_cost_of_open
         FROM facilities_comp
@@ -157,7 +157,7 @@ BEGIN
     IF(competitor_facilities_bool, competitor_trade_area, -1),
     -- facilities
     IF(limit_facilities_group_bool, 'group_id', 'COALESCE(group_id,"0")'),
-    IF(facilities_min_capacity_bool, 'min_capacity', 'COALESCE(min_capacity,0)'),
+    IF(facilities_min_usage_bool, 'min_usage', 'COALESCE(min_usage,0)'),
     IF(facilities_max_capacity_bool, 'max_capacity', 'COALESCE(max_capacity,0)'),
     IF(costopen_facilities_bool, 'cost_of_open', 'COALESCE(cost_of_open,0)'),
     REPLACE(facilities_table, '`', ''),
@@ -175,14 +175,14 @@ BEGIN
     CREATE OR REPLACE TABLE `%s` 
     OPTIONS (expiration_timestamp = TIMESTAMP_ADD(CURRENT_TIMESTAMP(), INTERVAL 30 DAY))
     AS
-    SELECT s.facility_id, s.customer_id as dpoint_id, s.demand, s.objective_value, s.gap, s.solving_time, s.termination_reason, s.stats
+    SELECT s.facility_id, s.customer_id as dpoint_id, s.demand, s.variable_value, s.objective_value, s.gap, s.solving_time, s.termination_reason, s.stats
     FROM `%s`, UNNEST(@@workflows_temp@@.`LOCATION_ALLOCATION`
     (    
         '%s',
         facility_id,
         facility_type,
         facility_group_id,
-        facility_min_capacity,
+        facility_min_usage,
         facility_max_capacity,
         facility_cost_of_open,
         dpoint_id,
@@ -216,7 +216,7 @@ BEGIN
     required_facilities_bool, 
     IF(limit_facilities_bool, CAST(max_facilities AS STRING), 'NULL'), 
     IF(limit_facilities_group_bool, CAST(max_facilities_group AS STRING), 'NULL'), 
-    facilities_min_capacity_bool,
+    facilities_min_usage_bool,
     facilities_max_capacity_bool,
     compatibility_bool,
     demand_bool,
@@ -230,7 +230,7 @@ BEGIN
     EXECUTE IMMEDIATE FORMAT('''
     %s
     AS
-        SELECT facility_id, dpoint_id, demand, ST_MAKELINE(f.geom, c.geom) geom
+        SELECT facility_id, dpoint_id, demand, variable_value, ST_MAKELINE(f.geom, c.geom) geom
         FROM `%s`
         JOIN  (SELECT facility_id, geom FROM `%s`) f
         USING (facility_id)

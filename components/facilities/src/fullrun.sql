@@ -29,7 +29,7 @@ BEGIN
     FORMAT("%s IS NOT NULL", candidates_id),
     FORMAT("AND %s IS NOT NULL", candidates_geom),
     IF(group_bool, FORMAT("AND %s IS NOT NULL", candidates_group), ''),
-    IF(min_capacity_bool, FORMAT("AND %s IS NOT NULL", candidates_min_capacity), ''),
+    IF(min_usage_bool, FORMAT("AND %s IS NOT NULL", candidates_min_usage), ''),
     IF(max_capacity_bool, FORMAT("AND %s IS NOT NULL", candidates_max_capacity), ''),
     IF(costofopen_bool, FORMAT("AND %s IS NOT NULL", candidates_costofopen), ''),
     candidates_table
@@ -47,7 +47,7 @@ BEGIN
         FORMAT("%s IS NOT NULL", required_id),
         FORMAT("AND %s IS NOT NULL", required_geom),
         IF(group_bool, FORMAT("AND %s IS NOT NULL", required_group), ''),
-        IF(min_capacity_bool, FORMAT("AND %s IS NOT NULL", required_min_capacity), ''),
+        IF(min_usage_bool, FORMAT("AND %s IS NOT NULL", required_min_usage), ''),
         IF(max_capacity_bool, FORMAT("AND %s IS NOT NULL", required_max_capacity), ''),
         IF(costofopen_bool, FORMAT("AND %s IS NOT NULL", required_costofopen), ''),
         required_table
@@ -80,7 +80,7 @@ BEGIN
             %s AS geom,
             0 AS facility_type,
             CAST(%s AS STRING) AS group_id,
-            %s AS min_capacity,
+            %s AS min_usage,
             %s AS max_capacity,
             %s AS cost_of_open
         FROM `%s` 
@@ -88,7 +88,7 @@ BEGIN
     candidates_id,
     candidates_geom,
     IF(group_bool, candidates_group, 'NULL'),
-    IF(min_capacity_bool, candidates_min_capacity, 'NULL'),
+    IF(min_usage_bool, candidates_min_usage, 'NULL'),
     IF(max_capacity_bool, candidates_max_capacity, 'NULL'),
     IF(costofopen_bool, candidates_costofopen, 'NULL'),
     candidates_table
@@ -102,7 +102,7 @@ BEGIN
                 %s AS geom,
                 1 AS facility_type,
                 CAST(%s AS STRING) AS group_id,
-                %s AS min_capacity,
+                %s AS min_usage,
                 %s AS max_capacity,
                 %s AS cost_of_open
             FROM `%s` 
@@ -110,7 +110,7 @@ BEGIN
         required_id,
         required_geom,
         IF(group_bool, required_group, 'NULL'),
-        IF(min_capacity_bool, required_min_capacity, 'NULL'),
+        IF(min_usage_bool, required_min_usage, 'NULL'),
         IF(max_capacity_bool, required_max_capacity, 'NULL'),
         IF(costofopen_bool, required_costofopen, 'NULL'),
         required_table
@@ -125,7 +125,7 @@ BEGIN
                 %s AS geom,
                 2 AS facility_type,
                 NULL AS group_id,
-                NULL AS min_capacity,
+                NULL AS min_usage,
                 NULL AS max_capacity,
                 NULL AS cost_of_open
             FROM `%s` 
@@ -157,13 +157,13 @@ BEGIN
     """, output_table);
     EXECUTE IMMEDIATE query INTO flag;
     IF flag THEN
-        RAISE USING MESSAGE = FORMAT('Duplicates found in overall facily IDs. Please make sure that values in candidate, required and competitor facility IDs (`%s`, `%s` and `%s`) are unique.', candidates_id, required_id, competitors_id);
+        RAISE USING MESSAGE = 'Duplicates found in overall facily IDs. Please make sure facility IDs are unique across all facility types.';  
     END IF;
 
-    -- Raise error if min_capacity > max_capacity
-    IF min_capacity_bool AND max_capacity_bool THEN
+    -- Raise error if min_usage > max_capacity
+    IF min_usage_bool AND max_capacity_bool THEN
         SET query = FORMAT("""
-            SELECT COUNTIF(min_capacity <= max_capacity) != COUNT(*)
+            SELECT COUNTIF(min_usage <= max_capacity) != COUNT(*)
             FROM `%s`
             WHERE facility_type != 2
         """, output_table);

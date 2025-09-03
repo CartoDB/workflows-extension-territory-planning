@@ -1,10 +1,10 @@
 {
     "name": "constraints",
-    "title": "Prepare Constraints Data",
+    "title": "Constraints Definition",
     "description": "A component that adds constraints data for Location Allocation.",
     "externalReference": {
         "label": "Documentation",
-        "href": "https://docs.carto.com/carto-user-manual/workflows/components/territory-planning#prepare-constraints-data"
+        "href": "https://docs.carto.com/carto-user-manual/workflows/components/territory-planning#constraints-definition"
     },
     "version": "1.0.0",
     "icon": "prepare-constraints.svg",
@@ -12,15 +12,15 @@
     "inputs": [
         {
             "name": "compatible_table",
-            "title": "Compatible (optional)",
+            "title": "Required (optional)",
             "description": "The source table containing required facility-demand point pairs.",
             "helper": "The source table containing required facility-demand point pairs.",
             "type": "Table",
             "optional": true
         },
         {
-            "name": "uncompatible_table",
-            "title": "Uncompatible (optional)",
+            "name": "incompatible_table",
+            "title": "Forbidden (optional)",
             "description": "The source table containing banned facility-demand point pairs.",
             "helper": "The source table containing banned facility-demand point pairs.",
             "type": "Table",
@@ -28,7 +28,7 @@
         },
         {
             "name": "compatible_bool",
-            "title": "Include required facility-demand point pairs",
+            "title": "Consider required facility-demand point pairs",
             "description": "Whether to consider mandatory relationships between facilities and demand points.",
             "helper": "Whether to consider mandatory relationships between facilities and demand points.",
             "type": "Boolean",
@@ -59,35 +59,35 @@
             ]
         },
         {
-            "name": "uncompatible_bool",
-            "title": "Include banned facility-demand point pairs",
+            "name": "incompatible_bool",
+            "title": "Consider forbidden facility-demand point pairs",
             "description": "Whether to consider prohibited relationships between facilities and demand points.",
             "helper": "Whether to consider prohibited relationships between facilities and demand points.",
             "type": "Boolean",
             "default": false
         },
         {
-            "name": "uncompatible_facility_id",
+            "name": "incompatible_facility_id",
             "title": "Facilities ID column",
             "description": "The column containing the facility IDs.",
             "helper": "The column containing the facility IDs.",
             "dataType": ["number", "string"],
             "type": "Column",
-            "parent": "uncompatible_table",
+            "parent": "incompatible_table",
             "showIf": [
-                {"parameter": "uncompatible_bool", "value": true}
+                {"parameter": "incompatible_bool", "value": true}
             ]
         },
         {
-            "name": "uncompatible_dpoint_id",
+            "name": "incompatible_dpoint_id",
             "title": "Demand points ID column",
             "description": "The column containing the demand point IDs.",
             "helper": "The column containing the demand point IDs.",
             "dataType": ["number", "string"],
             "type": "Column",
-            "parent": "uncompatible_table",
+            "parent": "incompatible_table",
             "showIf": [
-                {"parameter": "uncompatible_bool", "value": true}
+                {"parameter": "incompatible_bool", "value": true}
             ]
         }
     ],

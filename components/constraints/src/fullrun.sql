@@ -1,7 +1,7 @@
 DECLARE compatibility_tablename STRING DEFAULT NULL;
 DECLARE compatibility_metadata STRING DEFAULT NULL;
 DECLARE compatible_query STRING DEFAULT NULL;
-DECLARE uncompatible_query STRING DEFAULT NULL;
+DECLARE incompatible_query STRING DEFAULT NULL;
 DECLARE query STRING;
 DECLARE flag BOOL;
 DECLARE create_output_query STRING;
@@ -47,7 +47,7 @@ BEGIN
     -- 3. Create auxiliary tables and update metadata if specified
     
     -- Constraint ID: compatibility
-    IF compatible_bool OR uncompatible_bool THEN
+    IF compatible_bool OR incompatible_bool THEN
         EXECUTE IMMEDIATE FORMAT("""
             UPDATE `%s`
             SET table_name = '%s'
@@ -71,17 +71,17 @@ BEGIN
             );
         END IF;
 
-        IF uncompatible_bool THEN
-            SET uncompatible_query = FORMAT("""
+        IF incompatible_bool THEN
+            SET incompatible_query = FORMAT("""
                 SELECT DISTINCT
                     CAST(%s AS STRING) AS facility_id,
                     CAST(%s AS STRING) AS dpoint_id,
                     0 AS compatibility
                 FROM `%s`
             """,
-            uncompatible_facility_id,
-            uncompatible_dpoint_id,
-            REPLACE(uncompatible_table, '`', '')
+            incompatible_facility_id,
+            incompatible_dpoint_id,
+            REPLACE(incompatible_table, '`', '')
             );
         END IF;
 
@@ -93,7 +93,7 @@ BEGIN
         """,
         create_compatibility_query,
         ARRAY_TO_STRING(
-            ARRAY(SELECT x FROM UNNEST([compatible_query,uncompatible_query]) AS x WHERE x IS NOT NULL),
+            ARRAY(SELECT x FROM UNNEST([compatible_query,incompatible_query]) AS x WHERE x IS NOT NULL),
             ' UNION ALL ')
         );
 

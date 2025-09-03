@@ -29,13 +29,14 @@ CREATE OR REPLACE FUNCTION
     relative_gap INT64,
     verbose BOOLEAN
 )
-RETURNS ARRAY<STRUCT<facility_id STRING, customer_id STRING, demand FLOAT64, objective_value FLOAT64, gap FLOAT64, solving_time FLOAT64, termination_reason STRING, stats STRING>>
+RETURNS ARRAY<STRUCT<facility_id STRING, customer_id STRING, demand FLOAT64, variable_value FLOAT64, objective_value FLOAT64, gap FLOAT64, solving_time FLOAT64, termination_reason STRING, stats STRING>>
 
 LANGUAGE python
 OPTIONS (
     entry_point='main',
     runtime_version='python-3.11',
     max_batching_rows=1,
+    container_memory='8Gi', container_cpu=2,
     packages=['ortools==9.9.3963','pandas==2.2.3','numpy==1.23.5']
 )
 AS r"""
@@ -231,8 +232,9 @@ class LocationAllocation:
         
     def _add_fixed_costs(self, objective: mathopt.LinearExpression):
         '''Expression to add costs of opening facilities'''
+        f = -1.0 if self.optimization_strategy == 'maximize_coverage' else 1.0
         for i in range(self.m):
-            objective += self.facilities.cost_of_open[i] * self.x[i]
+            objective += f * self.facilities.cost_of_open[i] * self.x[i]
         return objective
 
     def build_objective_function(self, add_fixed_costs: bool = False) -> mathopt.LinearExpression:
@@ -352,13 +354,13 @@ class LocationAllocation:
                 if var_values[self.y[j]] > 0.5:
                     covering_facility = [i for i in range(self.m) if self.coverage_matrix[i,j] & self.facility_is_open[i]]
                     for c in covering_facility:
-                        facility_for_customer.append([self.facilities.id[c], self.customers.id[j], self.customers.demand[j]])
+                        facility_for_customer.append([self.facilities.id[c], self.customers.id[j], self.customers.demand[j], var_values[self.y[j]]])
         else:
             for j in range(self.n):
                 for i in range(self.m):
                     if var_values[self.y[i][j]] > tol:
                         d = self.customers.demand[j] if tol == 0.5 else var_values[self.y[i][j]] * self.customers.demand[j] 
-                        facility_for_customer.append([self.facilities.id[i], self.customers.id[j], d])
+                        facility_for_customer.append([self.facilities.id[i], self.customers.id[j], d, var_values[self.y[i][j]]])
         return facility_for_customer
 
     def extract_solution(self, result: mathopt.SolveResult, tol: float) -> pd.DataFrame:
@@ -368,7 +370,7 @@ class LocationAllocation:
             self.facility_is_open = self._get_opened_facilities(var_values)
             self.facility_for_customer = self._get_assignments(var_values, tol)
             
-            allocations = pd.DataFrame(self.facility_for_customer, columns=['facility_id','customer_id','demand'])
+            allocations = pd.DataFrame(self.facility_for_customer, columns=['facility_id','customer_id','demand','variable_value'])
             for col in ['objective_value', 'gap', 'solving_time', 'termination_reason', 'stats']:
                 allocations[col] = None
     
@@ -393,11 +395,12 @@ class LocationAllocation:
             allocations.loc[0,'stats'] = stats
 
         except Exception as e:
-            allocations = pd.DataFrame(columns = ['facility_id','customer_id','demand', 'objective_value', 'gap', 'solving_time', 'termination_reason', 'stats']
+            allocations = pd.DataFrame(columns = ['facility_id','customer_id','demand', 'variable_value', 'objective_value', 'gap', 'solving_time', 'termination_reason', 'stats']
             ).astype({
                 'facility_id': 'string',
                 'customer_id': 'string',
                 'demand': 'float64',
+                'variable_value': 'float64',
                 'objective_value': 'float64',
                 'gap': 'float64',
                 'solving_time': 'float64',
@@ -432,6 +435,8 @@ class LocationAllocation:
 
         if self.optimization_strategy == 'maximize_coverage':          
             self.coverage_matrix = self._build_coverage_matrix(coverage_radius)
+            if not self.coverage_matrix.any():
+                raise ValueError(f'Facilities cannot cover any demand point under the specified coverage radius: {coverage_radius}. Please, increase the radius accordingly.')
         
         ## Optimization Model
         self.model = mathopt.Model()

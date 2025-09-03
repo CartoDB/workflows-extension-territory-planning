@@ -26,7 +26,7 @@
         },
         {
             "name": "costs_table",
-            "title": "Cost",
+            "title": "Cost matrix",
             "description": "A table with costs data.",
             "helper": "A table with costs data.",
             "type": "Table"
@@ -62,7 +62,7 @@
         },
         {
             "name": "required_facilities_bool",
-            "title": "Include required facilities",
+            "title": "Use required facilities",
             "description": "Whether to consider mandatory facilities.",
             "helper": "Whether to consider mandatory facilities.",
             "type": "Boolean",
@@ -70,7 +70,7 @@
         },
         {
             "name": "competitor_facilities_bool",
-            "title": "Include competitor facilities",
+            "title": "Use competitor facilities",
             "description": "Whether to account for competitor locations that may influence demand point assignment.",
             "helper": "Whether to account for competitor locations that may influence demand point assignment.",
             "type": "Boolean",
@@ -89,7 +89,7 @@
         },
         {
             "name": "costopen_facilities_bool",
-            "title": "Include opening cost for the facilities",
+            "title": "Use facility costs of opening",
             "description": "The fixed cost of opening each facility is added to the objective function.",
             "helper": "The fixed cost of opening each facility is added to the objective function.",
             "type": "Boolean",
@@ -140,15 +140,15 @@
         },
         {
             "name": "demand_bool",
-            "title": "Satisfy demand points demand",
+            "title": "Use demand",
             "description": "Ensures that the full demand of each demand point is met across assigned facilities.",
             "helper": "Ensures that the full demand of each demand point is met across assigned facilities.",
             "type": "Boolean",
             "default": false
         },
         {
-            "name": "facilities_min_capacity_bool",
-            "title": "Limit the minimum capacity of the facilities",
+            "name": "facilities_min_usage_bool",
+            "title": "Enforce minimum usage of facilities",
             "description": "Restricts facilities from being opened unless they meet a minimum utilization level.",
             "helper": "Restricts facilities from being opened unless they meet a minimum utilization level.",
             "type": "Boolean",
@@ -159,7 +159,7 @@
         },
         {
             "name": "facilities_max_capacity_bool",
-            "title": "Limit the maximum capacity of the facilities",
+            "title": "Use facility maximum capacities",
             "description": "Restricts the total amount of demand a facility can serve.",
             "helper": "Restricts the total amount of demand a facility can serve.",
             "type": "Boolean",
@@ -170,7 +170,7 @@
         },
         {
             "name": "compatibility_bool",
-            "title": "Force facility-demand point relationships",
+            "title": "Use required/forbidden assignments",
             "description": "Allows enforcing or excluding specific demand point-facility assignments (e.g., a facility must serve a specific demand point).",
             "helper": "Allows enforcing or excluding specific demand point-facility assignments (e.g., a facility must serve a specific demand point).",
             "type": "Boolean",
@@ -214,7 +214,7 @@
         },
         {
             "name": "metrics_table",
-            "title": "Output table",
+            "title": "Metrics table",
             "description": "The table with solver metrics.",
             "helper": "The table with solver metrics.",
             "type": "Table"

@@ -5,7 +5,7 @@
       "geom": "POINT(0.164949479833198 0.689766924217567)",
       "facility_type": 0,
       "group_id": "0",
-      "min_capacity": 20,
+      "min_usage": 20,
       "max_capacity": 300,
       "cost_of_open": 87
     },
@@ -14,7 +14,7 @@
       "geom": "POINT(0.634999940404721 0.479100472057451)",
       "facility_type": 1,
       "group_id": "0",
-      "min_capacity": 20,
+      "min_usage": 20,
       "max_capacity": 300,
       "cost_of_open": 61
     },
@@ -23,7 +23,7 @@
       "geom": "POINT(0.639426798457884 0.625010755222667)",
       "facility_type": 2,
       "group_id": null,
-      "min_capacity": null,
+      "min_usage": null,
       "max_capacity": null,
       "cost_of_open": null
     },
@@ -32,7 +32,7 @@
       "geom": "POINT(0.275029318369119 0.223210738148823)",
       "facility_type": 2,
       "group_id": null,
-      "min_capacity": null,
+      "min_usage": null,
       "max_capacity": null,
       "cost_of_open": null
     },
@@ -41,7 +41,7 @@
       "geom": "POINT(0.216014347893903 0.792633358200246)",
       "facility_type": 0,
       "group_id": "1",
-      "min_capacity": 20,
+      "min_usage": 20,
       "max_capacity": 50,
       "cost_of_open": 30000
     },
@@ -50,7 +50,7 @@
       "geom": "POINT(0.807854301953428 0.512456239637593)",
       "facility_type": 0,
       "group_id": "0",
-      "min_capacity": 20,
+      "min_usage": 20,
       "max_capacity": 300,
       "cost_of_open": 32
     },
@@ -59,7 +59,7 @@
       "geom": "POINT(0.505084153470012 0.236056363496211)",
       "facility_type": 0,
       "group_id": "1",
-      "min_capacity": 20,
+      "min_usage": 20,
       "max_capacity": 50,
       "cost_of_open": 49
     }

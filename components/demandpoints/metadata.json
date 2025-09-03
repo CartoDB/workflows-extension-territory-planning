@@ -1,6 +1,6 @@
 {
     "name": "demandpoints",
-    "title": "Prepare Demand Points",
+    "title": "Demand Points Preparation",
     "description": "A component that prepares demand points (customers, delivery addresses, clinics...) data for Location Allocation.",
     "externalReference": {
         "label": "Documentation",
@@ -37,7 +37,7 @@
         },
         {
             "name": "demand_bool",
-            "title": "Assign demand to demand points",
+            "title": "Use demand",
             "advanced": false,
             "description": "Whether each demand point should have an associated demand value.",
             "helper": "Whether each demand point should have an associated demand value.",
@@ -45,7 +45,7 @@
         },
         {
             "name": "demand_col",
-            "title": "Customers demand column",
+            "title": "Demand column",
             "advanced": false,
             "description": "The column containing demand values for each demand point.",
             "helper": "The column containing demand values for each demand point.",
