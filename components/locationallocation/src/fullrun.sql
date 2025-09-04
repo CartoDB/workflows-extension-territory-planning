@@ -62,6 +62,111 @@ BEGIN
         RAISE USING MESSAGE = 'Missing costs detected. Please assign one cost for each facility-demand point pair.';
     END IF;
 
+    -- Check if competitor facilities exist when competitor_facilities_bool is enabled
+    IF competitor_facilities_bool THEN
+        SET query = FORMAT("""
+            SELECT COUNT(*) = 0
+            FROM `%s`
+            WHERE facility_type = 2
+        """,
+        REPLACE(facilities_table, '`', '')
+        );
+        EXECUTE IMMEDIATE query INTO flag;
+        IF flag THEN
+            RAISE USING MESSAGE = 'No competitor facilities found. Please add competitor facilities (facility_type = 2) or disable competitor facilities option.';
+        END IF;
+    END IF;
+
+    -- Check if required facilities exist when required_facilities_bool is enabled
+    IF required_facilities_bool THEN
+        SET query = FORMAT("""
+            SELECT COUNT(*) = 0
+            FROM `%s`
+            WHERE facility_type = 1
+        """,
+        REPLACE(facilities_table, '`', '')
+        );
+        EXECUTE IMMEDIATE query INTO flag;
+        IF flag THEN
+            RAISE USING MESSAGE = 'No required facilities found. Please add required facilities (facility_type = 1) or disable required facilities option.';
+        END IF;
+    END IF;
+
+    -- Check if min_usage values exist when facilities_min_usage_bool is enabled
+    IF facilities_min_usage_bool THEN
+        SET query = FORMAT("""
+            SELECT COUNT(*) > 0
+            FROM `%s`
+            WHERE min_usage IS NULL
+        """,
+        REPLACE(facilities_table, '`', '')
+        );
+        EXECUTE IMMEDIATE query INTO flag;
+        IF flag THEN
+            RAISE USING MESSAGE = 'Missing min_usage values detected. Please provide min_usage values for all facilities or disable minimum usage option.';
+        END IF;
+    END IF;
+
+    -- Check if max_capacity values exist when facilities_max_capacity_bool is enabled
+    IF facilities_max_capacity_bool THEN
+        SET query = FORMAT("""
+            SELECT COUNT(*) > 0
+            FROM `%s`
+            WHERE max_capacity IS NULL
+        """,
+        REPLACE(facilities_table, '`', '')
+        );
+        EXECUTE IMMEDIATE query INTO flag;
+        IF flag THEN
+            RAISE USING MESSAGE = 'Missing max_capacity values detected. Please provide max_capacity values for all facilities or disable maximum capacity option.';
+        END IF;
+    END IF;
+
+    -- Check if demand values exist when demand_bool is enabled
+    IF demand_bool THEN
+        SET query = FORMAT("""
+            SELECT COUNT(*) > 0
+            FROM `%s`
+            WHERE demand IS NULL
+        """,
+        REPLACE(dpoints_table, '`', '')
+        );
+        EXECUTE IMMEDIATE query INTO flag;
+        IF flag THEN
+            RAISE USING MESSAGE = 'Missing demand values detected. Please provide demand values for all demand points or disable demand option.';
+        END IF;
+    END IF;
+
+    -- Check if cost_of_open values exist when costopen_facilities_bool is enabled
+    IF costopen_facilities_bool THEN
+        SET query = FORMAT("""
+            SELECT COUNT(*) > 0
+            FROM `%s`
+            WHERE cost_of_open IS NULL
+        """,
+        REPLACE(facilities_table, '`', '')
+        );
+        EXECUTE IMMEDIATE query INTO flag;
+        IF flag THEN
+            RAISE USING MESSAGE = 'Missing cost_of_open values detected. Please provide cost_of_open values for all facilities or disable cost of opening option.';
+        END IF;
+    END IF;
+
+    -- Check if group_id values exist when limit_facilities_group_bool is enabled
+    IF limit_facilities_group_bool THEN
+        SET query = FORMAT("""
+            SELECT COUNT(*) > 0
+            FROM `%s`
+            WHERE group_id IS NULL
+        """,
+        REPLACE(facilities_table, '`', '')
+        );
+        EXECUTE IMMEDIATE query INTO flag;
+        IF flag THEN
+            RAISE USING MESSAGE = 'Missing group_id values detected. Please provide group_id values for all facilities or disable facility group limit option.';
+        END IF;
+    END IF;
+
     -- 3. Run Location Allocation
     IF compatibility_bool THEN
 
