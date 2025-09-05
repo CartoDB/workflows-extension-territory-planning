@@ -12,6 +12,8 @@ DECLARE temp_table STRING;
 
 BEGIN
 
+    -- TODO: remove variable_value: used only for QA purposes
+
     SET output_table = REPLACE(output_table, '`', '');
     SET metrics_table = REPLACE(metrics_table, '`', '');
 
@@ -47,15 +49,22 @@ BEGIN
             COALESCE(t1.dpoint_id,'') != COALESCE(t2.dpoint_id,'')
         ) != 0
         FROM `%s` t1
-        FULL OUTER JOIN (
+        RIGHT JOIN (
             SELECT facility_id, dpoint_id
             FROM `%s` CROSS JOIN `%s`
+            %s
         ) t2
         ON t1.facility_id = t2.facility_id AND t1.dpoint_id = t2.dpoint_id
     """,
     REPLACE(costs_table, '`', ''),
     REPLACE(facilities_table, '`', ''),
-    REPLACE(dpoints_table, '`', '')
+    REPLACE(dpoints_table, '`', ''),
+    CASE 
+        WHEN NOT competitor_facilities_bool AND NOT required_facilities_bool THEN 'WHERE facility_type = 0'
+        WHEN NOT competitor_facilities_bool AND required_facilities_bool THEN 'WHERE facility_type != 2'
+        WHEN competitor_facilities_bool AND NOT required_facilities_bool THEN 'WHERE facility_type != 1'
+        ELSE ''
+    END
     );
     EXECUTE IMMEDIATE query INTO flag;
     IF flag THEN
@@ -97,7 +106,7 @@ BEGIN
         SET query = FORMAT("""
             SELECT COUNT(*) > 0
             FROM `%s`
-            WHERE min_usage IS NULL
+            WHERE min_usage IS NULL AND facility_type != 2
         """,
         REPLACE(facilities_table, '`', '')
         );
@@ -112,7 +121,7 @@ BEGIN
         SET query = FORMAT("""
             SELECT COUNT(*) > 0
             FROM `%s`
-            WHERE max_capacity IS NULL
+            WHERE max_capacity IS NULL AND facility_type != 2
         """,
         REPLACE(facilities_table, '`', '')
         );
@@ -142,7 +151,7 @@ BEGIN
         SET query = FORMAT("""
             SELECT COUNT(*) > 0
             FROM `%s`
-            WHERE cost_of_open IS NULL
+            WHERE cost_of_open IS NULL AND facility_type != 2
         """,
         REPLACE(facilities_table, '`', '')
         );
@@ -157,7 +166,7 @@ BEGIN
         SET query = FORMAT("""
             SELECT COUNT(*) > 0
             FROM `%s`
-            WHERE group_id IS NULL
+            WHERE group_id IS NULL AND facility_type != 2
         """,
         REPLACE(facilities_table, '`', '')
         );
@@ -188,9 +197,8 @@ BEGIN
                 ARRAY_AGG(CAST(c.dpoint_id AS STRING)) compatibility_dpoint_id,
                 ARRAY_AGG(CAST(c.compatibility AS INT64)) compatibility_type
             FROM `%s` c
-            INNER JOIN facilities_comp f USING (facility_id)              -- remove competitors
-            LEFT JOIN dpoints_comp d ON c.dpoint_id = d.dpoint_id 
-            WHERE d.dpoint_id IS NULL                                     -- remove dpoints captured by competitors
+            INNER JOIN facilities_no_comp f USING (facility_id)
+            INNER JOIN dpoints_no_comp dc USING (dpoint_id)
         )
         ''',
         REPLACE(c_compatibility_table, '`', '')
@@ -204,24 +212,34 @@ BEGIN
     OPTIONS (expiration_timestamp = TIMESTAMP_ADD(CURRENT_TIMESTAMP(), INTERVAL 30 DAY))
     AS
     WITH 
+    facilities_no_comp AS (
+        -- Required and candidate facilities
+        SELECT 
+            facility_id,
+            facility_type,
+            %s AS facility_group_id,                                    
+            %s AS facility_min_usage,                                
+            %s AS facility_max_capacity,
+            %s AS facility_cost_of_open
+        FROM `%s` 
+        WHERE facility_type != 2  -- remove competitors
+    ),
     dpoints_comp AS (
-        -- Customers captured by competitors
+        -- Dpoints in costs captured by competitors
         SELECT DISTINCT c.dpoint_id
         FROM `%s` c
         JOIN `%s` f 
         ON c.facility_id = f.facility_id
         WHERE f.facility_type = 2 AND c.cost <= %f
     ),
-    facilities_comp AS (
+    dpoints_no_comp AS (
+        -- Dpoints not captured by competitors
         SELECT 
-            facility_id,
-            facility_type,
-            %s AS facility_group_id,                                    -- make sure this variables are informed 
-            %s AS facility_min_usage,                                -- (if any NULL, internal error)
-            %s AS facility_max_capacity,
-            %s AS facility_cost_of_open
-        FROM `%s` 
-        WHERE facility_type != 2                                        -- remove competitors
+            d.dpoint_id, 
+            %s AS demand
+        FROM `%s` d
+        LEFT JOIN dpoints_comp dc ON d.dpoint_id = dc.dpoint_id 
+        WHERE dc.dpoint_id IS NULL 
     ),
     facilities AS (
         SELECT 
@@ -231,15 +249,13 @@ BEGIN
             ARRAY_AGG(CAST(facility_min_usage AS FLOAT64)) facility_min_usage,                       
             ARRAY_AGG(CAST(facility_max_capacity AS FLOAT64)) facility_max_capacity,
             ARRAY_AGG(CAST(facility_cost_of_open AS FLOAT64)) facility_cost_of_open
-        FROM facilities_comp
+        FROM facilities_no_comp
     ),
     dpoints AS (
         SELECT
-            ARRAY_AGG(CAST(c.dpoint_id AS STRING)) dpoint_id,
-            ARRAY_AGG(CAST(%s AS FLOAT64)) dpoint_demand
-        FROM `%s` c
-        LEFT JOIN dpoints_comp d ON c.dpoint_id = d.dpoint_id 
-        WHERE d.dpoint_id IS NULL                                             -- remove dpoints captured by competitors
+            ARRAY_AGG(CAST(dpoint_id AS STRING)) dpoint_id,
+            ARRAY_AGG(CAST(demand AS FLOAT64)) dpoint_demand
+        FROM dpoints_no_comp
     ),
     costs AS (
         SELECT 
@@ -247,27 +263,26 @@ BEGIN
             ARRAY_AGG(CAST(c.dpoint_id AS STRING)) cost_dpoint_id,
             ARRAY_AGG(CAST(c.cost AS FLOAT64)) cost
         FROM `%s` c
-        INNER JOIN facilities_comp f USING (facility_id)                      -- remove competitors
-        LEFT JOIN dpoints_comp d ON c.dpoint_id = d.dpoint_id 
-        WHERE d.dpoint_id IS NULL                                             -- remove dpoints captured by competitors
+        INNER JOIN facilities_no_comp f USING (facility_id)
+        INNER JOIN dpoints_no_comp d USING (dpoint_id)
     )
     %s
     SELECT  *
     FROM facilities CROSS JOIN dpoints CROSS JOIN costs %s
     ''',
     output_table_temp,
-    -- competitors
-    REPLACE(costs_table, '`', ''),
-    REPLACE(facilities_table, '`', ''),
-    IF(competitor_facilities_bool, competitor_trade_area, -1),
-    -- facilities
+    -- facilities_no_comp
     IF(limit_facilities_group_bool, 'group_id', 'COALESCE(group_id,"0")'),
     IF(facilities_min_usage_bool, 'min_usage', 'COALESCE(min_usage,0)'),
     IF(facilities_max_capacity_bool, 'max_capacity', 'COALESCE(max_capacity,0)'),
     IF(costopen_facilities_bool, 'cost_of_open', 'COALESCE(cost_of_open,0)'),
     REPLACE(facilities_table, '`', ''),
-    -- dpoints
-    IF(demand_bool, 'c.demand', 'COALESCE(c.demand,0)'),
+    -- dpoints_comp
+    REPLACE(costs_table, '`', ''),
+    REPLACE(facilities_table, '`', ''),
+    IF(competitor_facilities_bool, competitor_trade_area, -1),
+    -- dpoints_no_comp
+    IF(demand_bool, 'd.demand', 'COALESCE(d.demand,0)'),
     REPLACE(dpoints_table, '`', ''),
     -- costs
     REPLACE(costs_table, '`', ''),
