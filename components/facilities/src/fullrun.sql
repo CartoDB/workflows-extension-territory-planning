@@ -21,7 +21,15 @@ BEGIN
         SET create_output_query = FORMAT('CREATE TEMPORARY TABLE `%s`', output_table);
     END IF;
 
-    -- 1. Check NULLs
+    -- Check provided input data
+    IF (required_bool AND required_table IS NULL) THEN
+        RAISE USING MESSAGE = 'Please connect a Required Facilities table to the component';
+    END IF;
+    IF (competitors_bool AND competitors_table IS NULL) THEN
+        RAISE USING MESSAGE = 'Please connect a Competitor Facilities table to the component';
+    END IF;
+
+    -- Check NULLs
     SET query = FORMAT("""
         SELECT COUNTIF(%s %s %s %s %s %s) != COUNT(*)
         FROM `%s`
