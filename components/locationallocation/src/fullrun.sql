@@ -214,32 +214,32 @@ BEGIN
     WITH 
     facilities_no_comp AS (
         -- Required and candidate facilities
-        SELECT 
+        SELECT
             facility_id,
             facility_type,
-            %s AS facility_group_id,                                    
-            %s AS facility_min_usage,                                
+            %s AS facility_group_id,
+            %s AS facility_min_usage,
             %s AS facility_max_capacity,
             %s AS facility_cost_of_open
-        FROM `%s` 
+        FROM `%s`
         WHERE facility_type != 2  -- remove competitors
     ),
     dpoints_comp AS (
         -- Dpoints in costs captured by competitors
         SELECT DISTINCT c.dpoint_id
         FROM `%s` c
-        JOIN `%s` f 
+        JOIN `%s` f
         ON c.facility_id = f.facility_id
         WHERE f.facility_type = 2 AND c.cost <= %f
     ),
     dpoints_no_comp AS (
         -- Dpoints not captured by competitors
-        SELECT 
-            d.dpoint_id, 
+        SELECT
+            d.dpoint_id,
             %s AS demand
         FROM `%s` d
-        LEFT JOIN dpoints_comp dc ON d.dpoint_id = dc.dpoint_id 
-        WHERE dc.dpoint_id IS NULL 
+        LEFT JOIN dpoints_comp dc ON d.dpoint_id = dc.dpoint_id
+        WHERE dc.dpoint_id IS NULL
     ),
     facilities AS (
         SELECT 
