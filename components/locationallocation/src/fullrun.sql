@@ -12,8 +12,6 @@ DECLARE temp_table STRING;
 
 BEGIN
 
-    -- TODO: remove variable_value: used only for QA purposes
-
     SET output_table = REPLACE(output_table, '`', '');
     SET metrics_table = REPLACE(metrics_table, '`', '');
 
@@ -295,7 +293,7 @@ BEGIN
     CREATE OR REPLACE TABLE `%s` 
     OPTIONS (expiration_timestamp = TIMESTAMP_ADD(CURRENT_TIMESTAMP(), INTERVAL 30 DAY))
     AS
-    SELECT s.facility_id, s.customer_id as dpoint_id, s.demand, s.variable_value, s.objective_value, s.gap, s.solving_time, s.termination_reason, s.stats
+    SELECT s.facility_id, s.customer_id as dpoint_id, s.demand, s.objective_value, s.gap, s.solving_time, s.termination_reason, s.stats
     FROM `%s`, UNNEST(@@workflows_temp@@.`LOCATION_ALLOCATION`
     (    
         '%s',
@@ -350,7 +348,7 @@ BEGIN
     EXECUTE IMMEDIATE FORMAT('''
     %s
     AS
-        SELECT facility_id, dpoint_id, demand, variable_value, ST_MAKELINE(f.geom, c.geom) geom
+        SELECT facility_id, dpoint_id, demand, ST_MAKELINE(f.geom, c.geom) geom
         FROM `%s`
         JOIN  (SELECT facility_id, geom FROM `%s`) f
         USING (facility_id)
