@@ -49,7 +49,7 @@ BEGIN
 
     IF required_bool THEN
         SET query = FORMAT("""
-            SELECT COUNTIF(%s %s %s %s %s %s) != COUNT(*)
+            SELECT COUNTIF(%s %s %s %s %s) != COUNT(*)
             FROM `%s`
         """, 
         FORMAT("%s IS NOT NULL", required_id),
@@ -57,7 +57,6 @@ BEGIN
         IF(group_bool, FORMAT("AND %s IS NOT NULL", required_group), ''),
         IF(min_usage_bool, FORMAT("AND %s IS NOT NULL", required_min_usage), ''),
         IF(max_capacity_bool, FORMAT("AND %s IS NOT NULL", required_max_capacity), ''),
-        IF(costofopen_bool, FORMAT("AND %s IS NOT NULL", required_costofopen), ''),
         required_table
         );
         EXECUTE IMMEDIATE query INTO flag;
@@ -112,7 +111,7 @@ BEGIN
                 CAST(%s AS STRING) AS group_id,
                 %s AS min_usage,
                 %s AS max_capacity,
-                %s AS cost_of_open
+                0 AS cost_of_open
             FROM `%s` 
         """,
         required_id,
@@ -120,7 +119,6 @@ BEGIN
         IF(group_bool, required_group, 'NULL'),
         IF(min_usage_bool, required_min_usage, 'NULL'),
         IF(max_capacity_bool, required_max_capacity, 'NULL'),
-        IF(costofopen_bool, required_costofopen, 'NULL'),
         required_table
         );
     END IF;

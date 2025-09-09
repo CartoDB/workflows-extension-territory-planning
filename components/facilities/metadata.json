@@ -244,20 +244,6 @@
             "showIf": [
                 {"parameter": "costofopen_bool", "value": true}
             ]
-        },
-        {
-            "name": "required_costofopen",
-            "title": "Required facilities cost of open column",
-            "advanced": false,
-            "description": "The column containing the cost of opening each required facility.",
-            "helper": "The column containing the cost of opening each required facility.",
-            "type": "Column",
-            "parent": "required_table",
-            "dataType": ["number"],
-            "showIf": [
-                {"parameter": "required_bool", "value": true},
-                {"parameter": "costofopen_bool", "value": true}
-            ]
         }
     ],
     "outputs": [

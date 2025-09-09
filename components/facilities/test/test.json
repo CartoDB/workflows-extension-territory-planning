@@ -23,8 +23,7 @@
             "candidates_min_usage": "coverage",
             "required_min_usage": "coverage",
             "costofopen_bool": true,
-            "candidates_costofopen": "cost_of_open",
-            "required_costofopen": "cost_of_open"
+            "candidates_costofopen": "cost_of_open"
         }
     },
     {
@@ -51,8 +50,7 @@
             "candidates_min_usage": null,
             "required_min_usage": null,
             "costofopen_bool": false,
-            "candidates_costofopen": null,
-            "required_costofopen": null
+            "candidates_costofopen": null
         }
     }
 ]
