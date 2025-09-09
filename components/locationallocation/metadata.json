@@ -99,6 +99,16 @@
             ]
         },
         {
+            "name": "budget_constraint",
+            "title": "Budget limit (in cost of open units)",
+            "description": "Maximum budget allowed for opening facilities. The sum of opening costs of selected facilities must not exceed this value.",
+            "helper": "Maximum budget allowed for opening facilities. The sum of opening costs of selected facilities must not exceed this value.",
+            "type": "Number",
+            "minimum": 0,
+            "default": 1000000,
+            "optional": true
+        },
+        {
             "name": "limit_facilities_bool",
             "title": "Limit the total number of facilities",
             "description": "Restricts the number of facilities that can be opened.",

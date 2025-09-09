@@ -145,17 +145,17 @@ BEGIN
     END IF;
 
     -- Check if cost_of_open values exist when costopen_facilities_bool is enabled
-    IF costopen_facilities_bool THEN
+    IF (costopen_facilities_bool OR budget_constraint IS NOT NULL) THEN
         SET query = FORMAT("""
             SELECT COUNT(*) > 0
             FROM `%s`
-            WHERE cost_of_open IS NULL AND facility_type != 2
+            WHERE cost_of_open IS NULL AND facility_type = 0
         """,
         REPLACE(facilities_table, '`', '')
         );
         EXECUTE IMMEDIATE query INTO flag;
         IF flag THEN
-            RAISE USING MESSAGE = 'Missing cost_of_open values detected. Please provide cost_of_open values for all facilities or disable cost of opening option.';
+            RAISE USING MESSAGE = 'Missing cost_of_open values detected. Please provide cost_of_open values for all candidate facilities or disable cost of opening and/or budget options.';
         END IF;
     END IF;
 
@@ -320,6 +320,7 @@ BEGIN
         %t,
         %t,
         %f,
+        %f,
         %d,
         %d,
         False
@@ -340,6 +341,7 @@ BEGIN
     demand_bool,
     costopen_facilities_bool,
     IFNULL(coverage_radius,0),
+    IFNULL(budget_constraint,0),
     CAST(time_limit AS INT64),
     CAST(relative_gap AS INT64)
     );

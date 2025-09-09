@@ -20,7 +20,8 @@
             "demand_bool": false,       
             "facilities_min_usage_bool": false,        
             "facilities_max_capacity_bool": false,        
-            "compatibility_bool": false,        
+            "compatibility_bool": false,    
+            "budget_constraint": null,    
             "relative_gap": 0,        
             "time_limit": 3600
         }
@@ -46,7 +47,8 @@
             "demand_bool": false,       
             "facilities_min_usage_bool": false,        
             "facilities_max_capacity_bool": false,        
-            "compatibility_bool": false,        
+            "compatibility_bool": false,  
+            "budget_constraint": null, 
             "relative_gap": 0,        
             "time_limit": 3600
         }
@@ -72,7 +74,8 @@
             "demand_bool": false,       
             "facilities_min_usage_bool": false,        
             "facilities_max_capacity_bool": false,        
-            "compatibility_bool": false,        
+            "compatibility_bool": false,
+            "budget_constraint": null,       
             "relative_gap": 0,        
             "time_limit": 3600
         }
@@ -98,7 +101,8 @@
             "demand_bool": false,       
             "facilities_min_usage_bool": false,        
             "facilities_max_capacity_bool": false,        
-            "compatibility_bool": true,        
+            "compatibility_bool": true,     
+            "budget_constraint": null,   
             "relative_gap": 0,        
             "time_limit": 3600
         }
@@ -124,7 +128,8 @@
             "demand_bool": true,       
             "facilities_min_usage_bool": true,        
             "facilities_max_capacity_bool": true,        
-            "compatibility_bool": false,        
+            "compatibility_bool": false,   
+            "budget_constraint": null,     
             "relative_gap": 0,        
             "time_limit": 3600
         }
@@ -150,7 +155,8 @@
             "demand_bool": false,       
             "facilities_min_usage_bool": false,        
             "facilities_max_capacity_bool": false,        
-            "compatibility_bool": true,        
+            "compatibility_bool": true,      
+            "budget_constraint": null,  
             "relative_gap": 0,        
             "time_limit": 3600
         }
@@ -176,13 +182,14 @@
             "demand_bool": true,       
             "facilities_min_usage_bool": true,        
             "facilities_max_capacity_bool": true,        
-            "compatibility_bool": false,        
+            "compatibility_bool": false,       
+            "budget_constraint": null, 
             "relative_gap": 0,        
             "time_limit": 3600
         }
     },
     {
-        "id": "max_coverage_with_paramas1",
+        "id": "max_coverage_with_params1",
         "skip_output" : ["metrics_table"],
         "inputs": {
             "facilities_table": "facilities",
@@ -202,13 +209,14 @@
             "demand_bool": false,       
             "facilities_min_usage_bool": false,        
             "facilities_max_capacity_bool": false,        
-            "compatibility_bool": false,        
+            "compatibility_bool": false,     
+            "budget_constraint": null,   
             "relative_gap": 0,        
             "time_limit": 3600
         }
     },
     {
-        "id": "max_coverage_with_paramas2",
+        "id": "max_coverage_with_params2",
         "skip_output" : ["metrics_table"],
         "inputs": {
             "facilities_table": "facilities",
@@ -228,7 +236,35 @@
             "demand_bool": true,       
             "facilities_min_usage_bool": false,        
             "facilities_max_capacity_bool": true,        
-            "compatibility_bool": false,        
+            "compatibility_bool": false,     
+            "budget_constraint": null,   
+            "relative_gap": 0,        
+            "time_limit": 3600
+        }
+    },
+    {
+        "id": "max_coverage_with_params3",
+        "skip_output" : ["metrics_table"],
+        "inputs": {
+            "facilities_table": "facilities",
+            "dpoints_table": "customers",
+            "costs_table": "costs",
+            "constraints_table": "constraints",
+            "optimization_strategy": "Maximize coverage",
+            "coverage_radius": 40,
+            "required_facilities_bool": false,        
+            "competitor_facilities_bool": false,        
+            "competitor_trade_area": null,        
+            "costopen_facilities_bool": false,        
+            "limit_facilities_bool": false,        
+            "max_facilities": null,        
+            "limit_facilities_group_bool": false,        
+            "max_facilities_group": null, 
+            "demand_bool": false,       
+            "facilities_min_usage_bool": false,        
+            "facilities_max_capacity_bool": false,        
+            "compatibility_bool": false,
+            "budget_constraint": 85,
             "relative_gap": 0,        
             "time_limit": 3600
         }

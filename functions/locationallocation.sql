@@ -25,6 +25,7 @@ CREATE OR REPLACE FUNCTION
     add_demand BOOLEAN,
     add_fixed_costs BOOLEAN,
     coverage_radius FLOAT64,
+    budget_constraint FLOAT64,
     time_limit INT64,
     relative_gap INT64,
     verbose BOOLEAN
@@ -316,6 +317,11 @@ class LocationAllocation:
         '''Add constraints to force facility-client relationships'''
         for i, j, c in self.constraints.compatibility:
             self.model.add_linear_constraint(self.y[i][j] == c)
+    
+    def add_budget_constraint(self, budget_limit: float):
+        '''Add budget constraint to limit total cost of opening facilities'''
+        total_cost = sum(self.facilities.cost_of_open[i] * self.x[i] for i in range(self.m))
+        self.model.add_linear_constraint(total_cost <= budget_limit)
 
     # -------------- #            
     # --- Solver --- #
@@ -425,6 +431,7 @@ class LocationAllocation:
               compatibility,
               add_fixed_costs,
               coverage_radius,
+              budget_constraint,
               time_limit,
               relative_gap,
               verbose
@@ -450,6 +457,8 @@ class LocationAllocation:
             self.add_facility_limit_constraints(max_limit)
         if max_group_limit:
             self.add_group_limit_constraints(max_group_limit)
+        if budget_constraint:
+            self.add_budget_constraint(budget_constraint)
         if self.optimization_strategy != 'maximize_coverage':  
             if min_capacity | max_capacity:
                 self.add_capacity_constraints(min_capacity, max_capacity)
@@ -489,6 +498,7 @@ def main(
     add_demand = False,
     add_fixed_costs = False,
     coverage_radius = None,
+    budget_constraint = None,
     time_limit = None,
     relative_gap = None,
     verbose = False
@@ -513,7 +523,9 @@ def main(
 
     data = InputData(input)
     
-    facilities = data.get_facilities(required, min_capacity, max_capacity, add_fixed_costs)
+    fixed_costs = True if (budget_constraint is not None or add_fixed_costs) else False
+
+    facilities = data.get_facilities(required, min_capacity, max_capacity, fixed_costs)
     customers = data.get_customers(add_demand)
     costs = data.get_costs(required)
     constraints = None
@@ -524,7 +536,7 @@ def main(
     constraints = data.get_constraints(constraint_id, required)
 
     localoc = LocationAllocation(facilities, customers, costs, constraints, optimization_strategy)
-    result = localoc.run(max_limit, max_group_limit, min_capacity, max_capacity, required, compatibility, add_fixed_costs, coverage_radius, time_limit, relative_gap, verbose)
+    result = localoc.run(max_limit, max_group_limit, min_capacity, max_capacity, required, compatibility, add_fixed_costs, coverage_radius, budget_constraint, time_limit, relative_gap, verbose)
     tol = 1e-6 if add_demand else 0.5
     allocations = localoc.extract_solution(result, tol)
 
