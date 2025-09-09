@@ -293,7 +293,7 @@ BEGIN
     CREATE OR REPLACE TABLE `%s` 
     OPTIONS (expiration_timestamp = TIMESTAMP_ADD(CURRENT_TIMESTAMP(), INTERVAL 30 DAY))
     AS
-    SELECT s.facility_id, s.customer_id as dpoint_id, s.demand, s.objective_value, s.gap, s.solving_time, s.termination_reason, s.stats
+    SELECT s.facility_id, s.dpoint_id, s.demand, s.objective_value, s.gap, s.solving_time, s.termination_reason, s.stats
     FROM `%s`, UNNEST(@@workflows_temp@@.`LOCATION_ALLOCATION`
     (    
         '%s',

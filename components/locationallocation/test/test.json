@@ -27,7 +27,7 @@
         }
     },
     {
-        "id": "min_max_cost",
+        "id": "skip_min_max_cost",
         "skip_output" : ["metrics_table"],
         "inputs": {
             "facilities_table": "facilities",
@@ -135,7 +135,7 @@
         }
     },
     {
-        "id": "min_max_cost_with_params1",
+        "id": "skip_min_max_cost_with_params1",
         "skip_output" : ["metrics_table"],
         "inputs": {
             "facilities_table": "facilities",
@@ -162,7 +162,7 @@
         }
     },
     {
-        "id": "min_max_cost_with_params2",
+        "id": "skip_min_max_cost_with_params2",
         "skip_output" : ["metrics_table"],
         "inputs": {
             "facilities_table": "facilities",
