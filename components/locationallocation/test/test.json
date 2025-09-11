@@ -20,7 +20,8 @@
             "demand_bool": false,       
             "facilities_min_usage_bool": false,        
             "facilities_max_capacity_bool": false,        
-            "compatibility_bool": false,    
+            "compatibility_bool": false, 
+            "budget_constraint_bool": false,   
             "budget_constraint": null,    
             "relative_gap": 0,        
             "time_limit": 3600
@@ -47,7 +48,8 @@
             "demand_bool": false,       
             "facilities_min_usage_bool": false,        
             "facilities_max_capacity_bool": false,        
-            "compatibility_bool": false,  
+            "compatibility_bool": false, 
+            "budget_constraint_bool": false,   
             "budget_constraint": null, 
             "relative_gap": 0,        
             "time_limit": 3600
@@ -75,6 +77,7 @@
             "facilities_min_usage_bool": false,        
             "facilities_max_capacity_bool": false,        
             "compatibility_bool": false,
+            "budget_constraint_bool": false,   
             "budget_constraint": null,       
             "relative_gap": 0,        
             "time_limit": 3600
@@ -102,6 +105,7 @@
             "facilities_min_usage_bool": false,        
             "facilities_max_capacity_bool": false,        
             "compatibility_bool": true,     
+            "budget_constraint_bool": false,   
             "budget_constraint": null,   
             "relative_gap": 0,        
             "time_limit": 3600
@@ -128,7 +132,8 @@
             "demand_bool": true,       
             "facilities_min_usage_bool": true,        
             "facilities_max_capacity_bool": true,        
-            "compatibility_bool": false,   
+            "compatibility_bool": false, 
+            "budget_constraint_bool": false,   
             "budget_constraint": null,     
             "relative_gap": 0,        
             "time_limit": 3600
@@ -156,6 +161,7 @@
             "facilities_min_usage_bool": false,        
             "facilities_max_capacity_bool": false,        
             "compatibility_bool": true,      
+            "budget_constraint_bool": false,   
             "budget_constraint": null,  
             "relative_gap": 0,        
             "time_limit": 3600
@@ -183,6 +189,7 @@
             "facilities_min_usage_bool": true,        
             "facilities_max_capacity_bool": true,        
             "compatibility_bool": false,       
+            "budget_constraint_bool": false,   
             "budget_constraint": null, 
             "relative_gap": 0,        
             "time_limit": 3600
@@ -210,6 +217,7 @@
             "facilities_min_usage_bool": false,        
             "facilities_max_capacity_bool": false,        
             "compatibility_bool": false,     
+            "budget_constraint_bool": false,   
             "budget_constraint": null,   
             "relative_gap": 0,        
             "time_limit": 3600
@@ -237,6 +245,7 @@
             "facilities_min_usage_bool": false,        
             "facilities_max_capacity_bool": true,        
             "compatibility_bool": false,     
+            "budget_constraint_bool": false,   
             "budget_constraint": null,   
             "relative_gap": 0,        
             "time_limit": 3600
@@ -264,6 +273,7 @@
             "facilities_min_usage_bool": false,        
             "facilities_max_capacity_bool": false,        
             "compatibility_bool": false,
+            "budget_constraint_bool": true,   
             "budget_constraint": 85,
             "relative_gap": 0,        
             "time_limit": 3600
