@@ -20,6 +20,8 @@ This component uses [Google's OR-Tools](https://developers.google.com/optimizati
 - **Use competitor facilities**: Whether to account for competitor locations that may influence demand point assignment.
 - **Cost threshold**: The distance under which a demand point is considered fully influenced by a competitor, and thus removed from consideration.
 - **Use facility costs of opening**: If enabled, the fixed cost of opening each facility is added to the objective function.
+- **Use maximum budget**: Whether to consider a maximum budget for opening facilities. When enabled, the sum of opening costs of selected facilities must not exceed the specified budget limit.
+- **Budget limit**: Maximum budget allowed for opening facilities (in cost of open units). This parameter is only available when "Use maximum budget" is enabled.
 - **Limit the total number of facilities**: If enabled, restricts the number of facilities that can be opened.
 - **Maximum number of facilities**: The maximum number of facilities allowed to open if the above option is enabled.
 - **Limit the total number of facilities per group**: If enabled, restricts the number of facilities that can be opened per defined group (e.g., region, brand).

@@ -145,7 +145,7 @@ BEGIN
     END IF;
 
     -- Check if cost_of_open values exist when costopen_facilities_bool is enabled
-    IF (costopen_facilities_bool OR budget_constraint IS NOT NULL) THEN
+    IF (costopen_facilities_bool OR budget_constraint_bool IS NOT NULL) THEN
         SET query = FORMAT("""
             SELECT COUNT(*) > 0
             FROM `%s`
@@ -320,7 +320,7 @@ BEGIN
         %t,
         %t,
         %f,
-        %f,
+        %s,
         %d,
         %d,
         False
@@ -341,7 +341,7 @@ BEGIN
     demand_bool,
     costopen_facilities_bool,
     IFNULL(coverage_radius,0),
-    IFNULL(budget_constraint,0),
+    IF(budget_constraint_bool, CAST(budget_constraint AS STRING),'NULL'),
     CAST(time_limit AS INT64),
     CAST(relative_gap AS INT64)
     );

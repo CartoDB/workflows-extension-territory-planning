@@ -99,6 +99,14 @@
             ]
         },
         {
+            "name": "budget_constraint_bool",
+            "title": "Use maximum budget",
+            "description": "Whether to consider a maximum budget for opening facilities.",
+            "helper": "Whether to consider a maximum budget for opening facilities.",
+            "type": "Boolean",
+            "default": false
+        },
+        {
             "name": "budget_constraint",
             "title": "Budget limit (in cost of open units)",
             "description": "Maximum budget allowed for opening facilities. The sum of opening costs of selected facilities must not exceed this value.",
@@ -106,7 +114,9 @@
             "type": "Number",
             "minimum": 0,
             "default": 1000000,
-            "optional": true
+            "showIf": [
+                {"parameter": "budget_constraint_bool", "value": true}
+            ]
         },
         {
             "name": "limit_facilities_bool",
