@@ -263,11 +263,10 @@ class LocationAllocation:
             # Demand point j can only be covered if at least one covering facility is selected
             for j in range(self.n):
                 covering_facilities = [self.x[i] for i in range(self.m) if self.coverage_matrix[i][j]]
-                if covering_facilities:
-                    constraint = self.solver.Constraint(-self.solver.infinity(), 0)
-                    constraint.SetCoefficient(self.y[j], 1)
-                    for var in covering_facilities:
-                        constraint.SetCoefficient(var, -1)
+                constraint = self.solver.Constraint(-self.solver.infinity(), 0)
+                constraint.SetCoefficient(self.y[j], 1)
+                for var in covering_facilities:
+                    constraint.SetCoefficient(var, -1)
                 
         else:
             # Each demand point must be assigned to at least one facility: sum_i y_ij == 1 for all j
