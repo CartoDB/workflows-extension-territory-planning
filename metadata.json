@@ -23,7 +23,7 @@
     },
     "details": [],
     "functions": [
-        "locationallocation"
+        "location_allocation"
     ],
     "components": [
         "territorybalancing",
