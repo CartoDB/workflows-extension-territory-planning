@@ -1,0 +1,155 @@
+{
+    "name": "location_allocation",
+    "description": "Optimization function for facility location and demand point allocation using linear programming",
+    "parameters": [
+      {
+        "name": "optimization_strategy",
+        "type": "STRING",
+        "description": "Optimization strategy: 'minimize_total_cost', 'minimize_max_cost', or 'maximize_coverage'"
+      },
+      {
+        "name": "facility_id",
+        "type": "ARRAY<STRING>",
+        "description": "Array of facility identifiers"
+      },
+      {
+        "name": "facility_type",
+        "type": "ARRAY<INT64>",
+        "description": "Array of facility types (0=optional, 1=required, 2=competitor)"
+      },
+      {
+        "name": "facility_group_id",
+        "type": "ARRAY<STRING>",
+        "description": "Array of facility group identifiers"
+      },
+      {
+        "name": "facility_min_usage",
+        "type": "ARRAY<FLOAT64>",
+        "description": "Array of minimum usage for facilities"
+      },
+      {
+        "name": "facility_max_capacity",
+        "type": "ARRAY<FLOAT64>",
+        "description": "Array of maximum capacity for facilities"
+      },
+      {
+        "name": "facility_cost_of_open",
+        "type": "ARRAY<FLOAT64>",
+        "description": "Array of costs for opening each facility"
+      },
+      {
+        "name": "dpoint_id",
+        "type": "ARRAY<STRING>",
+        "description": "Array of demand point identifiers"
+      },
+      {
+        "name": "dpoint_demand",
+        "type": "ARRAY<FLOAT64>",
+        "description": "Array of demand values for each demand point"
+      },
+      {
+        "name": "cost_facility_id",
+        "type": "ARRAY<STRING>",
+        "description": "Array of facility IDs for cost matrix"
+      },
+      {
+        "name": "cost_dpoint_id",
+        "type": "ARRAY<STRING>",
+        "description": "Array of demand point IDs for cost matrix"
+      },
+      {
+        "name": "cost",
+        "type": "ARRAY<FLOAT64>",
+        "description": "Array of costs between facilities and demand points"
+      },
+      {
+        "name": "compatibility_facility_id",
+        "type": "ARRAY<STRING>",
+        "description": "Array of facility IDs for compatibility constraints"
+      },
+      {
+        "name": "compatibility_dpoint_id",
+        "type": "ARRAY<STRING>",
+        "description": "Array of demand point IDs for compatibility constraints"
+      },
+      {
+        "name": "compatibility_type",
+        "type": "ARRAY<INT64>",
+        "description": "Array of compatibility types (0=forbidden, 1=required)"
+      },
+      {
+        "name": "required",
+        "type": "BOOLEAN",
+        "description": "Whether to enforce required facility constraints"
+      },
+      {
+        "name": "max_limit",
+        "type": "INT64",
+        "description": "Maximum number of facilities to open"
+      },
+      {
+        "name": "max_group_limit",
+        "type": "INT64",
+        "description": "Maximum number of facilities per group"
+      },
+      {
+        "name": "min_usage",
+        "type": "BOOLEAN",
+        "description": "Whether to enforce minimum usage constraints"
+      },
+      {
+        "name": "max_capacity",
+        "type": "BOOLEAN",
+        "description": "Whether to enforce maximum capacity constraints"
+      },
+      {
+        "name": "compatibility",
+        "type": "BOOLEAN",
+        "description": "Whether to enforce compatibility constraints"
+      },
+      {
+        "name": "add_demand",
+        "type": "BOOLEAN",
+        "description": "Whether to include demand values in optimization"
+      },
+      {
+        "name": "add_fixed_costs",
+        "type": "BOOLEAN",
+        "description": "Whether to include facility opening costs"
+      },
+      {
+        "name": "coverage_radius",
+        "type": "FLOAT64",
+        "description": "Coverage radius for maximize_coverage strategy"
+      },
+      {
+        "name": "budget_constraint",
+        "type": "FLOAT64",
+        "description": "Budget limit for facility opening costs"
+      },
+      {
+        "name": "time_limit",
+        "type": "INT64",
+        "description": "Time limit for optimization in seconds"
+      },
+      {
+        "name": "relative_gap",
+        "type": "INT64",
+        "description": "Relative optimality gap tolerance"
+      },
+      {
+        "name": "verbose",
+        "type": "BOOLEAN",
+        "description": "Whether to enable verbose output"
+      }
+    ],
+    "returns": {
+      "type": "ARRAY<STRUCT<facility_id STRING, dpoint_id STRING, demand FLOAT64, objective_value FLOAT64, gap FLOAT64, solving_time FLOAT64, termination_reason STRING, stats STRING>>",
+      "description": "Array of allocation results with facility-demand point assignments and optimization metrics"
+    },
+    "extra_options": {
+      "container_memory": "8Gi",
+      "container_cpu": 2,
+      "max_batching_rows": 1
+    }
+  }

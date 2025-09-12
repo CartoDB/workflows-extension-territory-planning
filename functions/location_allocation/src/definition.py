@@ -1,44 +1,12 @@
-CREATE OR REPLACE FUNCTION @@workflows_temp@@.`LOCATION_ALLOCATION`(    
-    optimization_strategy STRING,
-    facility_id ARRAY<STRING>,
-    facility_type ARRAY<INT64>,
-    facility_group_id ARRAY<STRING>,
-    facility_min_usage ARRAY<FLOAT64>,
-    facility_max_capacity ARRAY<FLOAT64>,
-    facility_cost_of_open ARRAY<FLOAT64>,
-    dpoint_id ARRAY<STRING>,
-    dpoint_demand ARRAY<FLOAT64>,
-    cost_facility_id ARRAY<STRING>,
-    cost_dpoint_id ARRAY<STRING>,
-    cost ARRAY<FLOAT64>,
-    compatibility_facility_id ARRAY<STRING>,
-    compatibility_dpoint_id ARRAY<STRING>,
-    compatibility_type ARRAY<INT64>,
-    required BOOLEAN, 
-    max_limit INT64,
-    max_group_limit INT64,
-    min_usage BOOLEAN,
-    max_capacity BOOLEAN,
-    compatibility BOOLEAN,
-    add_demand BOOLEAN,
-    add_fixed_costs BOOLEAN,
-    coverage_radius FLOAT64,
-    budget_constraint FLOAT64,
-    time_limit INT64,
-    relative_gap INT64,
-    verbose BOOLEAN
-)
-RETURNS ARRAY<STRUCT<facility_id STRING, dpoint_id STRING, demand FLOAT64, objective_value FLOAT64, gap FLOAT64, solving_time FLOAT64, termination_reason STRING, stats STRING>>
+# /// script
+# requires-python = "==3.11"
+# dependencies = [
+#   "ortools==9.9.3963",
+#   "pandas==2.2.3", 
+#   "numpy==1.23.5"
+# ]
+# ///
 
-LANGUAGE python
-OPTIONS (
-    entry_point='main',
-    runtime_version='python-3.11',
-    max_batching_rows=1,
-    container_memory='8Gi', container_cpu=2,
-    packages=['ortools==9.9.3963','pandas==2.2.3','numpy==1.23.5']
-)
-AS r"""
 import math
 import random
 import pandas as pd
@@ -632,9 +600,7 @@ def main(
             'termination_reason': 'string',
             'stats': 'string'
         })
-        allocations.dpoint_id = self.dpoints.id
+        allocations.dpoint_id = dpoint_id
         allocations.loc[0,'solving_time'] = np.nan
         allocations.loc[0,'termination_reason'] = f"ERROR: {str(e)}"
         return allocations.to_dict(orient='records')
-
-""";
