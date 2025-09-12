@@ -1,0 +1,258 @@
+{
+    "name": "facilities",
+    "title": "Facilities Preparation",
+    "description": "A component that prepares facilities data for Location Allocation.",
+    "externalReference": {
+        "label": "Documentation",
+        "href": "https://docs.carto.com/carto-user-manual/workflows/components/territory-planning#prepare-facilities"
+    },
+    "version": "1.0.0",
+    "icon": "prepare-facilities.svg",
+    "cartoEnvVars": ["tempStoragePath"],
+    "inputs": [
+        {
+            "name": "candidates_table",
+            "title": "Candidate Facilities",
+            "description": "The source table containing candidate facility data, which could be opened or activated based on the allocation strategy.",
+            "helper": "The source table containing candidate facility data, which could be opened or activated based on the allocation strategy.",
+            "type": "Table"
+        },
+        {
+            "name": "required_table",
+            "title": "Required Facilities (optional)",
+            "description": "The source table containing required facility data, which are always activated regardless of the allocation strategy.",
+            "helper": "The source table containing required facility data, which are always activated regardless of the allocation strategy.",
+            "type": "Table",
+            "optional": true
+        },
+        {
+            "name": "competitors_table",
+            "title": "Competitor Facilities (optional)",
+            "description": "The source table containing competitors data, which are used to influence demand allocation in the optimization process.",
+            "helper": "The source table containing competitors data, which are used to influence demand allocation in the optimization process.",
+            "type": "Table",
+            "optional": true
+        },
+        {
+            "name": "candidates_id",
+            "title": "Candidate facilities ID column",
+            "description": "The column containing the candidate facility unique IDs.",
+            "helper": "The column containing the candidate facility unique IDs.",
+            "dataType": ["number", "string"],
+            "type": "Column",
+            "parent": "candidates_table"
+        },
+        {
+            "name": "candidates_geom",
+            "title": "Candidate facilities geometry column",
+            "description": "The column containing the candidate facility point locations.",
+            "helper": "The column containing the candidate facility point locations.",
+            "dataType": ["geometry", "geography"],
+            "type": "Column",
+            "parent": "candidates_table"
+        },
+        {
+            "name": "required_bool",
+            "title": "Use required facilities",
+            "description": "Whether to consider mandatory or pre-selected facilities",
+            "helper": "Whether to consider mandatory or pre-selected facilities",
+            "type": "Boolean",
+            "default": false
+        },
+        {
+            "name": "required_id",
+            "title": "Required facilities ID column",
+            "description": "The column containing the required facility unique IDs.",
+            "helper": "The column containing the required facility unique IDs.",
+            "dataType": ["number", "string"],
+            "type": "Column",
+            "parent": "required_table",
+            "showIf": [
+                {"parameter": "required_bool", "value": true}
+            ]
+        },
+        {
+            "name": "required_geom",
+            "title": "Required facilities geometry column",
+            "description": "The column containing the required facility point locations.",
+            "helper": "The column containing the required facility point locations.",
+            "dataType": ["geometry", "geography"],
+            "type": "Column",
+            "parent": "required_table",
+            "showIf": [
+                {"parameter": "required_bool", "value": true}
+            ]
+        },
+        {
+            "name": "competitors_bool",
+            "title": "Use competitor facilities",
+            "description": "Whether to consider competitors.",
+            "helper": "Whether to consider competitors.",
+            "type": "Boolean",
+            "default": false
+        },
+        {
+            "name": "competitors_id",
+            "title": "Competitor facilities ID column",
+            "description": "The column containing the competitor facility unique IDs.",
+            "helper": "The column containing the competitor facility unique IDs.",
+            "dataType": ["number", "string"],
+            "type": "Column",
+            "parent": "competitors_table",
+            "showIf": [
+                {"parameter": "competitors_bool", "value": true}
+            ]
+        },
+        {
+            "name": "competitors_geom",
+            "title": "Competitor facilities geometry column",
+            "description": "The column containing the competitor facility point locations.",
+            "helper": "The column containing the competitor facility point locations.",
+            "dataType": ["geometry", "geography"],
+            "type": "Column",
+            "parent": "competitors_table",
+            "showIf": [
+                {"parameter": "competitors_bool", "value": true}
+            ]
+        },
+        {
+            "name": "group_bool",
+            "title": "Use facility groups",
+            "advanced": false,
+            "description": "Whether to use facility groups (i.e. region, brand) to limit the number of facilities to be opened.",
+            "helper": "Whether to use facility groups (i.e. region, brand) to limit the number of facilities to be opened.",
+            "type": "Boolean",
+            "default": false
+        },
+        {
+            "name": "candidates_group",
+            "title": "Candidate facilities group ID column",
+            "advanced": false,
+            "description": "The column containing the ID representing the group each candidate facility belongs to.",
+            "helper": "The column containing the ID representing the group each candidate facility belongs to.",
+            "type": "Column",
+            "parent": "candidates_table",
+            "dataType": ["number","string"],
+            "showIf": [
+                {"parameter": "group_bool", "value": true}
+            ]
+        },
+        {
+            "name": "required_group",
+            "title": "Required facilities group ID column",
+            "advanced": false,
+            "description": "The column containing the ID representing the group each required facility belongs to.",
+            "helper": "The column containing the ID representing the group each required facility belongs to.",
+            "type": "Column",
+            "parent": "required_table",
+            "dataType": ["number","string"],
+            "showIf": [
+                {"parameter": "required_bool", "value": true},
+                {"parameter": "group_bool", "value": true}
+            ]
+        },
+        {
+            "name": "min_usage_bool",
+            "title": "Enforce minimum usage of facilities",
+            "advanced": false,
+            "description": "Whether to use the minimum usage of a facility.",
+            "helper": "Whether to use the minimum usage of a facility.",
+            "type": "Boolean",
+            "default": false
+        },
+        {
+            "name": "candidates_min_usage",
+            "title": "Candidate facilities minimum usage column",
+            "advanced": false,
+            "description": "The column containing the minimum usage of each candidate facility.",
+            "helper": "The column containing the minimum usage of each candidate facility.",
+            "type": "Column",
+            "parent": "candidates_table",
+            "dataType": ["number"],
+            "showIf": [
+                {"parameter": "min_usage_bool", "value": true}
+            ]
+        },
+        {
+            "name": "required_min_usage",
+            "title": "Required facilities minimum usage column",
+            "advanced": false,
+            "description": "The column containing the minimum usage of each required facility.",
+            "helper": "The column containing the minimum usage of each required facility.",
+            "type": "Column",
+            "parent": "required_table",
+            "dataType": ["number"],
+            "showIf": [
+                {"parameter": "required_bool", "value": true},
+                {"parameter": "min_usage_bool", "value": true}
+            ]
+        },
+        {
+            "name": "max_capacity_bool",
+            "title": "Use facility maximum capacities",
+            "advanced": false,
+            "description": "Whether to use the maximum capacity of a facility.",
+            "helper": "Whether to use the maximum capacity of a facility.",
+            "type": "Boolean",
+            "default": false
+        },
+        {
+            "name": "candidates_max_capacity",
+            "title": "Candidate facilities maximum capacity column",
+            "advanced": false,
+            "description": "The column containing the maximum capacity of each candidate facility.",
+            "helper": "The column containing the maximum capacity of each candidate facility.",
+            "type": "Column",
+            "parent": "candidates_table",
+            "dataType": ["number"],
+            "showIf": [
+                {"parameter": "max_capacity_bool", "value": true}
+            ]
+        },
+        {
+            "name": "required_max_capacity",
+            "title": "Required facilities maximum capacity column",
+            "advanced": false,
+            "description": "The column containing the maximum capacity of each required facility.",
+            "helper": "The column containing the maximum capacity of each required facility.",
+            "type": "Column",
+            "parent": "required_table",
+            "dataType": ["number"],
+            "showIf": [
+                {"parameter": "required_bool", "value": true},
+                {"parameter": "max_capacity_bool", "value": true}
+            ]
+        },
+        {
+            "name": "costofopen_bool",
+            "title": "Use facility costs of opening",
+            "advanced": false,
+            "description": "Whether to use the fixed costs of opening a specific facility.",
+            "helper": "Whether to use the fixed costs of opening a specific facility.",
+            "type": "Boolean",
+            "default": false
+        },
+        {
+            "name": "candidates_costofopen",
+            "title": "Candidate facilities cost of open column",
+            "advanced": false,
+            "description": "The column containing the cost of opening each candidate facility.",
+            "helper": "The column containing the cost of opening each candidate facility.",
+            "type": "Column",
+            "parent": "candidates_table",
+            "dataType": ["number"],
+            "showIf": [
+                {"parameter": "costofopen_bool", "value": true}
+            ]
+        }
+    ],
+    "outputs": [
+        {
+            "name": "output_table",
+            "title": "Output table",
+            "description": "The table with the prepared facilities data.",
+            "helper": "The table with the prepared facilities data.",
+            "type": "Table"
+        }
+    ]
+}

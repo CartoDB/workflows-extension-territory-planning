@@ -1,0 +1,56 @@
+[
+    {
+        "id": "add_all",
+        "inputs": {
+            "candidates_table": "candidate_facilities",
+            "required_table": "required_facilities",
+            "competitors_table": "competitor_facilities",
+            "candidates_id": "facility_name",
+            "candidates_geom": "geom",
+            "required_bool": true,
+            "required_id": "facility_name",
+            "required_geom": "geom",
+            "competitors_bool": true,
+            "competitors_id": "competitor_id",
+            "competitors_geom": "geom",
+            "group_bool": true,
+            "candidates_group": "group_name",
+            "required_group": "group_name",
+            "max_capacity_bool": true,
+            "candidates_max_capacity": "capacity",
+            "required_max_capacity": "capacity",
+            "min_usage_bool": true,
+            "candidates_min_usage": "coverage",
+            "required_min_usage": "coverage",
+            "costofopen_bool": true,
+            "candidates_costofopen": "cost_of_open"
+        }
+    },
+    {
+        "id": "add_mandatory",
+        "inputs": {
+            "candidates_table": "candidate_facilities",
+            "required_table": "required_facilities",
+            "competitors_table": "competitor_facilities",
+            "candidates_id": "facility_name",
+            "candidates_geom": "geom",
+            "required_bool": false,
+            "required_id": null,
+            "required_geom": null,
+            "competitors_bool": false,
+            "competitors_id": null,
+            "competitors_geom": null,
+            "group_bool": false,
+            "candidates_group": null,
+            "required_group": null,
+            "max_capacity_bool": false,
+            "candidates_max_capacity": null,
+            "required_max_capacity": null,
+            "min_usage_bool": false,
+            "candidates_min_usage": null,
+            "required_min_usage": null,
+            "costofopen_bool": false,
+            "candidates_costofopen": null
+        }
+    }
+]

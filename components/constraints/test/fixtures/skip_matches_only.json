@@ -1,0 +1,9 @@
+{
+  "output_table": [
+    {
+      "constraint_id": "compatibility",
+      "constraint_description": "Force facility-demand point relationships",
+      "table_name": "@@BQ_TEST_PROJECT@@.@@BQ_TEST_DATASET@@._table_9ae37de1031847c7a21a128574f9e99c_compatibility"
+    }
+  ]
+}

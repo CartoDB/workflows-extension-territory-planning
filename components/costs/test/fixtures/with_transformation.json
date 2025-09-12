@@ -1,0 +1,354 @@
+{
+  "output_table": [
+    {
+      "facility_id": "0",
+      "dpoint_id": "0",
+      "cost": 879.8666603559551
+    },
+    {
+      "facility_id": "0",
+      "dpoint_id": "1",
+      "cost": 4050.365683900188
+    },
+    {
+      "facility_id": "0",
+      "dpoint_id": "10",
+      "cost": 4565.581831885496
+    },
+    {
+      "facility_id": "0",
+      "dpoint_id": "11",
+      "cost": 7923.152431085884
+    },
+    {
+      "facility_id": "0",
+      "dpoint_id": "12",
+      "cost": 1431.4926471616855
+    },
+    {
+      "facility_id": "0",
+      "dpoint_id": "13",
+      "cost": 689.694796907916
+    },
+    {
+      "facility_id": "0",
+      "dpoint_id": "14",
+      "cost": 7426.140341320604
+    },
+    {
+      "facility_id": "0",
+      "dpoint_id": "15",
+      "cost": 1198.855148577475
+    },
+    {
+      "facility_id": "0",
+      "dpoint_id": "16",
+      "cost": 1753.5825147110077
+    },
+    {
+      "facility_id": "0",
+      "dpoint_id": "17",
+      "cost": 6041.238475386142
+    },
+    {
+      "facility_id": "1",
+      "dpoint_id": "0",
+      "cost": 6097.044840775992
+    },
+    {
+      "facility_id": "1",
+      "dpoint_id": "1",
+      "cost": 2178.729937039623
+    },
+    {
+      "facility_id": "1",
+      "dpoint_id": "10",
+      "cost": 329.700288098298
+    },
+    {
+      "facility_id": "1",
+      "dpoint_id": "11",
+      "cost": 1683.5098746011945
+    },
+    {
+      "facility_id": "1",
+      "dpoint_id": "12",
+      "cost": 1807.9268369894785
+    },
+    {
+      "facility_id": "1",
+      "dpoint_id": "13",
+      "cost": 4765.880399212976
+    },
+    {
+      "facility_id": "1",
+      "dpoint_id": "14",
+      "cost": 848.3511838311516
+    },
+    {
+      "facility_id": "1",
+      "dpoint_id": "15",
+      "cost": 909.3706084254239
+    },
+    {
+      "facility_id": "1",
+      "dpoint_id": "16",
+      "cost": 4056.6334996200812
+    },
+    {
+      "facility_id": "1",
+      "dpoint_id": "17",
+      "cost": 3291.9811755935643
+    },
+    {
+      "facility_id": "100",
+      "dpoint_id": "0",
+      "cost": 4711.072071913208
+    },
+    {
+      "facility_id": "100",
+      "dpoint_id": "1",
+      "cost": 3641.453419189081
+    },
+    {
+      "facility_id": "100",
+      "dpoint_id": "10",
+      "cost": 212.35859445519816
+    },
+    {
+      "facility_id": "100",
+      "dpoint_id": "11",
+      "cost": 3223.367804682384
+    },
+    {
+      "facility_id": "100",
+      "dpoint_id": "12",
+      "cost": 833.4157369669028
+    },
+    {
+      "facility_id": "100",
+      "dpoint_id": "13",
+      "cost": 3474.510204659157
+    },
+    {
+      "facility_id": "100",
+      "dpoint_id": "14",
+      "cost": 1334.9284604926627
+    },
+    {
+      "facility_id": "100",
+      "dpoint_id": "15",
+      "cost": 1302.5879222979563
+    },
+    {
+      "facility_id": "100",
+      "dpoint_id": "16",
+      "cost": 2486.476841321094
+    },
+    {
+      "facility_id": "100",
+      "dpoint_id": "17",
+      "cost": 5214.486546122724
+    },
+    {
+      "facility_id": "101",
+      "dpoint_id": "0",
+      "cost": 6879.887292625683
+    },
+    {
+      "facility_id": "101",
+      "dpoint_id": "1",
+      "cost": 165.74341345420152
+    },
+    {
+      "facility_id": "101",
+      "dpoint_id": "10",
+      "cost": 4522.213453760708
+    },
+    {
+      "facility_id": "101",
+      "dpoint_id": "11",
+      "cost": 2682.1093185600107
+    },
+    {
+      "facility_id": "101",
+      "dpoint_id": "12",
+      "cost": 5008.793969616053
+    },
+    {
+      "facility_id": "101",
+      "dpoint_id": "13",
+      "cost": 6125.390305744085
+    },
+    {
+      "facility_id": "101",
+      "dpoint_id": "14",
+      "cost": 5068.435397397604
+    },
+    {
+      "facility_id": "101",
+      "dpoint_id": "15",
+      "cost": 743.9474298912312
+    },
+    {
+      "facility_id": "101",
+      "dpoint_id": "16",
+      "cost": 7513.563025956006
+    },
+    {
+      "facility_id": "101",
+      "dpoint_id": "17",
+      "cost": 630.7007620354118
+    },
+    {
+      "facility_id": "2",
+      "dpoint_id": "0",
+      "cost": 438.0059602394326
+    },
+    {
+      "facility_id": "2",
+      "dpoint_id": "1",
+      "cost": 5317.27055216246
+    },
+    {
+      "facility_id": "2",
+      "dpoint_id": "10",
+      "cost": 4251.001254975243
+    },
+    {
+      "facility_id": "2",
+      "dpoint_id": "11",
+      "cost": 8816.034597979806
+    },
+    {
+      "facility_id": "2",
+      "dpoint_id": "12",
+      "cost": 852.2822192162088
+    },
+    {
+      "facility_id": "2",
+      "dpoint_id": "13",
+      "cost": 213.43527234958205
+    },
+    {
+      "facility_id": "2",
+      "dpoint_id": "14",
+      "cost": 7389.37013407737
+    },
+    {
+      "facility_id": "2",
+      "dpoint_id": "15",
+      "cost": 1715.5968815432354
+    },
+    {
+      "facility_id": "2",
+      "dpoint_id": "16",
+      "cost": 861.8097895105988
+    },
+    {
+      "facility_id": "2",
+      "dpoint_id": "17",
+      "cost": 7610.7691184188325
+    },
+    {
+      "facility_id": "3",
+      "dpoint_id": "0",
+      "cost": 8308.99428523254
+    },
+    {
+      "facility_id": "3",
+      "dpoint_id": "1",
+      "cost": 3968.7162194685056
+    },
+    {
+      "facility_id": "3",
+      "dpoint_id": "10",
+      "cost": 82.79850898418142
+    },
+    {
+      "facility_id": "3",
+      "dpoint_id": "11",
+      "cost": 1955.8182767575047
+    },
+    {
+      "facility_id": "3",
+      "dpoint_id": "12",
+      "cost": 2582.2362612224333
+    },
+    {
+      "facility_id": "3",
+      "dpoint_id": "13",
+      "cost": 6637.1844332097935
+    },
+    {
+      "facility_id": "3",
+      "dpoint_id": "14",
+      "cost": 209.34821582895805
+    },
+    {
+      "facility_id": "3",
+      "dpoint_id": "15",
+      "cost": 2468.5203859782628
+    },
+    {
+      "facility_id": "3",
+      "dpoint_id": "16",
+      "cost": 5079.442358941306
+    },
+    {
+      "facility_id": "3",
+      "dpoint_id": "17",
+      "cost": 5109.97837711299
+    },
+    {
+      "facility_id": "4",
+      "dpoint_id": "0",
+      "cost": 8210.4253864242
+    },
+    {
+      "facility_id": "4",
+      "dpoint_id": "1",
+      "cost": 312.4479340794772
+    },
+    {
+      "facility_id": "4",
+      "dpoint_id": "10",
+      "cost": 2290.3058382308864
+    },
+    {
+      "facility_id": "4",
+      "dpoint_id": "11",
+      "cost": 783.6231150057905
+    },
+    {
+      "facility_id": "4",
+      "dpoint_id": "12",
+      "cost": 4328.298476793463
+    },
+    {
+      "facility_id": "4",
+      "dpoint_id": "13",
+      "cost": 6980.046185789449
+    },
+    {
+      "facility_id": "4",
+      "dpoint_id": "14",
+      "cost": 2181.081082428361
+    },
+    {
+      "facility_id": "4",
+      "dpoint_id": "15",
+      "cost": 814.8136150521217
+    },
+    {
+      "facility_id": "4",
+      "dpoint_id": "16",
+      "cost": 7294.829912641107
+    },
+    {
+      "facility_id": "4",
+      "dpoint_id": "17",
+      "cost": 714.8239003281074
+    }
+  ]
+}

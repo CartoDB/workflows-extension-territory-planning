@@ -1,0 +1,243 @@
+{
+    "name": "locationallocation",
+    "title": "Location-Allocation",
+    "description": "A component that performs Location Allocation.",
+    "externalReference": {
+        "label": "Documentation",
+        "href": "https://docs.carto.com/carto-user-manual/workflows/components/territory-planning#location-allocation"
+    },
+    "version": "1.0.0",
+    "icon": "location-allocation.svg",
+    "cartoEnvVars": ["tempStoragePath"],
+    "inputs": [
+        {
+            "name": "facilities_table",
+            "title": "Facilities",
+            "description": "A table with facilities data.",
+            "helper": "A table with facilities data.",
+            "type": "Table"
+        },
+        {
+            "name": "dpoints_table",
+            "title": "Demand points",
+            "description": "A table with demand points data.",
+            "helper": "A table with demand points data.",
+            "type": "Table"
+        },
+        {
+            "name": "costs_table",
+            "title": "Cost matrix",
+            "description": "A table with costs data.",
+            "helper": "A table with costs data.",
+            "type": "Table"
+        },
+        {
+            "name": "constraints_table",
+            "title": "Constraints (optional)",
+            "description": "A table with additional constraints metadadata.",
+            "helper": "A table with additional constraints metadadata.",
+            "type": "Table",
+            "optional": true
+        },
+        {
+            "name": "optimization_strategy",
+            "title": "Optimization Strategy",
+            "description": "The strategy of the solver to solve optimization.",
+            "helper": "The strategy of the solver to solve optimization.",
+            "type": "Selection",
+            "options": ["Minimize total cost", "Minimize maximum cost", "Maximize coverage"],
+            "default": "Minimize total cost"
+        },
+        {
+            "name": "coverage_radius",
+            "title": "Facilities coverage radius (in cost units)",
+            "description": "Maximum distance that a facility can cover.",
+            "helper": "Maximum distance that a facility can cover.",
+            "type": "Number",
+            "minimum": 0,
+            "default": 10,
+            "showIf": [
+                {"parameter": "optimization_strategy", "value": ["Maximize coverage"]}
+            ]
+        },
+        {
+            "name": "required_facilities_bool",
+            "title": "Use required facilities",
+            "description": "Whether to consider mandatory facilities.",
+            "helper": "Whether to consider mandatory facilities.",
+            "type": "Boolean",
+            "default": false
+        },
+        {
+            "name": "competitor_facilities_bool",
+            "title": "Use competitor facilities",
+            "description": "Whether to account for competitor locations that may influence demand point assignment.",
+            "helper": "Whether to account for competitor locations that may influence demand point assignment.",
+            "type": "Boolean",
+            "default": false
+        },
+        {
+            "name": "competitor_trade_area",
+            "title": "Cost threshold (in cost units)",
+            "description": "The distance under which a demand point is considered fully influenced by a competitor, and thus removed from consideration.",
+            "helper": "The distance under which a demand point is considered fully influenced by a competitor, and thus removed from consideration.",
+            "type": "Number",
+            "default": 5,
+            "showIf": [
+                {"parameter": "competitor_facilities_bool", "value": true}
+            ]
+        },
+        {
+            "name": "costopen_facilities_bool",
+            "title": "Use facility costs of opening",
+            "description": "The fixed cost of opening each facility is added to the objective function.",
+            "helper": "The fixed cost of opening each facility is added to the objective function.",
+            "type": "Boolean",
+            "default": false,
+            "showIf": [
+                {"parameter": "optimization_strategy", "value": ["Minimize total cost", "Minimize maximum cost"]}
+            ]
+        },
+        {
+            "name": "budget_constraint_bool",
+            "title": "Use maximum budget",
+            "description": "Whether to consider a maximum budget for opening facilities.",
+            "helper": "Whether to consider a maximum budget for opening facilities.",
+            "type": "Boolean",
+            "default": false
+        },
+        {
+            "name": "budget_constraint",
+            "title": "Budget limit (in cost of open units)",
+            "description": "Maximum budget allowed for opening facilities. The sum of opening costs of selected facilities must not exceed this value.",
+            "helper": "Maximum budget allowed for opening facilities. The sum of opening costs of selected facilities must not exceed this value.",
+            "type": "Number",
+            "minimum": 0,
+            "default": 1000000,
+            "showIf": [
+                {"parameter": "budget_constraint_bool", "value": true}
+            ]
+        },
+        {
+            "name": "limit_facilities_bool",
+            "title": "Limit the total number of facilities",
+            "description": "Restricts the number of facilities that can be opened.",
+            "helper": "Restricts the number of facilities that can be opened.",
+            "type": "Boolean",
+            "default": false
+        },
+        {
+            "name": "max_facilities",
+            "title": "Maximum number of facilities",
+            "description": "The maximum number of facilities allowed to open.",
+            "helper": "The maximum number of facilities allowed to open.",
+            "type": "Number",
+            "minimum": 1,
+            "default": 5,
+            "showIf": [
+                {"parameter": "limit_facilities_bool", "value": true}
+            ]
+        },
+        {
+            "name": "limit_facilities_group_bool",
+            "title": "Limit the total number of facilities per group",
+            "description": "Restricts the number of facilities that can be opened per defined group (e.g., region, brand).",
+            "helper": "Restricts the number of facilities that can be opened per defined group (e.g., region, brand).",
+            "type": "Boolean",
+            "default": false
+        },
+        {
+            "name": "max_facilities_group",
+            "title": "Maximum number of facilities",
+            "description": "The maximum number of facilities allowed to open per group.",
+            "helper": "The maximum number of facilities allowed to open per group.",
+            "type": "Number",
+            "minimum": 1,
+            "default": 5,
+            "showIf": [
+                {"parameter": "limit_facilities_group_bool", "value": true}
+            ]
+        },
+        {
+            "name": "demand_bool",
+            "title": "Use demand",
+            "description": "Ensures that the full demand of each demand point is met across assigned facilities.",
+            "helper": "Ensures that the full demand of each demand point is met across assigned facilities.",
+            "type": "Boolean",
+            "default": false
+        },
+        {
+            "name": "facilities_min_usage_bool",
+            "title": "Enforce minimum usage of facilities",
+            "description": "Restricts facilities from being opened unless they meet a minimum utilization level.",
+            "helper": "Restricts facilities from being opened unless they meet a minimum utilization level.",
+            "type": "Boolean",
+            "default": false,
+            "showIf": [
+                {"parameter": "optimization_strategy", "value": ["Minimize total cost", "Minimize maximum cost"]}
+            ]
+        },
+        {
+            "name": "facilities_max_capacity_bool",
+            "title": "Use facility maximum capacities",
+            "description": "Restricts the total amount of demand a facility can serve.",
+            "helper": "Restricts the total amount of demand a facility can serve.",
+            "type": "Boolean",
+            "default": false,
+            "showIf": [
+                {"parameter": "optimization_strategy", "value": ["Minimize total cost", "Minimize maximum cost"]}
+            ]
+        },
+        {
+            "name": "compatibility_bool",
+            "title": "Use required/forbidden assignments",
+            "description": "Allows enforcing or excluding specific demand point-facility assignments (e.g., a facility must serve a specific demand point).",
+            "helper": "Allows enforcing or excluding specific demand point-facility assignments (e.g., a facility must serve a specific demand point).",
+            "type": "Boolean",
+            "default": false,
+            "showIf": [
+                {"parameter": "optimization_strategy", "value": ["Minimize total cost", "Minimize maximum cost"]}
+            ]
+        },
+        {
+            "name": "relative_gap",
+            "title": "Relative Gap Tolerance (%)",
+            "advanced": true,
+            "description": "The maximum allowed relative optimality gap between the best known solution and the theoretical optimum.",
+            "helper": "The maximum allowed relative optimality gap between the best known solution and the theoretical optimum.",
+            "type": "Number",
+            "mode": "slider",
+            "min": 0,
+            "max": 100,
+            "default": 0
+        },
+        {
+            "name": "time_limit",
+            "title": "Maximum Solving Time (sec)",
+            "advanced": true,
+            "description": "The maximum allowed time taken for the solver to solve the problem (in seconds).",
+            "helper": "The maximum allowed time taken for the solver to solve the problem (in seconds).",
+            "type": "Number",
+            "mode": "slider",
+            "min": 1,
+            "max": 7200,
+            "default": 3600
+        }
+    ],
+    "outputs": [
+        {
+            "name": "output_table",
+            "title": "Output table",
+            "description": "The table with the optimized assignments.",
+            "helper": "The table with the optimized assignments.",
+            "type": "Table"
+        },
+        {
+            "name": "metrics_table",
+            "title": "Metrics table",
+            "description": "The table with solver metrics.",
+            "helper": "The table with solver metrics.",
+            "type": "Table"
+        }
+    ]
+}

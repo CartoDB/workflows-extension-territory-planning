@@ -1,11 +1,11 @@
 {
     "name": "territoryplanning",
     "title": "Territory Planning",
-    "industry": "TBD",
+    "industry": "Operational Planning",
     "description": "An extension package for optimizing and managing territories",
-    "icon": "extension-default.svg",
+    "icon": "territory-planning_extension.svg",
     "version": "1.0.0",
-    "lastUpdate": "2025-05-28",
+    "lastUpdate": "2025-09-29",
     "provider": "bigquery",
     "author": {
         "value": "CARTO",
@@ -15,14 +15,19 @@
         }
     },
     "license": {
-        "value": "CARTO Proprietary",
+        "value": "CARTO License",
         "link": {
-            "label": "CARTO Proprietary",
+            "label": "CARTO License",
             "href": "https://carto.com/legal"
         }
     },
     "details": [],
     "components": [
-        "territorybalancing"
+        "territorybalancing",
+        "facilities",
+        "demandpoints",
+        "costs",
+        "constraints",
+        "locationallocation"
     ]
 }

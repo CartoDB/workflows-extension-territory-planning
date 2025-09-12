@@ -1,0 +1,103 @@
+{
+    "name": "constraints",
+    "title": "Constraints Definition",
+    "description": "A component that adds constraints data for Location Allocation.",
+    "externalReference": {
+        "label": "Documentation",
+        "href": "https://docs.carto.com/carto-user-manual/workflows/components/territory-planning#constraints-definition"
+    },
+    "version": "1.0.0",
+    "icon": "prepare-constraints.svg",
+    "cartoEnvVars": ["tempStoragePath"],
+    "inputs": [
+        {
+            "name": "compatible_table",
+            "title": "Required (optional)",
+            "description": "The source table containing required facility-demand point pairs.",
+            "helper": "The source table containing required facility-demand point pairs.",
+            "type": "Table",
+            "optional": true
+        },
+        {
+            "name": "incompatible_table",
+            "title": "Forbidden (optional)",
+            "description": "The source table containing banned facility-demand point pairs.",
+            "helper": "The source table containing banned facility-demand point pairs.",
+            "type": "Table",
+            "optional": true
+        },
+        {
+            "name": "compatible_bool",
+            "title": "Consider required facility-demand point pairs",
+            "description": "Whether to consider mandatory relationships between facilities and demand points.",
+            "helper": "Whether to consider mandatory relationships between facilities and demand points.",
+            "type": "Boolean",
+            "default": false
+        },
+        {
+            "name": "compatible_facility_id",
+            "title": "Facilities ID column",
+            "description": "The column containing the facility IDs.",
+            "helper": "The column containing the facility IDs.",
+            "dataType": ["number", "string"],
+            "type": "Column",
+            "parent": "compatible_table",
+            "showIf": [
+                {"parameter": "compatible_bool", "value": true}
+            ]
+        },
+        {
+            "name": "compatible_dpoint_id",
+            "title": "Demand points ID column",
+            "description": "The column containing the demand point IDs.",
+            "helper": "The column containing the demand point IDs.",
+            "dataType": ["number", "string"],
+            "type": "Column",
+            "parent": "compatible_table",
+            "showIf": [
+                {"parameter": "compatible_bool", "value": true}
+            ]
+        },
+        {
+            "name": "incompatible_bool",
+            "title": "Consider forbidden facility-demand point pairs",
+            "description": "Whether to consider prohibited relationships between facilities and demand points.",
+            "helper": "Whether to consider prohibited relationships between facilities and demand points.",
+            "type": "Boolean",
+            "default": false
+        },
+        {
+            "name": "incompatible_facility_id",
+            "title": "Facilities ID column",
+            "description": "The column containing the facility IDs.",
+            "helper": "The column containing the facility IDs.",
+            "dataType": ["number", "string"],
+            "type": "Column",
+            "parent": "incompatible_table",
+            "showIf": [
+                {"parameter": "incompatible_bool", "value": true}
+            ]
+        },
+        {
+            "name": "incompatible_dpoint_id",
+            "title": "Demand points ID column",
+            "description": "The column containing the demand point IDs.",
+            "helper": "The column containing the demand point IDs.",
+            "dataType": ["number", "string"],
+            "type": "Column",
+            "parent": "incompatible_table",
+            "showIf": [
+                {"parameter": "incompatible_bool", "value": true}
+            ]
+        }
+    ],
+    "outputs": [
+        {
+            "name": "output_table",
+            "title": "Output table",
+            "description": "The table with the metadata of the prepared constraints data",
+            "helper": "The table with the metadata of the prepared constraints data",
+            "type": "Table"
+        }
+    ]
+}

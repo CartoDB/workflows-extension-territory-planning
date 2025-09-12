@@ -1,0 +1,26 @@
+[
+    {
+        "id": "without_transformation",
+        "inputs": {
+            "costs_table": "costs",
+            "facilities_column": "facility_name",
+            "dpoints_column": "customer_name",
+            "cost_column": "distance_kilometers",
+            "transformation_bool": false,
+            "transformation_function": null,
+            "transformation_parameter": null  
+        }
+    },
+    {
+        "id": "with_transformation",
+        "inputs": {
+            "costs_table": "costs",
+            "facilities_column": "facility_name",
+            "dpoints_column": "customer_name",
+            "cost_column": "distance_kilometers",
+            "transformation_bool": true,
+            "transformation_function": "Power",
+            "transformation_parameter": 2  
+        }
+    }
+]

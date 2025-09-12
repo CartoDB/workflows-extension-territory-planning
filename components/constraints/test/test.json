@@ -1,0 +1,41 @@
+[
+    {
+        "id": "both",
+        "inputs": {
+            "compatible_table": "compatibility_match",
+            "incompatible_table": "compatibility_unmatch",
+            "compatible_bool": true,
+            "compatible_facility_id": "facility_name",
+            "compatible_dpoint_id": "customer_name",
+            "incompatible_bool": true,
+            "incompatible_facility_id": "facility_name",
+            "incompatible_dpoint_id": "customer_name"    
+        }
+    },
+    {
+        "id": "matches_only",
+        "inputs": {
+            "compatible_table": "compatibility_match",
+            "incompatible_table": "compatibility_unmatch",
+            "compatible_bool": true,
+            "compatible_facility_id": "facility_name",
+            "compatible_dpoint_id": "customer_name",
+            "incompatible_bool": false,
+            "incompatible_facility_id": null,
+            "incompatible_dpoint_id": null    
+        }
+    },
+    {
+        "id": "unmatches_only",
+        "inputs": {
+            "compatible_table": "compatibility_match",
+            "incompatible_table": "compatibility_unmatch",
+            "compatible_bool": false,
+            "compatible_facility_id": null,
+            "compatible_dpoint_id": null,
+            "incompatible_bool": true,
+            "incompatible_facility_id": "facility_name",
+            "incompatible_dpoint_id": "customer_name" 
+        }
+    }
+]
