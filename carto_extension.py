@@ -397,6 +397,7 @@ def generate_function_sql_bigquery(function_metadata: dict) -> str:
     # Infer function type from definition file extension
     sql_definition_file = func_path / "src" / "definition.sql"
     python_definition_file = func_path / "src" / "definition.py"
+    javascript_definition_file = func_path / "src" / "definition.js"
 
     if sql_definition_file.exists():
         # SQL function or procedure for BigQuery
@@ -423,11 +424,12 @@ def generate_function_sql_bigquery(function_metadata: dict) -> str:
             );"""
 
     elif python_definition_file.exists():
-        # Check if this is a procedure - BigQuery doesn't support Python procedures
+        # Check if this is a procedure - BigQuery doesn't support Python stored procedures
         if func_type == "procedure":
             raise NotImplementedError(
-                f"BigQuery Python procedures are not supported. "
-                f"Function '{func_name}' is marked as type 'procedure' but uses Python definition."
+                f"BigQuery Python stored procedures are not supported. "
+                f"Function '{func_name}' is marked as type 'procedure' but uses Python definition. "
+                f"BigQuery only supports Python UDFs, not stored procedures."
             )
 
         # Python function for BigQuery
@@ -478,9 +480,57 @@ def generate_function_sql_bigquery(function_metadata: dict) -> str:
             AS r\"\"\"\n{clean_python_code}\n\"\"\";
             """
 
+    elif javascript_definition_file.exists():
+        # Check if this is a procedure - BigQuery doesn't support JavaScript stored procedures
+        if func_type == "procedure":
+            raise NotImplementedError(
+                f"BigQuery JavaScript stored procedures are not supported. "
+                f"Function '{func_name}' is marked as type 'procedure' but uses JavaScript definition. "
+                f"BigQuery only supports JavaScript UDFs, not stored procedures."
+            )
+
+        # JavaScript UDF for BigQuery
+        with open(javascript_definition_file, "r") as f:
+            javascript_code = f.read().strip()
+
+        # Add extra options from metadata if present
+        options = []
+        extra_options = function_metadata.get("extra_options", {})
+        for key, value in extra_options.items():
+            if isinstance(value, str):
+                options.append(f"{key}='{value}'")
+            elif isinstance(value, list):
+                # Handle list values like libraries
+                list_str = ",".join([f"'{item}'" for item in value])
+                options.append(f"{key}=[{list_str}]")
+            else:
+                # Handle other types (numbers, booleans)
+                options.append(f"{key}={value}")
+
+        options_str = ",\n    ".join(options) if options else ""
+        if options_str:
+            options_clause = ("\n" + " " * 12).join(
+                [
+                    "",
+                    "OPTIONS (",
+                    "   " + options_str,
+                    ")",
+                ]
+            )
+        else:
+            options_clause = ""
+
+        return f"""CREATE OR REPLACE FUNCTION @@workflows_temp@@.`{func_name}`(
+                {params_str}
+            )
+            RETURNS {return_type}
+            LANGUAGE js{options_clause}
+            AS r\"\"\"\n{javascript_code}\n\"\"\";
+            """
+
     else:
         print(
-            f"Warning: No definition file found for {func_name} (checked definition.sql and definition.py)"
+            f"Warning: No definition file found for {func_name} (checked definition.sql, definition.py, and definition.js)"
         )
         return ""
 
@@ -562,6 +612,7 @@ def generate_function_sql_snowflake(function_metadata: dict) -> str:
     # Infer function type from definition file extension
     sql_definition_file = func_path / "src" / "definition.sql"
     python_definition_file = func_path / "src" / "definition.py"
+    javascript_definition_file = func_path / "src" / "definition.js"
 
     if sql_definition_file.exists():
         # SQL function or procedure for Snowflake
@@ -656,9 +707,40 @@ def generate_function_sql_snowflake(function_metadata: dict) -> str:
             $$\n{clean_python_code}\n$$;
             """
 
+    elif javascript_definition_file.exists():
+        # JavaScript function or procedure for Snowflake
+        with open(javascript_definition_file, "r") as f:
+            javascript_code = f.read().strip()
+
+        if func_type == "procedure":
+            # Create a JavaScript stored procedure
+            return f"""CREATE OR REPLACE PROCEDURE @@workflows_temp@@.{func_name}(
+                {params_str}
+            )
+            RETURNS {return_type}
+            LANGUAGE JAVASCRIPT
+            EXECUTE AS CALLER
+            AS
+            $$
+                {javascript_code}
+            $$;
+            """
+        else:
+            # Create a JavaScript function (default behavior)
+            return f"""CREATE OR REPLACE FUNCTION @@workflows_temp@@.{func_name}(
+                {params_str}
+            )
+            RETURNS {return_type}
+            LANGUAGE JAVASCRIPT
+            AS
+            $$
+                {javascript_code}
+            $$;
+            """
+
     else:
         print(
-            f"Warning: No definition file found for {func_name} (checked definition.sql and definition.py)"
+            f"Warning: No definition file found for {func_name} (checked definition.sql, definition.py, and definition.js)"
         )
         return ""
 
@@ -1001,9 +1083,9 @@ def deploy_bq(metadata, destination):
     print("Deploying extension to BigQuery...")
     if not destination:
         destination = bq_workflows_temp
-    elif not (destination.startswith('`') and destination.endswith('`')):
+    elif not (destination.startswith("`") and destination.endswith("`")):
         destination = f"`{destination}`"
-    
+
     sql_code = create_sql_code_bq(metadata)
     sql_code = sql_code.replace(WORKFLOWS_TEMP_PLACEHOLDER, destination)
     sql_code = substitute_vars(sql_code, provider="bigquery")
@@ -1138,9 +1220,11 @@ def _upload_test_table_bq(filename, component):
     dataset_id = os.getenv("BQ_TEST_DATASET")
     if component.get("_is_setup_table", False):
         # For setup tables, use direct naming
-        table_id = component['name']
+        table_id = component["name"]
     else:
-        table_id = f"_test_{component['name']}_{os.path.basename(filename).split('.')[0]}"
+        table_id = (
+            f"_test_{component['name']}_{os.path.basename(filename).split('.')[0]}"
+        )
 
     dataset_ref = bq_client().dataset(dataset_id)
     table_ref = dataset_ref.table(table_id)
@@ -1218,9 +1302,11 @@ def _upload_test_table_sf(filename, component):
 
     if component.get("_is_setup_table", False):
         # For setup tables, use direct naming
-        table_id = component['name']
+        table_id = component["name"]
     else:
-        table_id = f"_test_{component['name']}_{os.path.basename(filename).split('.')[0]}"
+        table_id = (
+            f"_test_{component['name']}_{os.path.basename(filename).split('.')[0]}"
+        )
     create_table_sql = f"CREATE OR REPLACE TABLE {sf_workflows_temp}.{table_id} ("
     for key, value in data[0].items():
         create_table_sql += f"{key} {data_types[key]}, "
@@ -1338,7 +1424,7 @@ def _get_test_results(metadata, component, progress_bar=None, use_ci_logging=Fal
                     # Indicate this is a setup table with explicit naming
                     setup_component = {"name": table_name, "_is_setup_table": True}
                     upload_function(ndjson_full_path, setup_component)
-            
+
             param_values = []
             test_id = test_configuration["id"]
             skip_outputs = test_configuration.get("skip_output", [])
@@ -1727,7 +1813,7 @@ def pytest_generate_tests(metafunc):
 def test_extension_components(test_case):
     """Parametrized test function that runs all component tests."""
     from pytest_unordered import unordered
-    
+
     if test_case["test_type"] == "schema":
         # Test schema consistency
         for output_name, dry_output in test_case["outputs"]["dry"].items():
