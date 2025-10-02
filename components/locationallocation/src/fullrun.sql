@@ -145,7 +145,7 @@ BEGIN
     END IF;
 
     -- Check if cost_of_open values exist when costopen_facilities_bool is enabled
-    IF (costopen_facilities_bool OR budget_constraint_bool IS NOT NULL) THEN
+    IF (costopen_facilities_bool OR budget_constraint_bool) THEN
         SET query = FORMAT("""
             SELECT COUNT(*) > 0
             FROM `%s`
