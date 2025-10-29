@@ -89,13 +89,5 @@ To run the extension tests, follow these steps:
    python carto_extension.py pytest
    ```
 
-> [!WARNING]  
-> **Special setup required for Location-Allocation tests**: Due to component dependencies, you may encounter errors when testing the [`locationallocation`](components/locationallocation/) component. 
->
-> **Recommended workflow**:
-> 1. First, run the [`constraints`](components/constraints/test/test.json) component tests in normal mode
-> 2. Copy the output table name into [`constraints.ndjson`](components/locationallocation/test/constraints.ndjson)  
-> 3. Switch the [`constraints`](components/constraints/test/test.json) test to `skip` mode in its configuration
-> 4. Run the complete test suite together
->
-> This ensures the required constraint tables exist before testing the location allocation optimization.
+> [!NOTE]  
+> **Component Dependencies**: Some components like [`locationallocation`](components/locationallocation/) depend on data from other components (e.g., constraints data). The testing framework supports `setup_tables` metadata to automatically handle these dependencies, which are uploaded as a different table that is not directly passed as input (and can be referenced as table). Hovewer, the current implication is that **the `constraints` component is not being tested**.
