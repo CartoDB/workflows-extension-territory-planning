@@ -4,7 +4,7 @@
     "industry": "Operational Planning",
     "description": "An extension package for optimizing and managing territories",
     "icon": "territory-planning_extension.svg",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "lastUpdate": "2025-09-29",
     "provider": "bigquery",
     "author": {
